@@ -197,7 +197,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
         for (Object projectArtifact : project.getArtifacts())
         {
             final Artifact artifact = (Artifact) projectArtifact;
-            if (artifact.getScope() == "test")
+            if ("test".equals(artifact.getScope()))
             {
                 System.out.println("Skipping test artifact: " + artifact.getFile().toString());
                 continue;
