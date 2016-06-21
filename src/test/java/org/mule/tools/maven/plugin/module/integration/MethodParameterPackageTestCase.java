@@ -7,31 +7,15 @@
 
 package org.mule.tools.maven.plugin.module.integration;
 
-import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DEPENDENCY_PROBLEMS_FOUND;
-import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_DEPENDENCY_PROBLEMS_FOUND;
-
-import java.io.File;
-
-import io.takari.maven.testing.TestResources;
-import io.takari.maven.testing.executor.MavenExecutionResult;
 import io.takari.maven.testing.executor.MavenRuntime;
-import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(MavenJUnitTestRunner.class)
-public class MethodParameterPackageTestCase
+public class MethodParameterPackageTestCase extends AbstractExportTestCase
 {
-
-    @Rule
-    public final TestResources resources = new TestResources();
-
-    public final MavenRuntime mavenRuntime;
 
     public MethodParameterPackageTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
     {
-        this.mavenRuntime = builder.build();
+        super(builder);
     }
 
     //// Parameter type
@@ -123,33 +107,4 @@ public class MethodParameterPackageTestCase
         doExportABTest("ignoresReturnInProtectedMethodFromFinalClass");
     }
 
-    private void doExportABTest(String projectName) throws Exception
-    {
-        //TODO(pablo.kraan): this test should be different when org.bar is exported in the module, otherwise there is no safety that the code is doing the real thing
-        File basedir = resources.getBasedir(projectName);
-        MavenExecutionResult result = mavenRuntime
-                .forProject(basedir)
-                .execute("mule-module:analyze");
-
-        result.assertLogText(NO_DEPENDENCY_PROBLEMS_FOUND);
-        result.assertLogText("Found module:");
-        result.assertLogText("Visiting class: org/foo/A");
-        result.assertLogText("Visiting class: org/bar/B");
-        result.assertNoLogText("Packages that must be exported:");
-    }
-
-    private void doExportAMissingBTest(String projectName) throws Exception
-    {
-        File basedir = resources.getBasedir(projectName);
-        MavenExecutionResult result = mavenRuntime
-                .forProject(basedir)
-                .execute("mule-module:analyze");
-
-        result.assertLogText(DEPENDENCY_PROBLEMS_FOUND);
-        result.assertLogText("Found module:");
-        result.assertLogText("Visiting class: org/foo/A");
-        result.assertLogText("Visiting class: org/bar/B");
-        result.assertLogText("Packages that must be exported:");
-        result.assertLogText("org.bar");
-    }
 }

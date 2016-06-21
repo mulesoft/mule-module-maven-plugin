@@ -58,8 +58,7 @@ public final class ClassFileVisitorUtils
             }
             catch (URISyntaxException exception)
             {
-                IllegalArgumentException e = new IllegalArgumentException("Cannot accept visitor on URL: " + url);
-                e.initCause(exception);
+                IllegalArgumentException e = new IllegalArgumentException("Cannot accept visitor on URL: " + url, exception);
                 throw e;
             }
         }
