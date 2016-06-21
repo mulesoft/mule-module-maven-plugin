@@ -1,0 +1,14 @@
+*.ipr
+atlassian-ide-plugin.xml
+*.iml
+*.iws
+.idea
+target
+.classpath
+.project
+.settings
+build
+.svn/
+.DS_Store
+dependency-reduced-pom.xml
+
