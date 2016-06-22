@@ -8,6 +8,7 @@
 package org.mule.tools.maven.plugin.module.analyze.asm;
 
 import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.getPackageName;
+import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
 import org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor;
 
 import java.io.IOException;
@@ -28,10 +29,13 @@ import org.objectweb.asm.signature.SignatureVisitor;
 public class DependencyClassFileVisitor implements ClassFileVisitor
 {
 
-    private final ResultCollector resultCollector = new ResultCollector();
+    private final ResultCollector resultCollector;
+    private final AnalyzerLogger analyzerLogger;
 
-    public DependencyClassFileVisitor()
+    public DependencyClassFileVisitor(AnalyzerLogger analyzerLogger)
     {
+        this.analyzerLogger = analyzerLogger;
+        resultCollector =new ResultCollector(analyzerLogger);
     }
 
     /*
@@ -45,12 +49,12 @@ public class DependencyClassFileVisitor implements ClassFileVisitor
             final String packageName = getPackageName(className);
             ClassReader reader = new ClassReader(in);
 
-            AnnotationVisitor annotationVisitor = new DefaultAnnotationVisitor(packageName, resultCollector);
-            SignatureVisitor signatureVisitor = new DefaultSignatureVisitor(packageName, resultCollector);
-            FieldVisitor fieldVisitor = new DefaultFieldVisitor(packageName, annotationVisitor, resultCollector);
-            MethodVisitor mv = new DefaultMethodVisitor(packageName, annotationVisitor, signatureVisitor, resultCollector);
+            AnnotationVisitor annotationVisitor = new DefaultAnnotationVisitor(packageName, resultCollector, analyzerLogger);
+            SignatureVisitor signatureVisitor = new DefaultSignatureVisitor(packageName, resultCollector, analyzerLogger);
+            FieldVisitor fieldVisitor = new DefaultFieldVisitor(packageName, annotationVisitor, resultCollector, analyzerLogger);
+            MethodVisitor mv = new DefaultMethodVisitor(packageName, annotationVisitor, signatureVisitor, resultCollector, analyzerLogger);
             ClassVisitor classVisitor =
-                    new DefaultClassVisitor(packageName, signatureVisitor, annotationVisitor, fieldVisitor, mv, resultCollector);
+                    new DefaultClassVisitor(packageName, signatureVisitor, annotationVisitor, fieldVisitor, mv, resultCollector, analyzerLogger);
 
             reader.accept(classVisitor, 0);
         }
@@ -62,7 +66,7 @@ public class DependencyClassFileVisitor implements ClassFileVisitor
         {
             // some bug inside ASM causes an IOB exception. Log it and move on?
             // this happens when the class isn't valid.
-            System.out.println("Unable to process: " + className);
+            analyzerLogger.log("Unable to process: " + className);
         }
     }
 

@@ -19,5 +19,5 @@ public interface DependencyAnalyzer
 {
     String ROLE = DependencyAnalyzer.class.getName();
 
-    Map<String, Set<String>> analyze(URL url) throws IOException;
+    Map<String, Set<String>> analyze(URL url, AnalyzerLogger analyzerLogger) throws IOException;
 }

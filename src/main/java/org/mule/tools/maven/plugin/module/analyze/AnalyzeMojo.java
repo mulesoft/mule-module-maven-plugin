@@ -129,7 +129,8 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable
         ProjectDependencyAnalysis analysis;
         try
         {
-            analysis = createProjectDependencyAnalyzer().analyze(project);
+            final AnalyzerLogger analyzerLogger = verbose ? new VerboseAnalyzerLogger(getLog()) : new SilentAnalyzerLogger();
+            analysis = createProjectDependencyAnalyzer().analyze(project, analyzerLogger);
         }
         catch (ModuleApiAnalyzerException exception)
         {

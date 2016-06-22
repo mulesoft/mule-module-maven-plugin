@@ -16,5 +16,5 @@ public interface ModuleApiAnalyzer
 {
     String ROLE = ModuleApiAnalyzer.class.getName();
 
-    ProjectDependencyAnalysis analyze(MavenProject project) throws ModuleApiAnalyzerException;
+    ProjectDependencyAnalysis analyze(MavenProject project, AnalyzerLogger analyzerLogger) throws ModuleApiAnalyzerException;
 }

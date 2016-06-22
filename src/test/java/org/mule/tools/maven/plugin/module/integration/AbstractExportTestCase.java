@@ -29,7 +29,7 @@ public abstract class AbstractExportTestCase
 
     public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
     {
-        this.mavenRuntime = builder.build();
+        this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose").build();
     }
 
     protected void doExportABTest(String projectName) throws Exception
@@ -42,8 +42,8 @@ public abstract class AbstractExportTestCase
 
         result.assertLogText(NO_DEPENDENCY_PROBLEMS_FOUND);
         result.assertLogText("Found module:");
-        result.assertLogText("Visiting class: org/foo/A");
-        result.assertLogText("Visiting class: org/bar/B");
+        result.assertLogText("Analyzing class: org/foo/A");
+        result.assertLogText("Analyzing class: org/bar/B");
         result.assertNoLogText("Packages that must be exported:");
     }
 
@@ -56,10 +56,10 @@ public abstract class AbstractExportTestCase
 
         result.assertLogText(DEPENDENCY_PROBLEMS_FOUND);
         result.assertLogText("Found module:");
-        result.assertLogText("Visiting class: org/foo/A");
-        result.assertLogText("Visiting class: org/bar/B");
+        result.assertLogText("Analyzing class: org/foo/A");
+        result.assertLogText("Analyzing class: org/bar/B");
         //TODO(pablo.kraan): what about tests using C class?
-        //result.assertLogText("Visiting class: org/bar/A$C");
+        //result.assertLogText("Analyzing class: org/bar/A$C");
         result.assertLogText("Packages that must be exported:");
         result.assertLogText("org.bar");
     }

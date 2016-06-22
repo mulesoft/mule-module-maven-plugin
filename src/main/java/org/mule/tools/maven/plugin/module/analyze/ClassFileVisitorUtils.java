@@ -33,10 +33,10 @@ public final class ClassFileVisitorUtils
         // private constructor for utility class
     }
 
-    public static void accept(URL url, ClassFileVisitor visitor)
+    public static void accept(URL url, ClassFileVisitor visitor, AnalyzerLogger analyzerLogger)
             throws IOException
     {
-        System.out.println("Analizyng: " + url);
+        analyzerLogger.log("Analizyng: " + url);
         if (url.getPath().endsWith(".jar"))
         {
             acceptJar(url, visitor);

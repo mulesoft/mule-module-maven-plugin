@@ -47,15 +47,15 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
     /*
      * @see org.mule.tools.maven.plugin.module.analyze.ProjectDependencyAnalyzer#analyze(org.apache.maven.project.MavenProject)
      */
-    public ProjectDependencyAnalysis analyze(MavenProject project)
+    public ProjectDependencyAnalysis analyze(MavenProject project, AnalyzerLogger analyzerLogger)
             throws ModuleApiAnalyzerException
     {
         //TODO(pablo.kraan): must ensure that there is a exported properties in the current module, otherwise there is nothing to check
-        Set<String> exportedPackages = discoverExportedPackages(project);
+        Set<String> exportedPackages = discoverExportedPackages(project, analyzerLogger);
 
         try
         {
-            final Map<String, Set<String>> artifactPackageDeps = findPackageDependencies(project);
+            final Map<String, Set<String>> artifactPackageDeps = findPackageDependencies(project, analyzerLogger);
             final Map<String, Set<String>> noExportedPackageDeps = new HashMap<>();
 
             for (String exportedPackage : exportedPackages)
@@ -73,7 +73,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
 
             if (!noExportedPackageDeps.isEmpty())
             {
-                final Map<String, Set<String>> externalPackageDeps = calculateExternalDeps(project);
+                final Map<String, Set<String>> externalPackageDeps = calculateExternalDeps(project, analyzerLogger);
 
                 boolean dirty;
                 do
@@ -122,7 +122,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
         }
     }
 
-    private Set<String> discoverExportedPackages(MavenProject project) throws ModuleApiAnalyzerException
+    private Set<String> discoverExportedPackages(MavenProject project, AnalyzerLogger analyzerLogger) throws ModuleApiAnalyzerException
     {
         final Set<String> result = new HashSet<String>();
         Set<URL> urls = new HashSet<URL>();
@@ -147,7 +147,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
                 while (resources.hasMoreElements())
                 {
                     final URL url = resources.nextElement();
-                    System.out.println("Found module: " + url);
+                    analyzerLogger.log("Found module: " + url);
                     Properties properties = new Properties();
 
                     InputStream resourceStream = null;
@@ -191,7 +191,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
         return result;
     }
 
-    private Map<String, Set<String>> calculateExternalDeps(MavenProject project) throws IOException
+    private Map<String, Set<String>> calculateExternalDeps(MavenProject project, AnalyzerLogger analyzerLogger) throws IOException
     {
         final Map<String, Set<String>> result = new HashMap<String, Set<String>>();
         for (Object projectArtifact : project.getArtifacts())
@@ -199,10 +199,10 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
             final Artifact artifact = (Artifact) projectArtifact;
             if ("test".equals(artifact.getScope()))
             {
-                System.out.println("Skipping test artifact: " + artifact.getFile().toString());
+                analyzerLogger.log("Skipping test artifact: " + artifact.getFile().toString());
                 continue;
             }
-            final Map<String, Set<String>> artifactExternalPackageDeps = findPackageDependencies(artifact.getFile().toString());
+            final Map<String, Set<String>> artifactExternalPackageDeps = findPackageDependencies(artifact.getFile().toString(), analyzerLogger);
 
             for (String externalPackageName : artifactExternalPackageDeps.keySet())
             {
@@ -223,21 +223,21 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer
         return result;
     }
 
-    protected Map<String, Set<String>> findPackageDependencies(MavenProject project)
+    protected Map<String, Set<String>> findPackageDependencies(MavenProject project, AnalyzerLogger analyzerLogger)
             throws IOException
     {
         String outputDirectory = project.getBuild().getOutputDirectory();
-        final Map<String, Set<String>> packageDeps = findPackageDependencies(outputDirectory);
+        final Map<String, Set<String>> packageDeps = findPackageDependencies(outputDirectory, analyzerLogger);
 
         return packageDeps;
     }
 
-    private Map<String, Set<String>> findPackageDependencies(String path)
+    private Map<String, Set<String>> findPackageDependencies(String path, AnalyzerLogger analyzerLogger)
             throws IOException
     {
         URL url = new File(path).toURI().toURL();
 
-        return dependencyAnalyzer.analyze(url);
+        return dependencyAnalyzer.analyze(url, analyzerLogger);
     }
 
 }

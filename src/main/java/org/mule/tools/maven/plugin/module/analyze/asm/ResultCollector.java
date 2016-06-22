@@ -9,6 +9,8 @@ package org.mule.tools.maven.plugin.module.analyze.asm;
 
 import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.getPackageName;
 
+import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +23,12 @@ public class ResultCollector
 
     private final Set<String> classes = new HashSet<String>();
     private final Map<String, Set<String>> packageDeps = new HashMap<String, Set<String>>();
+    private final AnalyzerLogger analyzerLogger;
+
+    public ResultCollector(AnalyzerLogger analyzerLogger)
+    {
+        this.analyzerLogger = analyzerLogger;
+    }
 
     public Set<String> getDependencies()
     {
@@ -70,7 +78,7 @@ public class ResultCollector
         //TODO(pablo.kraan): is OK just to ignore the default package?
         if (!packageName.equals(depPackageName) && !"".equals(depPackageName) && !deps.contains(depPackageName))
         {
-            System.out.println("Adding dependency from " + packageName + " to " + depPackageName);
+            analyzerLogger.log("Adding dependency from " + packageName + " to " + depPackageName);
             deps.add(depPackageName);
         }
     }

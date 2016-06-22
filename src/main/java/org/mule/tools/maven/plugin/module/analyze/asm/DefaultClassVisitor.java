@@ -13,6 +13,8 @@ import static org.mule.tools.maven.plugin.module.analyze.asm.AccessUtils.isPriva
 import static org.mule.tools.maven.plugin.module.analyze.asm.AccessUtils.isProtected;
 import static org.mule.tools.maven.plugin.module.analyze.asm.AccessUtils.isPublic;
 
+import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -31,6 +33,7 @@ public class DefaultClassVisitor extends ClassVisitor
 {
 
     private final ResultCollector resultCollector;
+    private final AnalyzerLogger analyzerLogger;
 
     private final String packageName;
     private final SignatureVisitor signatureVisitor;
@@ -45,7 +48,7 @@ public class DefaultClassVisitor extends ClassVisitor
 
     public DefaultClassVisitor(String packageName, SignatureVisitor signatureVisitor, AnnotationVisitor annotationVisitor,
                                FieldVisitor fieldVisitor, MethodVisitor methodVisitor,
-                               ResultCollector resultCollector)
+                               ResultCollector resultCollector, AnalyzerLogger analyzerLogger)
     {
         super(Opcodes.ASM5);
         this.packageName = packageName;
@@ -54,17 +57,18 @@ public class DefaultClassVisitor extends ClassVisitor
         this.fieldVisitor = fieldVisitor;
         this.methodVisitor = methodVisitor;
         this.resultCollector = resultCollector;
+        this.analyzerLogger = analyzerLogger;
     }
 
     public void visit(final int version, final int access, final String name, final String signature,
                       final String superName, final String[] interfaces)
     {
-        System.out.println("Visiting class: " + name + (signature != null ? signature : ""));
+        analyzerLogger.log("Analyzing class: " + name + (signature != null ? signature : ""));
         skipClass = isPrivate(access) || isPackage(access);
         if (skipClass)
         {
             String accessString = isPrivate(access) ? "private" : "package";
-            System.out.println("Skipping " + accessString + " class: " + name + (signature != null ? signature : ""));
+            analyzerLogger.log("Skipping class: " + name + (signature != null ? signature : "") + " visibility: " + accessString);
         }
         else
         {
@@ -112,7 +116,7 @@ public class DefaultClassVisitor extends ClassVisitor
         if (isPublic(access) || (isProtected(access) && !isFinalClass))
         {
             String accessString = isPublic(access) ? "public" : "protected";
-            System.out.println("Visiting field: " + name + " - " + accessString);
+            analyzerLogger.log("Analyzing field: " + name + " - " + accessString);
             if (signature == null)
             {
                 resultCollector.addDesc(packageName, desc);
@@ -132,7 +136,7 @@ public class DefaultClassVisitor extends ClassVisitor
         else
         {
             String accessString = isPrivate(access) ? "private" : "package";
-            System.out.println("Visiting field: " + name + " - " + accessString);
+            analyzerLogger.log("Analyzing field: " + name + " - " + accessString);
             return null;
         }
     }
