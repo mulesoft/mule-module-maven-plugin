@@ -7,8 +7,8 @@
 
 package org.mule.tools.maven.plugin.module.integration;
 
-import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DEPENDENCY_PROBLEMS_FOUND;
-import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_DEPENDENCY_PROBLEMS_FOUND;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.MODULE_API_PROBLEMS_FOUND;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_MODULE_API_PROBLEMS_FOUND;
 
 import java.io.File;
 
@@ -40,7 +40,7 @@ public abstract class AbstractExportTestCase
                 .forProject(basedir)
                 .execute("mule-module:analyze");
 
-        result.assertLogText(NO_DEPENDENCY_PROBLEMS_FOUND);
+        result.assertLogText(NO_MODULE_API_PROBLEMS_FOUND);
         result.assertLogText("Found module:");
         result.assertLogText("Analyzing class: org/foo/A");
         result.assertLogText("Analyzing class: org/bar/B");
@@ -54,7 +54,7 @@ public abstract class AbstractExportTestCase
                 .forProject(basedir)
                 .execute("mule-module:analyze");
 
-        result.assertLogText(DEPENDENCY_PROBLEMS_FOUND);
+        result.assertLogText(MODULE_API_PROBLEMS_FOUND);
         result.assertLogText("Found module:");
         result.assertLogText("Analyzing class: org/foo/A");
         result.assertLogText("Analyzing class: org/bar/B");

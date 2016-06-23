@@ -36,8 +36,8 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 public class AnalyzeMojo extends AbstractMojo implements Contextualizable
 {
 
-    public static final String NO_DEPENDENCY_PROBLEMS_FOUND = "No dependency problems found";
-    public static final String DEPENDENCY_PROBLEMS_FOUND = "Dependency problems found";
+    public static final String NO_MODULE_API_PROBLEMS_FOUND = "No module API problems found";
+    public static final String MODULE_API_PROBLEMS_FOUND = "Module API problems found";
 
     /**
      * The plexus context to look-up the right {@link ModuleApiAnalyzer} implementation depending on the mojo
@@ -85,7 +85,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable
 
         if (error)
         {
-            throw new MojoExecutionException(DEPENDENCY_PROBLEMS_FOUND);
+            throw new MojoExecutionException(MODULE_API_PROBLEMS_FOUND);
         }
     }
 
@@ -103,7 +103,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable
         catch (Exception exception)
         {
             throw new MojoExecutionException(
-                    "Failed to instantiate ProjectDependencyAnalyser with role " + role + " / role-hint " + roleHint,
+                    "Failed to instantiate ModuleApiAnalyzer with role " + role + " / role-hint " + roleHint,
                     exception);
         }
     }
@@ -134,7 +134,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable
         }
         catch (ModuleApiAnalyzerException exception)
         {
-            throw new MojoExecutionException("Cannot analyze dependencies", exception);
+            throw new MojoExecutionException("Cannot analyze module API", exception);
         }
 
         final HashMap<String, Set<String>> undeclaredExportedPackages = new HashMap<String, Set<String>>(analysis.getUndeclaredPackageDeps());
@@ -148,7 +148,10 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable
         {
             getLog().info("Used undeclared exported packages found:");
 
-            logUnExportedDependenciesPerPackage(analysis.getUndeclaredPackageDeps());
+            if (verbose)
+            {
+                logUnExportedDependenciesPerPackage(analysis.getUndeclaredPackageDeps());
+            }
             reported = true;
             warning = true;
         }
@@ -162,7 +165,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable
 
         if (!reported)
         {
-            getLog().info(NO_DEPENDENCY_PROBLEMS_FOUND);
+            getLog().info(NO_MODULE_API_PROBLEMS_FOUND);
         }
 
         return warning;
