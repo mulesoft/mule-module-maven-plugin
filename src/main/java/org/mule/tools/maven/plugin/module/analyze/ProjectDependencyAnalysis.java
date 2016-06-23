@@ -8,6 +8,8 @@
 package org.mule.tools.maven.plugin.module.analyze;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +24,7 @@ public class ProjectDependencyAnalysis
 
     public ProjectDependencyAnalysis()
     {
-        this(null, null);
+        this(new HashMap<String, Set<String>>(), new HashSet<String>());
     }
 
 
