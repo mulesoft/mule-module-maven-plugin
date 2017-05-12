@@ -15,7 +15,7 @@ public class CodeReferenceExportTestCase extends AbstractExportTestCase
 
     public CodeReferenceExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
     {
-        super(builder);
+        super(builder, "code");
     }
 
     @Test

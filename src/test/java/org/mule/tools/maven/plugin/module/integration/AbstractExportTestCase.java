@@ -7,6 +7,7 @@
 
 package org.mule.tools.maven.plugin.module.integration;
 
+import static java.io.File.separator;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.MODULE_API_PROBLEMS_FOUND;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_MODULE_API_PROBLEMS_FOUND;
 
@@ -26,16 +27,18 @@ public abstract class AbstractExportTestCase
     @Rule
     public final TestResources resources = new TestResources();
     public final MavenRuntime mavenRuntime;
+    private final String folder;
 
-    public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
+    public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception
     {
         this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose").build();
+        this.folder = folder;
     }
 
     protected void doExportABTest(String projectName) throws Exception
     {
         //TODO(pablo.kraan): this test should be different when org.bar is exported in the module, otherwise there is no safety that the code is doing the real thing
-        File basedir = resources.getBasedir(projectName);
+        File basedir = resources.getBasedir(folder + separator + projectName);
         MavenExecutionResult result = mavenRuntime
                 .forProject(basedir)
                 .execute("mule-module:analyze");
@@ -49,7 +52,7 @@ public abstract class AbstractExportTestCase
 
     protected void doExportAMissingBTest(String projectName) throws Exception
     {
-        File basedir = resources.getBasedir(projectName);
+        File basedir = resources.getBasedir(folder + separator + projectName);
         MavenExecutionResult result = mavenRuntime
                 .forProject(basedir)
                 .execute("mule-module:analyze");

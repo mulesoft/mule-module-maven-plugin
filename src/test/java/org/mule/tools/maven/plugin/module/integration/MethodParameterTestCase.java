@@ -10,15 +10,13 @@ package org.mule.tools.maven.plugin.module.integration;
 import io.takari.maven.testing.executor.MavenRuntime;
 import org.junit.Test;
 
-public class MethodParameterPackageTestCase extends AbstractExportTestCase
+public class MethodParameterTestCase extends AbstractExportTestCase
 {
 
-    public MethodParameterPackageTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
+    public MethodParameterTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
     {
-        super(builder);
+        super(builder, "parameter");
     }
-
-    //// Parameter type
 
     @Test
     public void exportedParameterInPublicMethod() throws Exception
@@ -60,51 +58,6 @@ public class MethodParameterPackageTestCase extends AbstractExportTestCase
     public void ignoresParamInProtectedMethodFromFinalClass() throws Exception
     {
         doExportABTest("ignoresParameterInProtectedMethodFromFinalClass");
-    }
-
-    //// Return type
-
-
-    @Test
-    public void exportedReturnPackageInPublicMethod() throws Exception
-    {
-        doExportABTest("exportedReturnInPublicMethod");
-    }
-
-    @Test
-    public void exportedReturnPackageInProtectedMethod() throws Exception
-    {
-        doExportABTest("exportedReturnInProtectedMethod");
-    }
-
-    @Test
-    public void missingExportedReturnPackageInPublicMethod() throws Exception
-    {
-        doExportAMissingBTest("missingReturnInPublicMethod");
-    }
-
-    @Test
-    public void missingExportedReturnPackageInProtectedMethod() throws Exception
-    {
-        doExportAMissingBTest("missingReturnInProtectedMethod");
-    }
-
-    @Test
-    public void ignoresReturnPackageInPrivateMethod() throws Exception
-    {
-        doExportABTest("ignoresReturnInPrivateMethod");
-    }
-
-    @Test
-    public void ignoresReturnPackageInPackageMethod() throws Exception
-    {
-        doExportABTest("ignoresReturnInPackageMethod");
-    }
-
-    @Test
-    public void ignoresReturnPackageInProtectedMethodFromFinalClass() throws Exception
-    {
-        doExportABTest("ignoresReturnInProtectedMethodFromFinalClass");
     }
 
 }

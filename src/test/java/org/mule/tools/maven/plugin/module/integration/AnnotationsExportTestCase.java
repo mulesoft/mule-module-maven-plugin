@@ -15,7 +15,7 @@ public class AnnotationsExportTestCase extends AbstractExportTestCase
 
     public AnnotationsExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
     {
-        super(builder);
+        super(builder, "annotation");
     }
 
     @Test

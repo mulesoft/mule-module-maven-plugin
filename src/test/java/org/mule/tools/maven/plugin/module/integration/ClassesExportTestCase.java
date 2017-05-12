@@ -15,7 +15,7 @@ public class ClassesExportTestCase extends AbstractExportTestCase
 
     public ClassesExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
     {
-        super(builder);
+        super(builder, "class");
     }
 
     @Test
@@ -52,41 +52,5 @@ public class ClassesExportTestCase extends AbstractExportTestCase
     public void ignoresSuperClassInPrivateInnerClass() throws Exception
     {
         doExportABTest("ignoresSuperClassInPrivateInnerClass");
-    }
-
-    @Test
-    public void exportedInterfaceInPublicClass() throws Exception
-    {
-        doExportABTest("exportedInterfaceInPublicClass");
-    }
-
-    @Test
-    public void missingInterfaceInPublicClass() throws Exception
-    {
-        doExportAMissingBTest("missingInterfaceInPublicClass");
-    }
-
-    @Test
-    public void exportedInterfaceInProtectedInnerClass() throws Exception
-    {
-        doExportABTest("exportedInterfaceInProtectedInnerClass");
-    }
-
-    @Test
-    public void missingInterfaceInProtectedInnerClass() throws Exception
-    {
-        doExportAMissingBTest("missingInterfaceInProtectedInnerClass");
-    }
-
-    @Test
-    public void ignoresInterfaceInPackageClass() throws Exception
-    {
-        doExportABTest("ignoresInterfaceInPackageClass");
-    }
-
-    @Test
-    public void ignoresInterfaceInPrivateInnerClass() throws Exception
-    {
-        doExportABTest("ignoresInterfaceInPrivateInnerClass");
     }
 }

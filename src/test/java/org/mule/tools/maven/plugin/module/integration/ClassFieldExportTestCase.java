@@ -15,7 +15,7 @@ public class ClassFieldExportTestCase extends AbstractExportTestCase
 
     public ClassFieldExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
     {
-        super(builder);
+        super(builder, "field");
     }
 
     @Test
