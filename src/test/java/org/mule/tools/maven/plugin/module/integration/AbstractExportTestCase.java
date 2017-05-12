@@ -21,49 +21,45 @@ import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 @RunWith(MavenJUnitTestRunner.class)
-public abstract class AbstractExportTestCase
-{
+public abstract class AbstractExportTestCase {
 
-    @Rule
-    public final TestResources resources = new TestResources();
-    public final MavenRuntime mavenRuntime;
-    private final String folder;
+  @Rule
+  public final TestResources resources = new TestResources();
+  public final MavenRuntime mavenRuntime;
+  private final String folder;
 
-    public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception
-    {
-        this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose").build();
-        this.folder = folder;
-    }
+  public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception {
+    this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose").build();
+    this.folder = folder;
+  }
 
-    protected void doExportABTest(String projectName) throws Exception
-    {
-        //TODO(pablo.kraan): this test should be different when org.bar is exported in the module, otherwise there is no safety that the code is doing the real thing
-        File basedir = resources.getBasedir(folder + separator + projectName);
-        MavenExecutionResult result = mavenRuntime
-                .forProject(basedir)
-                .execute("mule-module:analyze");
+  protected void doExportABTest(String projectName) throws Exception {
+    //TODO(pablo.kraan): this test should be different when org.bar is exported in the module, otherwise there is no safety that the code is doing the real thing
+    File basedir = resources.getBasedir(folder + separator + projectName);
+    MavenExecutionResult result = mavenRuntime
+        .forProject(basedir)
+        .execute("mule-module:analyze");
 
-        result.assertLogText(NO_MODULE_API_PROBLEMS_FOUND);
-        result.assertLogText("Found module:");
-        result.assertLogText("Analyzing class: org/foo/A");
-        result.assertLogText("Analyzing class: org/bar/B");
-        result.assertNoLogText("Packages that must be exported:");
-    }
+    result.assertLogText(NO_MODULE_API_PROBLEMS_FOUND);
+    result.assertLogText("Found module:");
+    result.assertLogText("Analyzing class: org/foo/A");
+    result.assertLogText("Analyzing class: org/bar/B");
+    result.assertNoLogText("Packages that must be exported:");
+  }
 
-    protected void doExportAMissingBTest(String projectName) throws Exception
-    {
-        File basedir = resources.getBasedir(folder + separator + projectName);
-        MavenExecutionResult result = mavenRuntime
-                .forProject(basedir)
-                .execute("mule-module:analyze");
+  protected void doExportAMissingBTest(String projectName) throws Exception {
+    File basedir = resources.getBasedir(folder + separator + projectName);
+    MavenExecutionResult result = mavenRuntime
+        .forProject(basedir)
+        .execute("mule-module:analyze");
 
-        result.assertLogText(MODULE_API_PROBLEMS_FOUND);
-        result.assertLogText("Found module:");
-        result.assertLogText("Analyzing class: org/foo/A");
-        result.assertLogText("Analyzing class: org/bar/B");
-        //TODO(pablo.kraan): what about tests using C class?
-        //result.assertLogText("Analyzing class: org/bar/A$C");
-        result.assertLogText("Packages that must be exported:");
-        result.assertLogText("org.bar");
-    }
+    result.assertLogText(MODULE_API_PROBLEMS_FOUND);
+    result.assertLogText("Found module:");
+    result.assertLogText("Analyzing class: org/foo/A");
+    result.assertLogText("Analyzing class: org/bar/B");
+    //TODO(pablo.kraan): what about tests using C class?
+    //result.assertLogText("Analyzing class: org/bar/A$C");
+    result.assertLogText("Packages that must be exported:");
+    result.assertLogText("org.bar");
+  }
 }

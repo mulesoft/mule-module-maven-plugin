@@ -7,12 +7,10 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
-public class SilentAnalyzerLogger implements AnalyzerLogger
-{
+public class SilentAnalyzerLogger implements AnalyzerLogger {
 
-    @Override
-    public void log(String message)
-    {
-        // Do nothing
-    }
+  @Override
+  public void log(String message) {
+    // Do nothing
+  }
 }

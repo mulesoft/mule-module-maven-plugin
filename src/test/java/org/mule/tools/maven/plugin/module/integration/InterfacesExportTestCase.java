@@ -10,83 +10,69 @@ package org.mule.tools.maven.plugin.module.integration;
 import io.takari.maven.testing.executor.MavenRuntime;
 import org.junit.Test;
 
-public class InterfacesExportTestCase extends AbstractExportTestCase
-{
+public class InterfacesExportTestCase extends AbstractExportTestCase {
 
-    public InterfacesExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
-    {
-        super(builder, "interface");
-    }
+  public InterfacesExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
+    super(builder, "interface");
+  }
 
-    @Test
-    public void exportedSuperInterfaceInPublicInterface() throws Exception
-    {
-        doExportABTest("exportedSuperInterfaceInPublicInterface");
-    }
+  @Test
+  public void exportedSuperInterfaceInPublicInterface() throws Exception {
+    doExportABTest("exportedSuperInterfaceInPublicInterface");
+  }
 
-    @Test
-    public void missingSuperInterfaceInPublicInterface() throws Exception
-    {
-        doExportAMissingBTest("missingSuperInterfaceInPublicInterface");
-    }
+  @Test
+  public void missingSuperInterfaceInPublicInterface() throws Exception {
+    doExportAMissingBTest("missingSuperInterfaceInPublicInterface");
+  }
 
-    @Test
-    public void exportedSuperInterfaceInProtectedInnerInterface() throws Exception
-    {
-        doExportABTest("exportedSuperInterfaceInProtectedInnerInterface");
-    }
+  @Test
+  public void exportedSuperInterfaceInProtectedInnerInterface() throws Exception {
+    doExportABTest("exportedSuperInterfaceInProtectedInnerInterface");
+  }
 
-    @Test
-    public void missingSuperInterfaceInProtectedInnerInterface() throws Exception
-    {
-        doExportAMissingBTest("missingSuperInterfaceInProtectedInnerInterface");
-    }
+  @Test
+  public void missingSuperInterfaceInProtectedInnerInterface() throws Exception {
+    doExportAMissingBTest("missingSuperInterfaceInProtectedInnerInterface");
+  }
 
-    @Test
-    public void ignoresSuperInterfaceInPackageInterface() throws Exception
-    {
-        doExportABTest("ignoresSuperInterfaceInPackageInterface");
-    }
+  @Test
+  public void ignoresSuperInterfaceInPackageInterface() throws Exception {
+    doExportABTest("ignoresSuperInterfaceInPackageInterface");
+  }
 
-    @Test
-    public void ignoresSuperInterfaceInPrivateInnerInterface() throws Exception
-    {
-        doExportABTest("ignoresSuperInterfaceInPrivateInnerInterface");
-    }
+  @Test
+  public void ignoresSuperInterfaceInPrivateInnerInterface() throws Exception {
+    doExportABTest("ignoresSuperInterfaceInPrivateInnerInterface");
+  }
 
-    @Test
-    public void exportedInterfaceInPublicClass() throws Exception
-    {
-        doExportABTest("exportedInterfaceInPublicClass");
-    }
+  @Test
+  public void exportedInterfaceInPublicClass() throws Exception {
+    doExportABTest("exportedInterfaceInPublicClass");
+  }
 
-    @Test
-    public void ignoresInterfaceInPrivateInnerClass() throws Exception
-    {
-        doExportABTest("ignoresInterfaceInPrivateInnerClass");
-    }
+  @Test
+  public void ignoresInterfaceInPrivateInnerClass() throws Exception {
+    doExportABTest("ignoresInterfaceInPrivateInnerClass");
+  }
 
-    @Test
-    public void missingInterfaceInPublicClass() throws Exception
-    {
-        doExportAMissingBTest("missingInterfaceInPublicClass");
-    }
+  @Test
+  public void missingInterfaceInPublicClass() throws Exception {
+    doExportAMissingBTest("missingInterfaceInPublicClass");
+  }
 
-    @Test
-    public void exportedInterfaceInProtectedInnerClass() throws Exception
-    {
-        doExportABTest("exportedInterfaceInProtectedInnerClass");
-    }
+  @Test
+  public void exportedInterfaceInProtectedInnerClass() throws Exception {
+    doExportABTest("exportedInterfaceInProtectedInnerClass");
+  }
 
-    @Test
-    public void missingInterfaceInProtectedInnerClass() throws Exception
-    {
-        doExportAMissingBTest("missingInterfaceInProtectedInnerClass");
-    }
+  @Test
+  public void missingInterfaceInProtectedInnerClass() throws Exception {
+    doExportAMissingBTest("missingInterfaceInProtectedInnerClass");
+  }
 
-    @Test
-    public void ignoresInterfaceInPackageClass() throws Exception
-    {
-        doExportABTest("ignoresInterfaceInPackageClass");
-    }
+  @Test
+  public void ignoresInterfaceInPackageClass() throws Exception {
+    doExportABTest("ignoresInterfaceInPackageClass");
+  }
 }

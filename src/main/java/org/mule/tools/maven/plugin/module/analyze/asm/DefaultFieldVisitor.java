@@ -18,36 +18,31 @@ import org.objectweb.asm.Opcodes;
  * Inspired by <code>org.objectweb.asm.depend.DependencyVisitor</code> in the ASM dependencies example.
  */
 public class DefaultFieldVisitor
-        extends FieldVisitor
-{
+    extends FieldVisitor {
 
-    private final String packageName;
-    private final AnnotationVisitor annotationVisitor;
+  private final String packageName;
+  private final AnnotationVisitor annotationVisitor;
 
-    private final ResultCollector resultCollector;
-    private final AnalyzerLogger analyzerLogger;
+  private final ResultCollector resultCollector;
+  private final AnalyzerLogger analyzerLogger;
 
-    public DefaultFieldVisitor(String packageName, AnnotationVisitor annotationVisitor, ResultCollector resultCollector, AnalyzerLogger analyzerLogger)
-    {
-        super(Opcodes.ASM5);
-        this.packageName = packageName;
-        this.annotationVisitor = annotationVisitor;
-        this.resultCollector = resultCollector;
-        this.analyzerLogger = analyzerLogger;
+  public DefaultFieldVisitor(String packageName, AnnotationVisitor annotationVisitor, ResultCollector resultCollector,
+                             AnalyzerLogger analyzerLogger) {
+    super(Opcodes.ASM5);
+    this.packageName = packageName;
+    this.annotationVisitor = annotationVisitor;
+    this.resultCollector = resultCollector;
+    this.analyzerLogger = analyzerLogger;
+  }
+
+  public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+    if (visible) {
+      resultCollector.addDesc(packageName, desc);
+
+      return annotationVisitor;
+    } else {
+      return null;
     }
-
-    public AnnotationVisitor visitAnnotation(final String desc, final boolean visible)
-    {
-        if (visible)
-        {
-            resultCollector.addDesc(packageName, desc);
-
-            return annotationVisitor;
-        }
-        else
-        {
-            return null;
-        }
-    }
+  }
 
 }

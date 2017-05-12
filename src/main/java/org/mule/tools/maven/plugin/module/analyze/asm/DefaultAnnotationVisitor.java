@@ -17,47 +17,40 @@ import org.objectweb.asm.Type;
  * Computes the set of classes referenced by visited code.
  * Inspired by <code>org.objectweb.asm.depend.DependencyVisitor</code> in the ASM dependencies example.
  */
-public class DefaultAnnotationVisitor extends AnnotationVisitor
-{
+public class DefaultAnnotationVisitor extends AnnotationVisitor {
 
-    private final String packageName;
-    private final ResultCollector resultCollector;
-    private final AnalyzerLogger analyzerLogger;
+  private final String packageName;
+  private final ResultCollector resultCollector;
+  private final AnalyzerLogger analyzerLogger;
 
-    public DefaultAnnotationVisitor(String packageName, ResultCollector resultCollector, AnalyzerLogger analyzerLogger)
-    {
-        super(Opcodes.ASM5);
-        this.packageName = packageName;
-        this.resultCollector = resultCollector;
-        this.analyzerLogger = analyzerLogger;
+  public DefaultAnnotationVisitor(String packageName, ResultCollector resultCollector, AnalyzerLogger analyzerLogger) {
+    super(Opcodes.ASM5);
+    this.packageName = packageName;
+    this.resultCollector = resultCollector;
+    this.analyzerLogger = analyzerLogger;
+  }
+
+  public void visit(final String name, final Object value) {
+    if (value instanceof Type) {
+      resultCollector.addType(packageName, (Type) value);
     }
+  }
 
-    public void visit(final String name, final Object value)
-    {
-        if (value instanceof Type)
-        {
-            resultCollector.addType(packageName, (Type) value);
-        }
-    }
+  public void visitEnum(final String name, final String desc, final String value) {
+    resultCollector.addDesc(packageName, desc);
+  }
 
-    public void visitEnum(final String name, final String desc, final String value)
-    {
-        resultCollector.addDesc(packageName, desc);
-    }
+  public AnnotationVisitor visitAnnotation(final String name, final String desc) {
+    resultCollector.addDesc(packageName, desc);
 
-    public AnnotationVisitor visitAnnotation(final String name, final String desc)
-    {
-        resultCollector.addDesc(packageName, desc);
+    return this;
+  }
 
-        return this;
-    }
-
-    /*
-     * @see org.objectweb.asm.AnnotationVisitor#visitArray(java.lang.String)
-     */
-    public AnnotationVisitor visitArray(final String name)
-    {
-        return this;
-    }
+  /*
+   * @see org.objectweb.asm.AnnotationVisitor#visitArray(java.lang.String)
+   */
+  public AnnotationVisitor visitArray(final String name) {
+    return this;
+  }
 
 }

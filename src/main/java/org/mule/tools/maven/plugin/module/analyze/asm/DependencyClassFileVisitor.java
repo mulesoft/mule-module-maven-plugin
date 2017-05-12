@@ -26,62 +26,54 @@ import org.objectweb.asm.signature.SignatureVisitor;
 /**
  * Computes the set of classes referenced by visited class files
  */
-public class DependencyClassFileVisitor implements ClassFileVisitor
-{
+public class DependencyClassFileVisitor implements ClassFileVisitor {
 
-    private final ResultCollector resultCollector;
-    private final AnalyzerLogger analyzerLogger;
+  private final ResultCollector resultCollector;
+  private final AnalyzerLogger analyzerLogger;
 
-    public DependencyClassFileVisitor(AnalyzerLogger analyzerLogger)
-    {
-        this.analyzerLogger = analyzerLogger;
-        resultCollector =new ResultCollector(analyzerLogger);
+  public DependencyClassFileVisitor(AnalyzerLogger analyzerLogger) {
+    this.analyzerLogger = analyzerLogger;
+    resultCollector = new ResultCollector(analyzerLogger);
+  }
+
+  /*
+   * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String,
+   *      java.io.InputStream)
+   */
+  public void visitClass(String className, InputStream in) {
+    try {
+      final String packageName = getPackageName(className);
+      ClassReader reader = new ClassReader(in);
+
+      AnnotationVisitor annotationVisitor = new DefaultAnnotationVisitor(packageName, resultCollector, analyzerLogger);
+      SignatureVisitor signatureVisitor = new DefaultSignatureVisitor(packageName, resultCollector, analyzerLogger);
+      FieldVisitor fieldVisitor = new DefaultFieldVisitor(packageName, annotationVisitor, resultCollector, analyzerLogger);
+      MethodVisitor mv =
+          new DefaultMethodVisitor(packageName, annotationVisitor, signatureVisitor, resultCollector, analyzerLogger);
+      ClassVisitor classVisitor =
+          new DefaultClassVisitor(packageName, signatureVisitor, annotationVisitor, fieldVisitor, mv, resultCollector,
+                                  analyzerLogger);
+
+      reader.accept(classVisitor, 0);
+    } catch (IOException exception) {
+      exception.printStackTrace();
+    } catch (IndexOutOfBoundsException e) {
+      // some bug inside ASM causes an IOB exception. Log it and move on?
+      // this happens when the class isn't valid.
+      analyzerLogger.log("Unable to process: " + className);
     }
+  }
 
-    /*
-     * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String,
-     *      java.io.InputStream)
-     */
-    public void visitClass(String className, InputStream in)
-    {
-        try
-        {
-            final String packageName = getPackageName(className);
-            ClassReader reader = new ClassReader(in);
+  /**
+   * @return the set of classes referenced by visited class files
+   */
+  public Set<String> getDependencies() {
+    return resultCollector.getDependencies();
+  }
 
-            AnnotationVisitor annotationVisitor = new DefaultAnnotationVisitor(packageName, resultCollector, analyzerLogger);
-            SignatureVisitor signatureVisitor = new DefaultSignatureVisitor(packageName, resultCollector, analyzerLogger);
-            FieldVisitor fieldVisitor = new DefaultFieldVisitor(packageName, annotationVisitor, resultCollector, analyzerLogger);
-            MethodVisitor mv = new DefaultMethodVisitor(packageName, annotationVisitor, signatureVisitor, resultCollector, analyzerLogger);
-            ClassVisitor classVisitor =
-                    new DefaultClassVisitor(packageName, signatureVisitor, annotationVisitor, fieldVisitor, mv, resultCollector, analyzerLogger);
-
-            reader.accept(classVisitor, 0);
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
-        catch (IndexOutOfBoundsException e)
-        {
-            // some bug inside ASM causes an IOB exception. Log it and move on?
-            // this happens when the class isn't valid.
-            analyzerLogger.log("Unable to process: " + className);
-        }
-    }
-
-    /**
-     * @return the set of classes referenced by visited class files
-     */
-    public Set<String> getDependencies()
-    {
-        return resultCollector.getDependencies();
-    }
-
-    public Map<String, Set<String>> getPackageDeps()
-    {
-        return resultCollector.getPackageDeps();
-    }
+  public Map<String, Set<String>> getPackageDeps() {
+    return resultCollector.getPackageDeps();
+  }
 
 
 }

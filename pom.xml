@@ -41,9 +41,15 @@
         <takari.test.version>2.8.0</takari.test.version>
         <publisher.version>v2-rev13-1.19.0</publisher.version>
         <asm.version>5.0.4</asm.version>
-        <jdk.version>1.7</jdk.version>
+        <jdk.version>1.8</jdk.version>
         <skipGpg>true</skipGpg>
         <license.path>LICENSE_HEADER.txt</license.path>
+        <javaFormatter.plugin.version>1.8.0</javaFormatter.plugin.version>
+        <license.maven.plugin.version>2.11</license.maven.plugin.version>
+        <formatterGoal>validate</formatterGoal>
+        <formatterConfigPath>formatter.xml</formatterConfigPath>
+        <skipVerifications>false</skipVerifications>
+        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
     </properties>
 
     <scm>
@@ -270,7 +276,7 @@
                                     <version>[3.0.0,)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>[1.7.0,1.8.0)</version>
+                                    <version>[1.8.0,)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -358,6 +364,33 @@
                         <goals>
                             <goal>generate-metadata</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.marvinformatics.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>${javaFormatter.plugin.version}</version>
+                <configuration>
+                    <compilerCompliance>${jdk.version}</compilerCompliance>
+                    <compilerSource>${jdk.version}</compilerSource>
+                    <compilerTargetPlatform>${jdk.version}</compilerTargetPlatform>
+                    <configFile>${basedir}/${formatterConfigPath}</configFile>
+                    <configJsFile>${basedir}/${formatterConfigPath}</configJsFile>
+                    <lineEnding>LF</lineEnding>
+                    <aggregator>false</aggregator>
+                    <executionRoot>true</executionRoot>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>apply-format</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>${formatterGoal}</goal>
+                        </goals>
+                        <configuration>
+                            <skipFormatting>${skipVerifications}</skipFormatting>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

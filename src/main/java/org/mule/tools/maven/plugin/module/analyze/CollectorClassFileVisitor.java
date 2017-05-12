@@ -15,27 +15,23 @@ import java.util.Set;
  * Simply collects the set of visited classes.
  */
 public class CollectorClassFileVisitor
-        implements ClassFileVisitor
-{
+    implements ClassFileVisitor {
 
-    private final Set<String> classes;
+  private final Set<String> classes;
 
-    public CollectorClassFileVisitor()
-    {
-        classes = new HashSet<String>();
-    }
+  public CollectorClassFileVisitor() {
+    classes = new HashSet<String>();
+  }
 
-    /*
-     * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String,
-     *      java.io.InputStream)
-     */
-    public void visitClass(String className, InputStream in)
-    {
-        classes.add(className);
-    }
+  /*
+   * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String,
+   *      java.io.InputStream)
+   */
+  public void visitClass(String className, InputStream in) {
+    classes.add(className);
+  }
 
-    public Set<String> getClasses()
-    {
-        return classes;
-    }
+  public Set<String> getClasses() {
+    return classes;
+  }
 }

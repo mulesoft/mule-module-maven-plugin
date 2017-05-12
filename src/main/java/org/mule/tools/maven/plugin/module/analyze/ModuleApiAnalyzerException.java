@@ -7,21 +7,18 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
-public class ModuleApiAnalyzerException extends Exception
-{
+public class ModuleApiAnalyzerException extends Exception {
 
-    /**
-     * The serialisation unique ID.
-     */
-    private static final long serialVersionUID = -5954447543668196977L;
+  /**
+   * The serialisation unique ID.
+   */
+  private static final long serialVersionUID = -5954447543668196977L;
 
-    public ModuleApiAnalyzerException(String message)
-    {
-        super(message);
-    }
+  public ModuleApiAnalyzerException(String message) {
+    super(message);
+  }
 
-    public ModuleApiAnalyzerException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
+  public ModuleApiAnalyzerException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

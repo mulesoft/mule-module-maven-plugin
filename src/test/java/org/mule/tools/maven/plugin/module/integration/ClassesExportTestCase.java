@@ -10,47 +10,39 @@ package org.mule.tools.maven.plugin.module.integration;
 import io.takari.maven.testing.executor.MavenRuntime;
 import org.junit.Test;
 
-public class ClassesExportTestCase extends AbstractExportTestCase
-{
+public class ClassesExportTestCase extends AbstractExportTestCase {
 
-    public ClassesExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
-    {
-        super(builder, "class");
-    }
+  public ClassesExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
+    super(builder, "class");
+  }
 
-    @Test
-    public void exportedSuperClassInPublicClass() throws Exception
-    {
-        doExportABTest("exportedSuperClassInPublicClass");
-    }
+  @Test
+  public void exportedSuperClassInPublicClass() throws Exception {
+    doExportABTest("exportedSuperClassInPublicClass");
+  }
 
-    @Test
-    public void missingSuperClassInPublicClass() throws Exception
-    {
-        doExportAMissingBTest("missingSuperClassInPublicClass");
-    }
+  @Test
+  public void missingSuperClassInPublicClass() throws Exception {
+    doExportAMissingBTest("missingSuperClassInPublicClass");
+  }
 
-    @Test
-    public void exportedSuperClassInProtectedInnerClass() throws Exception
-    {
-        doExportABTest("exportedSuperClassInProtectedInnerClass");
-    }
+  @Test
+  public void exportedSuperClassInProtectedInnerClass() throws Exception {
+    doExportABTest("exportedSuperClassInProtectedInnerClass");
+  }
 
-    @Test
-    public void missingSuperClassInProtectedInnerClass() throws Exception
-    {
-        doExportAMissingBTest("missingSuperClassInProtectedInnerClass");
-    }
+  @Test
+  public void missingSuperClassInProtectedInnerClass() throws Exception {
+    doExportAMissingBTest("missingSuperClassInProtectedInnerClass");
+  }
 
-    @Test
-    public void ignoresSuperClassInPackageClass() throws Exception
-    {
-        doExportABTest("ignoresSuperClassInPackageClass");
-    }
+  @Test
+  public void ignoresSuperClassInPackageClass() throws Exception {
+    doExportABTest("ignoresSuperClassInPackageClass");
+  }
 
-    @Test
-    public void ignoresSuperClassInPrivateInnerClass() throws Exception
-    {
-        doExportABTest("ignoresSuperClassInPrivateInnerClass");
-    }
+  @Test
+  public void ignoresSuperClassInPrivateInnerClass() throws Exception {
+    doExportABTest("ignoresSuperClassInPrivateInnerClass");
+  }
 }
