@@ -9,19 +9,16 @@ package org.mule.tools.maven.plugin.module.analyze;
 
 import org.apache.maven.plugin.logging.Log;
 
-public class VerboseAnalyzerLogger implements AnalyzerLogger
-{
+public class VerboseAnalyzerLogger implements AnalyzerLogger {
 
-    private final Log logger;
+  private final Log logger;
 
-    public VerboseAnalyzerLogger(Log logger)
-    {
-        this.logger = logger;
-    }
+  public VerboseAnalyzerLogger(Log logger) {
+    this.logger = logger;
+  }
 
-    @Override
-    public void log(String message)
-    {
-        logger.info(message);
-    }
+  @Override
+  public void log(String message) {
+    logger.info(message);
+  }
 }

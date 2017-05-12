@@ -29,161 +29,128 @@ import org.objectweb.asm.signature.SignatureVisitor;
  * Computes the set of classes referenced by visited code.
  * Inspired by <code>org.objectweb.asm.depend.DependencyVisitor</code> in the ASM dependencies example.
  */
-public class DefaultClassVisitor extends ClassVisitor
-{
+public class DefaultClassVisitor extends ClassVisitor {
 
-    private final ResultCollector resultCollector;
-    private final AnalyzerLogger analyzerLogger;
+  private final ResultCollector resultCollector;
+  private final AnalyzerLogger analyzerLogger;
 
-    private final String packageName;
-    private final SignatureVisitor signatureVisitor;
+  private final String packageName;
+  private final SignatureVisitor signatureVisitor;
 
-    private final AnnotationVisitor annotationVisitor;
+  private final AnnotationVisitor annotationVisitor;
 
-    private final FieldVisitor fieldVisitor;
+  private final FieldVisitor fieldVisitor;
 
-    private final MethodVisitor methodVisitor;
-    private boolean skipClass;
-    private boolean isFinalClass;
+  private final MethodVisitor methodVisitor;
+  private boolean skipClass;
+  private boolean isFinalClass;
 
-    public DefaultClassVisitor(String packageName, SignatureVisitor signatureVisitor, AnnotationVisitor annotationVisitor,
-                               FieldVisitor fieldVisitor, MethodVisitor methodVisitor,
-                               ResultCollector resultCollector, AnalyzerLogger analyzerLogger)
-    {
-        super(Opcodes.ASM5);
-        this.packageName = packageName;
-        this.signatureVisitor = signatureVisitor;
-        this.annotationVisitor = annotationVisitor;
-        this.fieldVisitor = fieldVisitor;
-        this.methodVisitor = methodVisitor;
-        this.resultCollector = resultCollector;
-        this.analyzerLogger = analyzerLogger;
+  public DefaultClassVisitor(String packageName, SignatureVisitor signatureVisitor, AnnotationVisitor annotationVisitor,
+                             FieldVisitor fieldVisitor, MethodVisitor methodVisitor,
+                             ResultCollector resultCollector, AnalyzerLogger analyzerLogger) {
+    super(Opcodes.ASM5);
+    this.packageName = packageName;
+    this.signatureVisitor = signatureVisitor;
+    this.annotationVisitor = annotationVisitor;
+    this.fieldVisitor = fieldVisitor;
+    this.methodVisitor = methodVisitor;
+    this.resultCollector = resultCollector;
+    this.analyzerLogger = analyzerLogger;
+  }
+
+  public void visit(final int version, final int access, final String name, final String signature,
+                    final String superName, final String[] interfaces) {
+    analyzerLogger.log("Analyzing class: " + name + (signature != null ? signature : ""));
+    skipClass = isPrivate(access) || isPackage(access);
+    if (skipClass) {
+      String accessString = isPrivate(access) ? "private" : "package";
+      analyzerLogger.log("Skipping class: " + name + (signature != null ? signature : "") + " visibility: " + accessString);
+    } else {
+      isFinalClass = isFinal(access);
+
+      if (signature == null) {
+        resultCollector.addName(packageName, superName);
+        resultCollector.addNames(packageName, interfaces);
+      } else {
+        addSignature(signature);
+      }
+    }
+  }
+
+  public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+    if (skipClass) {
+      return null;
     }
 
-    public void visit(final int version, final int access, final String name, final String signature,
-                      final String superName, final String[] interfaces)
-    {
-        analyzerLogger.log("Analyzing class: " + name + (signature != null ? signature : ""));
-        skipClass = isPrivate(access) || isPackage(access);
-        if (skipClass)
-        {
-            String accessString = isPrivate(access) ? "private" : "package";
-            analyzerLogger.log("Skipping class: " + name + (signature != null ? signature : "") + " visibility: " + accessString);
-        }
-        else
-        {
-            isFinalClass = isFinal(access);
+    if (visible) {
+      resultCollector.addDesc(packageName, desc);
 
-            if (signature == null)
-            {
-                resultCollector.addName(packageName, superName);
-                resultCollector.addNames(packageName, interfaces);
-            }
-            else
-            {
-                addSignature(signature);
-            }
-        }
+      return annotationVisitor;
+    } else {
+      return null;
+    }
+  }
+
+  public FieldVisitor visitField(final int access, final String name, final String desc, final String signature,
+                                 final Object value) {
+    if (skipClass) {
+      return null;
     }
 
-    public AnnotationVisitor visitAnnotation(final String desc, final boolean visible)
-    {
-        if (skipClass)
-        {
-            return null;
-        }
+    if (isPublic(access) || (isProtected(access) && !isFinalClass)) {
+      String accessString = isPublic(access) ? "public" : "protected";
+      analyzerLogger.log("Analyzing field: " + name + " - " + accessString);
+      if (signature == null) {
+        resultCollector.addDesc(packageName, desc);
+      } else {
+        addTypeSignature(signature);
+      }
 
-        if (visible)
-        {
-            resultCollector.addDesc(packageName, desc);
+      if (value instanceof Type) {
+        resultCollector.addType(packageName, (Type) value);
+      }
 
-            return annotationVisitor;
-        }
-        else
-        {
-            return null;
-        }
+      return fieldVisitor;
+    } else {
+      String accessString = isPrivate(access) ? "private" : "package";
+      analyzerLogger.log("Analyzing field: " + name + " - " + accessString);
+      return null;
+    }
+  }
+
+  public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
+                                   final String[] exceptions) {
+    if (skipClass) {
+      return null;
     }
 
-    public FieldVisitor visitField(final int access, final String name, final String desc, final String signature,
-                                   final Object value)
-    {
-        if (skipClass)
-        {
-            return null;
-        }
-
-        if (isPublic(access) || (isProtected(access) && !isFinalClass))
-        {
-            String accessString = isPublic(access) ? "public" : "protected";
-            analyzerLogger.log("Analyzing field: " + name + " - " + accessString);
-            if (signature == null)
-            {
-                resultCollector.addDesc(packageName, desc);
-            }
-            else
-            {
-                addTypeSignature(signature);
-            }
-
-            if (value instanceof Type)
-            {
-                resultCollector.addType(packageName, (Type) value);
-            }
-
-            return fieldVisitor;
-        }
-        else
-        {
-            String accessString = isPrivate(access) ? "private" : "package";
-            analyzerLogger.log("Analyzing field: " + name + " - " + accessString);
-            return null;
-        }
+    if (isPrivate(access) || isPackage(access) || (isProtected(access) && isFinalClass)) {
+      // Ignore method
+      return null;
     }
 
-    public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
-                                     final String[] exceptions)
-    {
-        if (skipClass)
-        {
-            return null;
-        }
-
-        if (isPrivate(access) || isPackage(access) || (isProtected(access) && isFinalClass))
-        {
-            // Ignore method
-            return null;
-        }
-
-        if (signature == null)
-        {
-            resultCollector.addMethodDesc(packageName, desc);
-        }
-        else
-        {
-            addSignature(signature);
-        }
-
-        resultCollector.addNames(packageName, exceptions);
-
-        return methodVisitor;
+    if (signature == null) {
+      resultCollector.addMethodDesc(packageName, desc);
+    } else {
+      addSignature(signature);
     }
 
-    private void addSignature(final String signature)
-    {
-        if (signature != null)
-        {
-            new SignatureReader(signature).accept(signatureVisitor);
-        }
-    }
+    resultCollector.addNames(packageName, exceptions);
 
-    private void addTypeSignature(final String signature)
-    {
-        if (signature != null)
-        {
-            new SignatureReader(signature).acceptType(signatureVisitor);
-        }
+    return methodVisitor;
+  }
+
+  private void addSignature(final String signature) {
+    if (signature != null) {
+      new SignatureReader(signature).accept(signatureVisitor);
     }
+  }
+
+  private void addTypeSignature(final String signature) {
+    if (signature != null) {
+      new SignatureReader(signature).acceptType(signatureVisitor);
+    }
+  }
 
 
 }

@@ -7,8 +7,7 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
-public interface AnalyzerLogger
-{
+public interface AnalyzerLogger {
 
-    void log(String message);
+  void log(String message);
 }

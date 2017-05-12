@@ -9,8 +9,7 @@ package org.mule.tools.maven.plugin.module.analyze;
 
 import java.io.InputStream;
 
-public interface ClassFileVisitor
-{
+public interface ClassFileVisitor {
 
-    void visitClass(String className, InputStream in);
+  void visitClass(String className, InputStream in);
 }

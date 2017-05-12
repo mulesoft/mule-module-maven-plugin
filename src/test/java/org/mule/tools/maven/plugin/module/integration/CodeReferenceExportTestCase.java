@@ -10,24 +10,20 @@ package org.mule.tools.maven.plugin.module.integration;
 import io.takari.maven.testing.executor.MavenRuntime;
 import org.junit.Test;
 
-public class CodeReferenceExportTestCase extends AbstractExportTestCase
-{
+public class CodeReferenceExportTestCase extends AbstractExportTestCase {
 
-    public CodeReferenceExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception
-    {
-        super(builder, "code");
-    }
+  public CodeReferenceExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
+    super(builder, "code");
+  }
 
-    @Test
-    public void ignoresTypeReferenceInMethod() throws Exception
-    {
-        doExportABTest("ignoresTypeReferenceInMethod");
-    }
+  @Test
+  public void ignoresTypeReferenceInMethod() throws Exception {
+    doExportABTest("ignoresTypeReferenceInMethod");
+  }
 
-    @Test
-    public void ignoresTypeReferenceInStaticInitializer() throws Exception
-    {
-        doExportABTest("ignoresTypeReferenceInStaticInitializer");
-    }
+  @Test
+  public void ignoresTypeReferenceInStaticInitializer() throws Exception {
+    doExportABTest("ignoresTypeReferenceInStaticInitializer");
+  }
 
 }

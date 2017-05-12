@@ -20,19 +20,17 @@ import org.codehaus.plexus.component.annotations.Component;
 
 @Component(role = DependencyAnalyzer.class)
 public class ASMDependencyAnalyzer
-        implements DependencyAnalyzer
-{
+    implements DependencyAnalyzer {
 
-    /*
-     * @see org.mule.tools.maven.plugin.module.analyze.DependencyAnalyzer#analyze(java.net.URL)
-     */
-    public Map<String, Set<String>> analyze(URL url, AnalyzerLogger analyzerLogger)
-            throws IOException
-    {
-        DependencyClassFileVisitor visitor = new DependencyClassFileVisitor(analyzerLogger);
+  /*
+   * @see org.mule.tools.maven.plugin.module.analyze.DependencyAnalyzer#analyze(java.net.URL)
+   */
+  public Map<String, Set<String>> analyze(URL url, AnalyzerLogger analyzerLogger)
+      throws IOException {
+    DependencyClassFileVisitor visitor = new DependencyClassFileVisitor(analyzerLogger);
 
-        ClassFileVisitorUtils.accept(url, visitor, analyzerLogger);
+    ClassFileVisitorUtils.accept(url, visitor, analyzerLogger);
 
-        return visitor.getPackageDeps();
-    }
+    return visitor.getPackageDeps();
+  }
 }

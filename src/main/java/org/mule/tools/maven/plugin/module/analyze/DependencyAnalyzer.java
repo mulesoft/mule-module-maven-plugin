@@ -15,9 +15,9 @@ import java.util.Set;
 /**
  * Gets the set of classes referenced by a library given either as a jar file or an exploded directory.
  */
-public interface DependencyAnalyzer
-{
-    String ROLE = DependencyAnalyzer.class.getName();
+public interface DependencyAnalyzer {
 
-    Map<String, Set<String>> analyze(URL url, AnalyzerLogger analyzerLogger) throws IOException;
+  String ROLE = DependencyAnalyzer.class.getName();
+
+  Map<String, Set<String>> analyze(URL url, AnalyzerLogger analyzerLogger) throws IOException;
 }

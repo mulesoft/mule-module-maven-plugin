@@ -12,9 +12,9 @@ import org.apache.maven.project.MavenProject;
 /**
  * Analyze a module API to ensure that there are not missing exported pacakges
  */
-public interface ModuleApiAnalyzer
-{
-    String ROLE = ModuleApiAnalyzer.class.getName();
+public interface ModuleApiAnalyzer {
 
-    ProjectDependencyAnalysis analyze(MavenProject project, AnalyzerLogger analyzerLogger) throws ModuleApiAnalyzerException;
+  String ROLE = ModuleApiAnalyzer.class.getName();
+
+  ProjectDependencyAnalysis analyze(MavenProject project, AnalyzerLogger analyzerLogger) throws ModuleApiAnalyzerException;
 }

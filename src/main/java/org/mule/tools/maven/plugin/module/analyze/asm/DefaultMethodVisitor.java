@@ -20,54 +20,44 @@ import org.objectweb.asm.signature.SignatureVisitor;
  * Inspired by <code>org.objectweb.asm.depend.DependencyVisitor</code> in the ASM dependencies example.
  */
 public class DefaultMethodVisitor
-        extends MethodVisitor
-{
+    extends MethodVisitor {
 
-    private final String packageName;
-    private final AnnotationVisitor annotationVisitor;
+  private final String packageName;
+  private final AnnotationVisitor annotationVisitor;
 
-    private final SignatureVisitor signatureVisitor;
+  private final SignatureVisitor signatureVisitor;
 
-    private final ResultCollector resultCollector;
-    private final AnalyzerLogger analyzerLogger;
+  private final ResultCollector resultCollector;
+  private final AnalyzerLogger analyzerLogger;
 
-    public DefaultMethodVisitor(String packageName, AnnotationVisitor annotationVisitor, SignatureVisitor signatureVisitor,
-                                ResultCollector resultCollector, AnalyzerLogger analyzerLogger)
-    {
-        super(Opcodes.ASM5);
-        this.packageName = packageName;
-        this.annotationVisitor = annotationVisitor;
-        this.signatureVisitor = signatureVisitor;
-        this.resultCollector = resultCollector;
-        this.analyzerLogger = analyzerLogger;
+  public DefaultMethodVisitor(String packageName, AnnotationVisitor annotationVisitor, SignatureVisitor signatureVisitor,
+                              ResultCollector resultCollector, AnalyzerLogger analyzerLogger) {
+    super(Opcodes.ASM5);
+    this.packageName = packageName;
+    this.annotationVisitor = annotationVisitor;
+    this.signatureVisitor = signatureVisitor;
+    this.resultCollector = resultCollector;
+    this.analyzerLogger = analyzerLogger;
+  }
+
+  public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+    if (visible) {
+      resultCollector.addDesc(packageName, desc);
+
+      return annotationVisitor;
+    } else {
+      return null;
     }
+  }
 
-    public AnnotationVisitor visitAnnotation(final String desc, final boolean visible)
-    {
-        if (visible)
-        {
-            resultCollector.addDesc(packageName, desc);
 
-            return annotationVisitor;
-        }
-        else
-        {
-            return null;
-        }
+  public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
+    if (visible) {
+      resultCollector.addDesc(packageName, desc);
+
+      return annotationVisitor;
+    } else {
+      return null;
     }
-
-
-    public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible)
-    {
-        if (visible)
-        {
-            resultCollector.addDesc(packageName, desc);
-
-            return annotationVisitor;
-        }
-        else
-        {
-            return null;
-        }
-    }
+  }
 }
