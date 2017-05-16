@@ -7,11 +7,14 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
+import static org.mule.tools.maven.plugin.module.analyze.JrePackageFinder.find;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +31,8 @@ import org.codehaus.plexus.component.annotations.Requirement;
 
 @Component(role = ModuleApiAnalyzer.class)
 public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
+
+  public static final String PROJECT_IS_NOT_A_MULE_MODULE = "Project is not a mule module";
 
   //TODO(pablo.kraan): move these things ot a util class
   private static final char PACKAGE_SEPARATOR = '.';
@@ -51,78 +56,166 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
       throws ModuleApiAnalyzerException {
     final Properties properties = getModuleProperties(project);
     if (properties == null) {
-      analyzerLogger.log("Project is not a mule module");
+      analyzerLogger.log(PROJECT_IS_NOT_A_MULE_MODULE);
       return new ProjectDependencyAnalysis();
     }
 
-
     try {
       Set<String> projectExportedPackages = getModuleExportedPackages(analyzerLogger, properties);
+      Set<String> projectOptionalPackages = getModuleOptionalPackages(analyzerLogger, properties);
+      checkExportedOptionalPackage(analyzerLogger, projectExportedPackages, projectOptionalPackages);
+
       Set<String> externalExportedPackages =
           discoverExternalExportedPackages(project, analyzerLogger, (String) properties.get("module.name"));
 
+      removeExternalModuleExportedPackage(analyzerLogger, projectExportedPackages, externalExportedPackages);
+
       final Map<String, Set<String>> projectPackageDependencies = findPackageDependencies(project, analyzerLogger);
       final Map<String, Set<String>> missingExportedPackages = new HashMap<>();
+      final Map<String, Set<String>> externalPackageDeps = calculateExternalDeps(project, analyzerLogger);
 
-      for (String projectExportedPackage : projectExportedPackages) {
-        final Set<String> packageDeps = projectPackageDependencies.get(projectExportedPackage);
-        if (packageDeps != null) {
-          packageDeps.removeAll(projectExportedPackages);
-          packageDeps.removeAll(externalExportedPackages);
-          if (!packageDeps.isEmpty()) {
-            Set<String> packageToExport = new HashSet<>();
-            for (String packageDep : packageDeps) {
-              if (!externalExportedPackages.contains(packageDep)) {
-                packageToExport.add(packageDep);
+      Set<String> exportedPackageClosure = new HashSet<>(projectExportedPackages);
+      Set<String> missingAnalyzedPackages = new HashSet<>();
+      final Set<String> jrePackages = find();
+
+      boolean dirty;
+      do {
+        Set<String> diff = new HashSet<>();
+        Set<String> exportedByOtherModule = new HashSet<>();
+        for (String exportedPackage : exportedPackageClosure) {
+          if (!ignorePackage(analyzerLogger, exportedPackage, jrePackages, externalExportedPackages)) {
+            Set<String> packageDeps = projectPackageDependencies.get(exportedPackage);
+            if (packageDeps != null) {
+              for (String packageDep : packageDeps) {
+                if (!exportedPackageClosure.contains(packageDep)
+                    && !ignorePackage(analyzerLogger, packageDep, jrePackages, externalExportedPackages)) {
+                  diff.add(packageDep);
+                }
               }
-            }
-            if (!packageToExport.isEmpty()) {
-              analyzerLogger.log("Missing export packages: " + packageDeps);
-              missingExportedPackages.put(projectExportedPackage, packageDeps);
+            } else {
+              packageDeps = externalPackageDeps.get(exportedPackage);
+              if (packageDeps != null) {
+                for (String packageDep : packageDeps) {
+                  if (!exportedPackageClosure.contains(packageDep)
+                      && !ignorePackage(analyzerLogger, packageDep, jrePackages, externalExportedPackages)) {
+                    diff.add(packageDep);
+                  }
+                }
+              } else {
+                if (!externalExportedPackages.contains(exportedPackage) && !projectOptionalPackages.contains(exportedPackage)) {
+                  missingAnalyzedPackages.add(exportedPackage);
+                }
+              }
             }
           }
         }
+        exportedPackageClosure.addAll(diff);
+        exportedPackageClosure.removeAll(exportedByOtherModule);
+        diff.removeAll(exportedByOtherModule);
+        dirty = !diff.isEmpty();
+      } while (dirty);
+
+      StringBuilder builder = new StringBuilder("Exported package closure:");
+      for (String exportedPackage : exportedPackageClosure) {
+        builder.append("\n").append(exportedPackage);
       }
+      analyzerLogger.log(builder.toString());
 
-      if (!missingExportedPackages.isEmpty()) {
-        final Map<String, Set<String>> externalPackageDeps = calculateExternalDeps(project, analyzerLogger);
+      Set<String> packagesToExport = new HashSet<>(exportedPackageClosure);
+      packagesToExport.removeAll(projectExportedPackages);
+      packagesToExport.removeAll(projectOptionalPackages);
 
-        boolean dirty;
-        do {
-          dirty = false;
-
-          for (String missingExportedPackage : new HashSet<String>(missingExportedPackages.keySet())) {
-            final Set<String> missingExportedPackageDeps = missingExportedPackages.get(missingExportedPackage);
-            for (String missingExportedPackageDep : missingExportedPackageDeps) {
-              final Set<String> packagesToAdd = externalPackageDeps.get(missingExportedPackageDep);
-              if (packagesToAdd != null && !packagesToAdd.isEmpty()) {
-                Set<String> currentNoExportedPackageDeps = missingExportedPackages.get(missingExportedPackageDep);
-                if (currentNoExportedPackageDeps == null) {
-                  currentNoExportedPackageDeps = new HashSet<>();
-                  missingExportedPackages.put(missingExportedPackageDep, currentNoExportedPackageDeps);
-                }
-                for (String packageToAdd : packagesToAdd) {
-                  if (!externalExportedPackages.contains(packageToAdd)) {
-                    if (currentNoExportedPackageDeps.add(packageToAdd)) {
-                      dirty = true;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        } while (dirty);
-      }
-
-      Set<String> packagesToExport = new HashSet<String>();
-      for (String packageDeps : missingExportedPackages.keySet()) {
-        packagesToExport.addAll(missingExportedPackages.get(packageDeps));
-      }
-
-      return new ProjectDependencyAnalysis(missingExportedPackages, packagesToExport);
+      return new ProjectDependencyAnalysis(missingExportedPackages, packagesToExport, missingAnalyzedPackages);
     } catch (Exception exception) {
       throw new ModuleApiAnalyzerException("Cannot analyze dependencies", exception);
     }
+  }
+
+  private void checkExportedOptionalPackage(AnalyzerLogger analyzerLogger,
+                                            Set<String> projectExportedPackages, Set<String> projectOptionalPackages)
+      throws ModuleApiAnalyzerException {
+    List<String> packages = new ArrayList<>();
+    for (String projectOptionalPackage : projectOptionalPackages) {
+      if (projectExportedPackages.contains(projectOptionalPackage)) {
+        packages.add(projectOptionalPackage);
+      }
+    }
+
+    if (!packages.isEmpty()) {
+      String message = buildOptionalPackageExportedMessage(packages);
+      analyzerLogger.log(message);
+      throw new ModuleApiAnalyzerException(message);
+    }
+  }
+
+  private void removeExternalModuleExportedPackage(AnalyzerLogger analyzerLogger, Set<String> projectExportedPackages,
+                                                   Set<String> externalExportedPackages) {
+    for (String externalExportedPackage : externalExportedPackages) {
+      if (projectExportedPackages.contains(externalExportedPackage)) {
+        analyzerLogger.log(buildRedundantExportedPackageMessage(externalExportedPackage));
+        projectExportedPackages.remove(externalExportedPackage);
+      }
+    }
+  }
+
+  /**
+   * @param packages list of class packages
+   * @return a message describing which optional packages are also exported.
+   */
+  public static String buildOptionalPackageExportedMessage(List<String> packages) {
+    return "Module exports packages defined as optional: " + packages;
+  }
+
+  /**
+   * @param packageName a class package
+   * @return a message for a redundantly exported package
+   */
+  public static String buildRedundantExportedPackageMessage(String packageName) {
+    return "Exported package '" + packageName + "' already exported by a module dependency";
+  }
+
+  /**
+   * @param packageName a class package
+   * @return a message indicating that the package was removed from the package closure
+   */
+  public static String buildRemovedProvidedPackageMessage(String packageName) {
+    return "Package " + packageName + " already exported by a module dependency. Removing from export package closure";
+  }
+
+  /**
+   * @param packageName an internal SUN class package
+   * @return a message indicating that the package was removed from the package closure
+   */
+  public static String buildRemovedSunPackageMessage(String packageName) {
+    return "Removing internal SUN package " + packageName + " from export package closure";
+  }
+
+  /**
+   * @param packageName a package providede by the JRE
+   * @return a message indicating that the package was removed from the package closure
+   */
+  public static String buildRemovedJrePackageMessage(String packageName) {
+    return "Removing JRE package " + packageName + " from export package closure";
+  }
+
+  private boolean ignorePackage(AnalyzerLogger analyzerLogger, String packageName, Set<String> jrePackages,
+                                Set<String> otherModuleExportedPackages) {
+    boolean result = false;
+
+    if (otherModuleExportedPackages.contains(packageName)) {
+      analyzerLogger
+          .log(buildRemovedProvidedPackageMessage(packageName));
+      result = true;
+    } else if (jrePackages.contains(packageName)) {
+      analyzerLogger.log(
+                         buildRemovedJrePackageMessage(packageName));
+      result = true;
+    } else if (packageName.startsWith("sun.") || packageName.startsWith("com.sun.")) {
+      analyzerLogger.log(buildRemovedSunPackageMessage(packageName));
+      result = true;
+    }
+
+    return result;
   }
 
   private Properties getModuleProperties(MavenProject project) throws ModuleApiAnalyzerException {
@@ -153,9 +246,9 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   private Set<String> discoverExternalExportedPackages(MavenProject project, AnalyzerLogger analyzerLogger,
                                                        String projectModuleName)
       throws ModuleApiAnalyzerException {
-    final Set<String> result = new HashSet<String>();
-    Set<URL> urls = new HashSet<URL>();
-    List<String> elements = null;
+    final Set<String> result = new HashSet<>();
+    Set<URL> urls = new HashSet<>();
+    List<String> elements;
     try {
       elements = project.getRuntimeClasspathElements();
       elements.addAll(project.getCompileClasspathElements());
@@ -191,21 +284,31 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   }
 
   private Set<String> getModuleExportedPackages(AnalyzerLogger analyzerLogger, Properties properties) throws IOException {
-    final Set<String> modulePackages = new HashSet<String>();
+    return getModulePackagesFromProperty(analyzerLogger, properties, "artifact.export.classPackages");
+  }
 
-    final String classPackages = (String) properties.get("artifact.export.classPackages");
-    StringBuilder builder = new StringBuilder("Found module: " + properties.get("module.name") + " exporting:");
-    for (String classPackage : classPackages.split(",")) {
-      if (classPackage != null) {
-        classPackage = classPackage.trim();
+  private Set<String> getModuleOptionalPackages(AnalyzerLogger analyzerLogger, Properties properties) throws IOException {
+    return getModulePackagesFromProperty(analyzerLogger, properties, "artifact.export.optionalPackages");
+  }
+
+  private Set<String> getModulePackagesFromProperty(AnalyzerLogger analyzerLogger, Properties properties, String key) {
+    final Set<String> optionalPackages = new HashSet<>();
+
+    final String classPackages = (String) properties.get(key);
+    if (classPackages != null) {
+      StringBuilder builder = new StringBuilder("Found module: " + properties.get("module.name") + " with property=" + key + ":");
+      for (String classPackage : classPackages.split(",")) {
         if (classPackage != null) {
-          modulePackages.add(classPackage);
-          builder.append("\n").append(classPackage);
+          classPackage = classPackage.trim();
+          if (classPackage != null) {
+            optionalPackages.add(classPackage);
+            builder.append("\n").append(classPackage);
+          }
         }
       }
+      analyzerLogger.log(builder.toString());
     }
-    analyzerLogger.log(builder.toString());
-    return modulePackages;
+    return optionalPackages;
   }
 
   private Properties loadProperties(URL url) throws IOException {
@@ -224,7 +327,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   }
 
   private Map<String, Set<String>> calculateExternalDeps(MavenProject project, AnalyzerLogger analyzerLogger) throws IOException {
-    final Map<String, Set<String>> result = new HashMap<String, Set<String>>();
+    final Map<String, Set<String>> result = new HashMap<>();
     for (Object projectArtifact : project.getArtifacts()) {
       final Artifact artifact = (Artifact) projectArtifact;
       if ("test".equals(artifact.getScope())) {
@@ -236,14 +339,12 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
 
       for (String externalPackageName : artifactExternalPackageDeps.keySet()) {
         final Set<String> packageDeps = artifactExternalPackageDeps.get(externalPackageName);
-        if (packageDeps != null && !packageDeps.isEmpty()) {
-          Set<String> externalPackageDeps = result.get(externalPackageName);
-          if (externalPackageDeps == null) {
-            externalPackageDeps = new HashSet<String>();
-            result.put(externalPackageName, externalPackageDeps);
-          }
-          externalPackageDeps.addAll(packageDeps);
+        Set<String> externalPackageDeps = result.get(externalPackageName);
+        if (externalPackageDeps == null) {
+          externalPackageDeps = new HashSet<>();
+          result.put(externalPackageName, externalPackageDeps);
         }
+        externalPackageDeps.addAll(packageDeps);
       }
     }
 

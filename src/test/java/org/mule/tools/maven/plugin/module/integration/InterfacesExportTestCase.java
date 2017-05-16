@@ -18,61 +18,65 @@ public class InterfacesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedSuperInterfaceInPublicInterface() throws Exception {
-    doExportABTest("exportedSuperInterfaceInPublicInterface");
+    doSuccessfulValidationTest("exportedSuperInterfaceInPublicInterface");
   }
 
   @Test
   public void missingSuperInterfaceInPublicInterface() throws Exception {
-    doExportAMissingBTest("missingSuperInterfaceInPublicInterface");
+    doMissingExportTest("missingSuperInterfaceInPublicInterface");
   }
 
   @Test
   public void exportedSuperInterfaceInProtectedInnerInterface() throws Exception {
-    doExportABTest("exportedSuperInterfaceInProtectedInnerInterface");
+    doSuccessfulValidationTest("exportedSuperInterfaceInProtectedInnerInterface",
+                               new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
   }
 
   @Test
   public void missingSuperInterfaceInProtectedInnerInterface() throws Exception {
-    doExportAMissingBTest("missingSuperInterfaceInProtectedInnerInterface");
+    doMissingExportTest("missingSuperInterfaceInProtectedInnerInterface",
+                        new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
   }
 
   @Test
   public void ignoresSuperInterfaceInPackageInterface() throws Exception {
-    doExportABTest("ignoresSuperInterfaceInPackageInterface");
+    doSuccessfulValidationTest("ignoresSuperInterfaceInPackageInterface");
   }
 
   @Test
   public void ignoresSuperInterfaceInPrivateInnerInterface() throws Exception {
-    doExportABTest("ignoresSuperInterfaceInPrivateInnerInterface");
+    doSuccessfulValidationTest("ignoresSuperInterfaceInPrivateInnerInterface",
+                               new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
   }
 
   @Test
   public void exportedInterfaceInPublicClass() throws Exception {
-    doExportABTest("exportedInterfaceInPublicClass");
+    doSuccessfulValidationTest("exportedInterfaceInPublicClass");
   }
 
   @Test
   public void ignoresInterfaceInPrivateInnerClass() throws Exception {
-    doExportABTest("ignoresInterfaceInPrivateInnerClass");
+    doSuccessfulValidationTest("ignoresInterfaceInPrivateInnerClass", new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
   }
 
   @Test
   public void missingInterfaceInPublicClass() throws Exception {
-    doExportAMissingBTest("missingInterfaceInPublicClass");
+    doMissingExportTest("missingInterfaceInPublicClass");
   }
 
   @Test
   public void exportedInterfaceInProtectedInnerClass() throws Exception {
-    doExportABTest("exportedInterfaceInProtectedInnerClass");
+    doSuccessfulValidationTest("exportedInterfaceInProtectedInnerClass",
+                               new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
   }
 
   @Test
   public void missingInterfaceInProtectedInnerClass() throws Exception {
-    doExportAMissingBTest("missingInterfaceInProtectedInnerClass");
+    doMissingExportTest("missingInterfaceInProtectedInnerClass", new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
   }
 
   @Test
   public void ignoresInterfaceInPackageClass() throws Exception {
-    doExportABTest("ignoresInterfaceInPackageClass");
+    doSuccessfulValidationTest("ignoresInterfaceInPackageClass");
   }
 }
