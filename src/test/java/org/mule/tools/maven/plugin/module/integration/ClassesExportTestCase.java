@@ -12,9 +12,6 @@ import org.junit.Test;
 
 public class ClassesExportTestCase extends AbstractExportTestCase {
 
-  private static final String CLASS_PATH_C = "org/foo/A$C";
-  private static final String[] EXPECTED_ANALYZED_CLASSES = {PATH_CLASS_A, PATH_CLASS_B, CLASS_PATH_C};
-
   public ClassesExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
     super(builder, "class");
   }
@@ -31,12 +28,12 @@ public class ClassesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedSuperClassInProtectedInnerClass() throws Exception {
-    doSuccessfulValidationTest("exportedSuperClassInProtectedInnerClass", EXPECTED_ANALYZED_CLASSES);
+    doSuccessfulValidationTest("exportedSuperClassInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void missingSuperClassInProtectedInnerClass() throws Exception {
-    doMissingExportTest("missingSuperClassInProtectedInnerClass", EXPECTED_ANALYZED_CLASSES);
+    doMissingExportTest("missingSuperClassInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
@@ -46,6 +43,6 @@ public class ClassesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void ignoresSuperClassInPrivateInnerClass() throws Exception {
-    doSuccessfulValidationTest("ignoresSuperClassInPrivateInnerClass", EXPECTED_ANALYZED_CLASSES);
+    doSuccessfulValidationTest("ignoresSuperClassInPrivateInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 }

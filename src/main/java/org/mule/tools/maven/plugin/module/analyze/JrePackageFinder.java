@@ -31,14 +31,14 @@ public class JrePackageFinder {
     try {
       final Properties properties = loadProperties(JrePackageFinder.class.getClassLoader().getResource(JRE_PACKAGES_PROPERTIES));
 
-      //TODO(pablo.kraan): review how to deal with different JREs versions
+      //TODO(pablo.kraan): MULE-12497:  Manage different JRE version on module maven plugin
       final String jreVersionProperty = "jre-1.8";
       if (!properties.keySet().contains(jreVersionProperty)) {
         throw new IllegalStateException(UNABLE_TO_DETERMINE_JRE_PACKAGES_ERROR);
       }
 
       final String packages = (String) properties.get(jreVersionProperty);
-      final HashSet<String> result = new HashSet<>();
+      final Set<String> result = new HashSet<>();
       for (String jrePackage : packages.split(",")) {
         jrePackage = jrePackage.trim();
         if (!isEmpty(jrePackage)) {

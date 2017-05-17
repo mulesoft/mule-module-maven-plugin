@@ -125,7 +125,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
 
     final Map<String, Set<String>> undeclaredExportedPackages = new HashMap<>(analysis.getUndeclaredPackageDeps());
     final Set<String> packagesToExport = new HashSet<>(analysis.getPackagesToExport());
-    final Set<String> noAnalyzedPackages = new HashSet<>(analysis.getNoAnalyzedPackages());
+    final Set<String> noAnalyzedPackages = new HashSet<>(analysis.getNotAnalyzedPackages());
 
     boolean reported = false;
     boolean warning = false;
@@ -142,7 +142,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     }
 
     if (!noAnalyzedPackages.isEmpty()) {
-      getLog().info(buildNoAnalyzedPackageError(noAnalyzedPackages));
+      getLog().info(buildNotAnalyzedPackageError(noAnalyzedPackages));
       reported = true;
       warning = true;
     }
@@ -191,7 +191,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     return builder.toString();
   }
 
-  private static String buildNoAnalyzedPackageError(Set<String> packageNames) {
+  private static String buildNotAnalyzedPackageError(Set<String> packageNames) {
     StringBuilder builder = new StringBuilder();
     builder.append(NOT_ANALYZED_PACKAGES_ERROR);
 

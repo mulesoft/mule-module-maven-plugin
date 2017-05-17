@@ -28,14 +28,12 @@ public class InterfacesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedSuperInterfaceInProtectedInnerInterface() throws Exception {
-    doSuccessfulValidationTest("exportedSuperInterfaceInProtectedInnerInterface",
-                               new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
+    doSuccessfulValidationTest("exportedSuperInterfaceInProtectedInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void missingSuperInterfaceInProtectedInnerInterface() throws Exception {
-    doMissingExportTest("missingSuperInterfaceInProtectedInnerInterface",
-                        new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
+    doMissingExportTest("missingSuperInterfaceInProtectedInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
@@ -45,8 +43,7 @@ public class InterfacesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void ignoresSuperInterfaceInPrivateInnerInterface() throws Exception {
-    doSuccessfulValidationTest("ignoresSuperInterfaceInPrivateInnerInterface",
-                               new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
+    doSuccessfulValidationTest("ignoresSuperInterfaceInPrivateInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
@@ -56,7 +53,7 @@ public class InterfacesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void ignoresInterfaceInPrivateInnerClass() throws Exception {
-    doSuccessfulValidationTest("ignoresInterfaceInPrivateInnerClass", new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
+    doSuccessfulValidationTest("ignoresInterfaceInPrivateInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
@@ -66,13 +63,12 @@ public class InterfacesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedInterfaceInProtectedInnerClass() throws Exception {
-    doSuccessfulValidationTest("exportedInterfaceInProtectedInnerClass",
-                               new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
+    doSuccessfulValidationTest("exportedInterfaceInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void missingInterfaceInProtectedInnerClass() throws Exception {
-    doMissingExportTest("missingInterfaceInProtectedInnerClass", new String[] {PATH_CLASS_A, PATH_CLASS_B, "org/foo/A$C"});
+    doMissingExportTest("missingInterfaceInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test

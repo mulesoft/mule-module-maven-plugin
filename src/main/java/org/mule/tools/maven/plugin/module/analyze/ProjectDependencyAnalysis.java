@@ -19,7 +19,7 @@ public class ProjectDependencyAnalysis {
 
   private final Map<String, Set<String>> undeclaredPackageDeps;
   private final Set<String> packagesToExport;
-  private final Set<String> noAnalyzedPackages;
+  private final Set<String> notAnalyzedPackages;
 
   public ProjectDependencyAnalysis() {
     this(new HashMap<>(), new HashSet<>(), new HashSet<>());
@@ -27,11 +27,11 @@ public class ProjectDependencyAnalysis {
 
 
   public ProjectDependencyAnalysis(Map<String, Set<String>> undeclaredPackageDeps, Set<String> packagesToExport,
-                                   Set<String> noAnalyzedPackages) {
+                                   Set<String> notAnalyzedPackages) {
 
     this.undeclaredPackageDeps = undeclaredPackageDeps;
     this.packagesToExport = packagesToExport;
-    this.noAnalyzedPackages = noAnalyzedPackages;
+    this.notAnalyzedPackages = notAnalyzedPackages;
   }
 
   /**
@@ -45,8 +45,8 @@ public class ProjectDependencyAnalysis {
     return packagesToExport;
   }
 
-  public Set<String> getNoAnalyzedPackages() {
-    return noAnalyzedPackages;
+  public Set<String> getNotAnalyzedPackages() {
+    return notAnalyzedPackages;
   }
 
   /*
@@ -55,7 +55,7 @@ public class ProjectDependencyAnalysis {
   public int hashCode() {
     int hashCode = getUndeclaredPackageDeps().hashCode();
     hashCode = (hashCode * 37) + getPackagesToExport().hashCode();
-    hashCode = (hashCode * 37) + getNoAnalyzedPackages().hashCode();
+    hashCode = (hashCode * 37) + getNotAnalyzedPackages().hashCode();
 
     return hashCode;
   }
@@ -69,7 +69,7 @@ public class ProjectDependencyAnalysis {
 
       return getUndeclaredPackageDeps().equals(analysis.getUndeclaredPackageDeps())
           && getPackagesToExport().equals(analysis.getPackagesToExport())
-          && getNoAnalyzedPackages().equals(analysis.getNoAnalyzedPackages());
+          && getNotAnalyzedPackages().equals(analysis.getNotAnalyzedPackages());
     }
 
     return false;
@@ -93,12 +93,12 @@ public class ProjectDependencyAnalysis {
       buffer.append("packagesToExport=").append(getPackagesToExport());
     }
 
-    if (!getNoAnalyzedPackages().isEmpty()) {
+    if (!getNotAnalyzedPackages().isEmpty()) {
       if (buffer.length() > 0) {
         buffer.append(",");
       }
 
-      buffer.append("noAnalyzedPackages=").append(getNoAnalyzedPackages());
+      buffer.append("notAnalyzedPackages=").append(getNotAnalyzedPackages());
     }
 
     buffer.insert(0, "[");

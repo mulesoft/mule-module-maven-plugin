@@ -40,7 +40,7 @@ public class ModuleTestCase extends AbstractExportTestCase {
     assertThat(barLog, hasItem(INFO_LOG_PREFIX + PROJECT_IS_NOT_A_MULE_MODULE));
 
     List<String> fooLog = logs.get(FOO_MODULE_ID);
-    assertAnalyzedClasses(fooLog, PATH_CLASS_A, PATH_CLASS_B);
+    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
     assertValidModuleApi(fooLog);
   }
 
@@ -52,7 +52,7 @@ public class ModuleTestCase extends AbstractExportTestCase {
     assertThat(barLog, hasItem(INFO_LOG_PREFIX + PROJECT_IS_NOT_A_MULE_MODULE));
 
     List<String> fooLog = logs.get(FOO_MODULE_ID);
-    assertAnalyzedClasses(fooLog, PATH_CLASS_A, PATH_CLASS_B);
+    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
     assertMissingExportedPackages(fooLog, BAR_PACKAGE);
   }
 
@@ -65,7 +65,7 @@ public class ModuleTestCase extends AbstractExportTestCase {
     assertValidModuleApi(barLog);
 
     List<String> fooLog = logs.get(FOO_MODULE_ID);
-    assertAnalyzedClasses(fooLog, PATH_CLASS_A, PATH_CLASS_B);
+    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
     assertValidModuleApi(fooLog);
   }
 
@@ -79,7 +79,7 @@ public class ModuleTestCase extends AbstractExportTestCase {
 
     List<String> fooLog = logs.get(FOO_MODULE_ID);
     assertValidModuleApi(fooLog);
-    assertAnalyzedClasses(fooLog, PATH_CLASS_A, PATH_CLASS_B);
+    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
     assertThat(fooLog, hasItem(INFO_LOG_PREFIX + buildRedundantExportedPackageMessage(BAR_PACKAGE)));
   }
 
@@ -91,7 +91,7 @@ public class ModuleTestCase extends AbstractExportTestCase {
     assertThat(barLog, hasItem(INFO_LOG_PREFIX + PROJECT_IS_NOT_A_MULE_MODULE));
 
     List<String> fooLog = logs.get(FOO_MODULE_ID);
-    assertAnalyzedClasses(fooLog, PATH_CLASS_A, PATH_CLASS_B);
+    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
     assertValidModuleApi(fooLog);
   }
 

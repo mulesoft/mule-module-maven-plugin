@@ -38,8 +38,11 @@ public abstract class AbstractExportTestCase {
 
   protected static final String PATH_CLASS_A = "org/foo/A";
   protected static final String PATH_CLASS_B = "org/bar/B";
+  protected static final String CLASS_PATH_C = "org/foo/A$C";
   protected static final String INFO_LOG_PREFIX = "[INFO] ";
   protected static final String BAR_PACKAGE = "org.bar";
+  protected static final String[] ANALYZED_CLASSES_A_B = {PATH_CLASS_A, PATH_CLASS_B};
+  protected static final String[] ANALYZED_CLASSES_A_B_C = {PATH_CLASS_A, PATH_CLASS_B, CLASS_PATH_C};
 
   private static final String sectionSeparator = INFO_LOG_PREFIX +
       "------------------------------------------------------------------------";
@@ -63,7 +66,7 @@ public abstract class AbstractExportTestCase {
    * @throws Exception
    */
   protected void doSuccessfulValidationTest(String projectName) throws Exception {
-    doSuccessfulValidationTest(projectName, new String[] {PATH_CLASS_A, PATH_CLASS_B});
+    doSuccessfulValidationTest(projectName, ANALYZED_CLASSES_A_B);
   }
 
   /**
@@ -73,7 +76,7 @@ public abstract class AbstractExportTestCase {
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
-  protected void doSuccessfulValidationTest(String projectName, String[] analyzedClasses) throws Exception {
+  protected void doSuccessfulValidationTest(String projectName, String... analyzedClasses) throws Exception {
     MavenExecutionResult result = runMaven(projectName);
 
     result.assertLogText(NO_MODULE_API_PROBLEMS_FOUND);
@@ -89,7 +92,7 @@ public abstract class AbstractExportTestCase {
    * @throws Exception
    */
   protected void doMissingExportTest(String projectName) throws Exception {
-    doMissingExportTest(projectName, new String[] {PATH_CLASS_A, PATH_CLASS_B});
+    doMissingExportTest(projectName, ANALYZED_CLASSES_A_B);
   }
 
   /**
@@ -99,7 +102,7 @@ public abstract class AbstractExportTestCase {
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
-  protected void doMissingExportTest(String projectName, String[] analyzedClasses) throws Exception {
+  protected void doMissingExportTest(String projectName, String... analyzedClasses) throws Exception {
     MavenExecutionResult result = runMaven(projectName);
 
     result.assertLogText(MODULE_API_PROBLEMS_FOUND);
