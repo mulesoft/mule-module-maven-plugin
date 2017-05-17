@@ -8,10 +8,23 @@
 package org.mule.tools.maven.plugin.module.integration;
 
 import static java.io.File.separator;
+import static java.lang.System.arraycopy;
+import static java.util.Arrays.stream;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.MODULE_API_PROBLEMS_FOUND;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NOT_ANALYZED_PACKAGES_ERROR;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_MODULE_API_PROBLEMS_FOUND;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PACKAGES_TO_EXPORT_ERROR;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.takari.maven.testing.TestResources;
 import io.takari.maven.testing.executor.MavenExecutionResult;
@@ -23,6 +36,19 @@ import org.junit.runner.RunWith;
 @RunWith(MavenJUnitTestRunner.class)
 public abstract class AbstractExportTestCase {
 
+  protected static final String PATH_CLASS_A = "org/foo/A";
+  protected static final String PATH_CLASS_B = "org/bar/B";
+  protected static final String CLASS_PATH_C = "org/foo/A$C";
+  protected static final String INFO_LOG_PREFIX = "[INFO] ";
+  protected static final String BAR_PACKAGE = "org.bar";
+  protected static final String[] ANALYZED_CLASSES_A_B = {PATH_CLASS_A, PATH_CLASS_B};
+  protected static final String[] ANALYZED_CLASSES_A_B_C = {PATH_CLASS_A, PATH_CLASS_B, CLASS_PATH_C};
+
+  private static final String sectionSeparator = INFO_LOG_PREFIX +
+      "------------------------------------------------------------------------";
+  private static final String ANALYZING_CLASS_PREFIX = INFO_LOG_PREFIX + "Analyzing class: ";
+  private static final String MAVEN_BUILD_PREFIX = "[INFO] Building ";
+
   @Rule
   public final TestResources resources = new TestResources();
   public final MavenRuntime mavenRuntime;
@@ -33,33 +59,202 @@ public abstract class AbstractExportTestCase {
     this.folder = folder;
   }
 
-  protected void doExportABTest(String projectName) throws Exception {
-    //TODO(pablo.kraan): this test should be different when org.bar is exported in the module, otherwise there is no safety that the code is doing the real thing
-    File basedir = resources.getBasedir(folder + separator + projectName);
-    MavenExecutionResult result = mavenRuntime
-        .forProject(basedir)
-        .execute("mule-module:analyze");
-
-    result.assertLogText(NO_MODULE_API_PROBLEMS_FOUND);
-    result.assertLogText("Found module:");
-    result.assertLogText("Analyzing class: org/foo/A");
-    result.assertLogText("Analyzing class: org/bar/B");
-    result.assertNoLogText("Packages that must be exported:");
+  /**
+   * Tests a successful validation scenario where {@value PATH_CLASS_A} and {@value PATH_CLASS_B} classes are exported
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @throws Exception
+   */
+  protected void doSuccessfulValidationTest(String projectName) throws Exception {
+    doSuccessfulValidationTest(projectName, ANALYZED_CLASSES_A_B);
   }
 
-  protected void doExportAMissingBTest(String projectName) throws Exception {
-    File basedir = resources.getBasedir(folder + separator + projectName);
-    MavenExecutionResult result = mavenRuntime
-        .forProject(basedir)
-        .execute("mule-module:analyze");
+  /**
+   * Tests a successful validation scenario
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @param analyzedClasses full paths of classes that should be analyzed during the test.
+   * @throws Exception
+   */
+  protected void doSuccessfulValidationTest(String projectName, String... analyzedClasses) throws Exception {
+    MavenExecutionResult result = runMaven(projectName);
+
+    result.assertLogText(NO_MODULE_API_PROBLEMS_FOUND);
+    result.assertNoLogText(PACKAGES_TO_EXPORT_ERROR);
+    result.assertLogText("Found module:");
+    assertAnalyzedClasses(getLogLines(result), analyzedClasses);
+  }
+
+  /**
+   * Tests a failing validation scenario where {@value PATH_CLASS_A} and {@value PATH_CLASS_B} classes should be exported
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @throws Exception
+   */
+  protected void doMissingExportTest(String projectName) throws Exception {
+    doMissingExportTest(projectName, ANALYZED_CLASSES_A_B);
+  }
+
+  /**
+   * Tests a failing validation scenario
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @param analyzedClasses full paths of classes that should be analyzed during the test.
+   * @throws Exception
+   */
+  protected void doMissingExportTest(String projectName, String... analyzedClasses) throws Exception {
+    MavenExecutionResult result = runMaven(projectName);
 
     result.assertLogText(MODULE_API_PROBLEMS_FOUND);
     result.assertLogText("Found module:");
-    result.assertLogText("Analyzing class: org/foo/A");
-    result.assertLogText("Analyzing class: org/bar/B");
-    //TODO(pablo.kraan): what about tests using C class?
-    //result.assertLogText("Analyzing class: org/bar/A$C");
-    result.assertLogText("Packages that must be exported:");
-    result.assertLogText("org.bar");
+    List<String> logLines = getLogLines(result);
+    assertAnalyzedClasses(logLines, analyzedClasses);
+    assertMissingExportedPackages(logLines, BAR_PACKAGE);
+  }
+
+  /**
+   * Tests a validation scenario failing because a package not analyzed
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @throws Exception
+   */
+  protected void doMissingAnalyzedPackageTest(String projectName) throws Exception {
+    MavenExecutionResult result = runMaven(projectName);
+
+    result.assertLogText(MODULE_API_PROBLEMS_FOUND);
+    result.assertLogText("Found module:");
+    assertMultiLogLine(getLogLines(result), INFO_LOG_PREFIX + NOT_ANALYZED_PACKAGES_ERROR, BAR_PACKAGE);
+  }
+
+  /**
+   * Builds a single module with Maven
+   *
+   * @param projectName name of the folder containing the Maven project to test
+   * @return the full Maven's log of the build process
+   * @throws Exception
+   */
+  protected List<String> buildSingleModule(String projectName) throws Exception {
+    MavenExecutionResult result = runMaven(projectName);
+
+    return getLogLines(result);
+  }
+
+  /**
+   * Builds a multi module with Maven
+   *
+   * @param projectName name of the folder containing the Maven project to test
+   * @return a {@link Map} containing the separated Maven's log of each single module build
+   * @throws Exception
+   */
+  protected Map<String, List<String>> buildMultiModule(String projectName) throws Exception {
+    MavenExecutionResult result = runMaven(projectName);
+
+    List<String> logLines = getLogLines(result);
+
+    return splitLog(logLines);
+  }
+
+  /**
+   * Asserts that there are the expected log entries regarding missing exported packages
+   *
+   * @param log log lines to check
+   * @param packages packages that are expected to be missing
+   */
+  protected void assertMissingExportedPackages(List<String> log, String... packages) {
+    String[] lines = new String[packages.length + 1];
+    lines[0] = INFO_LOG_PREFIX + PACKAGES_TO_EXPORT_ERROR;
+    arraycopy(packages, 0, lines, 1, packages.length);
+
+    assertMultiLogLine(log, lines);
+  }
+
+  /**
+   * Asserts that there are the expected log entries regarding missing analyzed classes
+   *
+   * @param log log lines to check
+   * @param classNames names of the classes that are expected to be analyzed
+   */
+  protected void assertAnalyzedClasses(List<String> log, String... classNames) {
+    List<String> analyzedClassLines = log.stream().filter(s -> s.contains(ANALYZING_CLASS_PREFIX))
+        .map(s -> s.substring(ANALYZING_CLASS_PREFIX.length())).collect(Collectors.toList());
+
+    assertThat(analyzedClassLines, containsInAnyOrder(classNames));
+  }
+
+  /**
+   * Asserts that the API validation was successful
+   *
+   * @param log log lines to check
+   */
+  protected void assertValidModuleApi(List<String> log) {
+    assertThat(log, hasItem(containsString(NO_MODULE_API_PROBLEMS_FOUND)));
+  }
+
+  private MavenExecutionResult runMaven(String projectName) throws Exception {
+    File basedir = resources.getBasedir(folder + separator + projectName);
+    return mavenRuntime.forProject(basedir).execute("mule-module:analyze");
+  }
+
+  private Map<String, List<String>> splitLog(List<String> logLines) {
+    Map<String, List<String>> result = new HashMap<>();
+
+    int i = 0;
+    while (i < logLines.size()) {
+      String currentLine = logLines.get(i);
+      if (sectionSeparator.equals(currentLine)) {
+        if (i + 1 < logLines.size() && logLines.get(i + 1).startsWith(MAVEN_BUILD_PREFIX)) {
+          int moduleLogStart = i;
+          String moduleName = logLines.get(i + 1).substring(MAVEN_BUILD_PREFIX.length());
+          i = i + 3;
+
+          while (i < logLines.size() && !(logLines.get(i).equals(sectionSeparator))) {
+            i++;
+          }
+
+          result.put(moduleName, logLines.subList(moduleLogStart, i));
+        } else {
+          i++;
+        }
+      } else {
+        i++;
+      }
+    }
+    return result;
+  }
+
+  private static void assertMultiLogLine(List<String> log, String... lines) {
+    if (lines.length < 2) {
+      throw new IllegalArgumentException("There must be more than one line to assert. Use MavenExecutionResult#assertLogText instead");
+    }
+
+    for (int i = 0; i < log.size(); i++) {
+      if (i + lines.length > log.size()) {
+        break;
+      }
+      int j = 0;
+      while (j < lines.length && log.get(i + j).equals(lines[j])) {
+        j++;
+      }
+
+      if (j == lines.length) {
+        return;
+      }
+    }
+
+    StringBuilder builder = new StringBuilder("Multi log line not present: ");
+    stream(lines).forEach(s -> builder.append("\n").append(s));
+    throw new AssertionError(builder.toString());
+  }
+
+  private List<String> getLogLines(MavenExecutionResult result) {
+    List<String> log;
+    try {
+      Field logField = result.getClass().getDeclaredField("log");
+      logField.setAccessible(true);
+      log = (List<String>) logField.get(result);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new IllegalStateException(e);
+    }
+    return log;
   }
 }

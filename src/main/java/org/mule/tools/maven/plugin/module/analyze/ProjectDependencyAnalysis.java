@@ -7,10 +7,8 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,16 +19,19 @@ public class ProjectDependencyAnalysis {
 
   private final Map<String, Set<String>> undeclaredPackageDeps;
   private final Set<String> packagesToExport;
+  private final Set<String> notAnalyzedPackages;
 
   public ProjectDependencyAnalysis() {
-    this(new HashMap<String, Set<String>>(), new HashSet<String>());
+    this(new HashMap<>(), new HashSet<>(), new HashSet<>());
   }
 
 
-  public ProjectDependencyAnalysis(Map<String, Set<String>> undeclaredPackageDeps, Set<String> packagesToExport) {
+  public ProjectDependencyAnalysis(Map<String, Set<String>> undeclaredPackageDeps, Set<String> packagesToExport,
+                                   Set<String> notAnalyzedPackages) {
 
     this.undeclaredPackageDeps = undeclaredPackageDeps;
     this.packagesToExport = packagesToExport;
+    this.notAnalyzedPackages = notAnalyzedPackages;
   }
 
   /**
@@ -44,12 +45,17 @@ public class ProjectDependencyAnalysis {
     return packagesToExport;
   }
 
+  public Set<String> getNotAnalyzedPackages() {
+    return notAnalyzedPackages;
+  }
+
   /*
-   * @see java.lang.Object#hashCode()
-   */
+     * @see java.lang.Object#hashCode()
+     */
   public int hashCode() {
     int hashCode = getUndeclaredPackageDeps().hashCode();
     hashCode = (hashCode * 37) + getPackagesToExport().hashCode();
+    hashCode = (hashCode * 37) + getNotAnalyzedPackages().hashCode();
 
     return hashCode;
   }
@@ -62,7 +68,8 @@ public class ProjectDependencyAnalysis {
       ProjectDependencyAnalysis analysis = (ProjectDependencyAnalysis) object;
 
       return getUndeclaredPackageDeps().equals(analysis.getUndeclaredPackageDeps())
-          && getPackagesToExport().equals(analysis.getPackagesToExport());
+          && getPackagesToExport().equals(analysis.getPackagesToExport())
+          && getNotAnalyzedPackages().equals(analysis.getNotAnalyzedPackages());
     }
 
     return false;
@@ -86,16 +93,19 @@ public class ProjectDependencyAnalysis {
       buffer.append("packagesToExport=").append(getPackagesToExport());
     }
 
+    if (!getNotAnalyzedPackages().isEmpty()) {
+      if (buffer.length() > 0) {
+        buffer.append(",");
+      }
+
+      buffer.append("notAnalyzedPackages=").append(getNotAnalyzedPackages());
+    }
+
     buffer.insert(0, "[");
     buffer.insert(0, getClass().getName());
 
     buffer.append("]");
 
     return buffer.toString();
-  }
-
-  private Set<String> safeCopy(Set<String> set) {
-    return (set == null) ? Collections.<String>emptySet()
-        : Collections.unmodifiableSet(new LinkedHashSet<String>(set));
   }
 }

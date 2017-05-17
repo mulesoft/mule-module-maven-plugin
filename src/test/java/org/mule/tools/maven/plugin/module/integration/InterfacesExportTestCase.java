@@ -18,61 +18,61 @@ public class InterfacesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedSuperInterfaceInPublicInterface() throws Exception {
-    doExportABTest("exportedSuperInterfaceInPublicInterface");
+    doSuccessfulValidationTest("exportedSuperInterfaceInPublicInterface");
   }
 
   @Test
   public void missingSuperInterfaceInPublicInterface() throws Exception {
-    doExportAMissingBTest("missingSuperInterfaceInPublicInterface");
+    doMissingExportTest("missingSuperInterfaceInPublicInterface");
   }
 
   @Test
   public void exportedSuperInterfaceInProtectedInnerInterface() throws Exception {
-    doExportABTest("exportedSuperInterfaceInProtectedInnerInterface");
+    doSuccessfulValidationTest("exportedSuperInterfaceInProtectedInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void missingSuperInterfaceInProtectedInnerInterface() throws Exception {
-    doExportAMissingBTest("missingSuperInterfaceInProtectedInnerInterface");
+    doMissingExportTest("missingSuperInterfaceInProtectedInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void ignoresSuperInterfaceInPackageInterface() throws Exception {
-    doExportABTest("ignoresSuperInterfaceInPackageInterface");
+    doSuccessfulValidationTest("ignoresSuperInterfaceInPackageInterface");
   }
 
   @Test
   public void ignoresSuperInterfaceInPrivateInnerInterface() throws Exception {
-    doExportABTest("ignoresSuperInterfaceInPrivateInnerInterface");
+    doSuccessfulValidationTest("ignoresSuperInterfaceInPrivateInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void exportedInterfaceInPublicClass() throws Exception {
-    doExportABTest("exportedInterfaceInPublicClass");
+    doSuccessfulValidationTest("exportedInterfaceInPublicClass");
   }
 
   @Test
   public void ignoresInterfaceInPrivateInnerClass() throws Exception {
-    doExportABTest("ignoresInterfaceInPrivateInnerClass");
+    doSuccessfulValidationTest("ignoresInterfaceInPrivateInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void missingInterfaceInPublicClass() throws Exception {
-    doExportAMissingBTest("missingInterfaceInPublicClass");
+    doMissingExportTest("missingInterfaceInPublicClass");
   }
 
   @Test
   public void exportedInterfaceInProtectedInnerClass() throws Exception {
-    doExportABTest("exportedInterfaceInProtectedInnerClass");
+    doSuccessfulValidationTest("exportedInterfaceInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void missingInterfaceInProtectedInnerClass() throws Exception {
-    doExportAMissingBTest("missingInterfaceInProtectedInnerClass");
+    doMissingExportTest("missingInterfaceInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void ignoresInterfaceInPackageClass() throws Exception {
-    doExportABTest("ignoresInterfaceInPackageClass");
+    doSuccessfulValidationTest("ignoresInterfaceInPackageClass");
   }
 }

@@ -7,6 +7,8 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
+import static java.lang.System.lineSeparator;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,8 +30,7 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
- * Analyzes the exported API in a mule module and checks that there are no missing
- * exported packages.
+ * Analyzes the exported API in a mule module and checks that there are no missing exported packages.
  */
 @Mojo(name = "analyze", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 @Execute(phase = LifecyclePhase.TEST_COMPILE)
@@ -37,10 +38,11 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
 
   public static final String NO_MODULE_API_PROBLEMS_FOUND = "No module API problems found";
   public static final String MODULE_API_PROBLEMS_FOUND = "Module API problems found";
+  public static final String PACKAGES_TO_EXPORT_ERROR = "Packages that must be exported:";
+  public static final String NOT_ANALYZED_PACKAGES_ERROR = "Following packages were not analyzed:";
 
   /**
-   * The plexus context to look-up the right {@link ModuleApiAnalyzer} implementation depending on the mojo
-   * configuration.
+   * The plexus context to look-up the right {@link ModuleApiAnalyzer} implementation depending on the mojo configuration.
    */
   private Context context;
 
@@ -121,9 +123,9 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
       throw new MojoExecutionException("Cannot analyze module API", exception);
     }
 
-    final HashMap<String, Set<String>> undeclaredExportedPackages =
-        new HashMap<String, Set<String>>(analysis.getUndeclaredPackageDeps());
-    final HashSet<String> packagesToExport = new HashSet<String>(analysis.getPackagesToExport());
+    final Map<String, Set<String>> undeclaredExportedPackages = new HashMap<>(analysis.getUndeclaredPackageDeps());
+    final Set<String> packagesToExport = new HashSet<>(analysis.getPackagesToExport());
+    final Set<String> noAnalyzedPackages = new HashSet<>(analysis.getNotAnalyzedPackages());
 
     boolean reported = false;
     boolean warning = false;
@@ -139,8 +141,14 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
       warning = true;
     }
 
+    if (!noAnalyzedPackages.isEmpty()) {
+      getLog().info(buildNotAnalyzedPackageError(noAnalyzedPackages));
+      reported = true;
+      warning = true;
+    }
+
     if (!packagesToExport.isEmpty()) {
-      logPackagesToExport(packagesToExport);
+      getLog().info(buildMissingExportedPackagesError(packagesToExport));
       reported = true;
       warning = true;
     }
@@ -173,17 +181,23 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     }
   }
 
-  private void logPackagesToExport(Set<String> packageNames) {
+  private static String buildMissingExportedPackagesError(Set<String> packageNames) {
     StringBuilder builder = new StringBuilder();
-    builder.append("Packages that must be exported:\n");
-    if (packageNames.isEmpty()) {
-      builder.append("   NONE");
-    } else {
-      for (String packageName : packageNames) {
-        builder.append(packageName).append("\n");
-      }
+    builder.append(PACKAGES_TO_EXPORT_ERROR);
+
+    for (String packageName : packageNames) {
+      builder.append(lineSeparator()).append(packageName);
     }
-    getLog().info(builder.toString());
+    return builder.toString();
   }
 
+  private static String buildNotAnalyzedPackageError(Set<String> packageNames) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(NOT_ANALYZED_PACKAGES_ERROR);
+
+    for (String packageName : packageNames) {
+      builder.append(lineSeparator()).append(packageName);
+    }
+    return builder.toString();
+  }
 }

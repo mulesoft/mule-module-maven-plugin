@@ -33,7 +33,7 @@ public final class ClassFileVisitorUtils {
 
   public static void accept(URL url, ClassFileVisitor visitor, AnalyzerLogger analyzerLogger)
       throws IOException {
-    analyzerLogger.log("Analizyng: " + url);
+    analyzerLogger.log("Analyzing: " + url);
     if (url.getPath().endsWith(".jar")) {
       acceptJar(url, visitor);
     } else if (url.getProtocol().equalsIgnoreCase("file")) {

@@ -18,31 +18,31 @@ public class ClassesExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedSuperClassInPublicClass() throws Exception {
-    doExportABTest("exportedSuperClassInPublicClass");
+    doSuccessfulValidationTest("exportedSuperClassInPublicClass");
   }
 
   @Test
   public void missingSuperClassInPublicClass() throws Exception {
-    doExportAMissingBTest("missingSuperClassInPublicClass");
+    doMissingExportTest("missingSuperClassInPublicClass");
   }
 
   @Test
   public void exportedSuperClassInProtectedInnerClass() throws Exception {
-    doExportABTest("exportedSuperClassInProtectedInnerClass");
+    doSuccessfulValidationTest("exportedSuperClassInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void missingSuperClassInProtectedInnerClass() throws Exception {
-    doExportAMissingBTest("missingSuperClassInProtectedInnerClass");
+    doMissingExportTest("missingSuperClassInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
   @Test
   public void ignoresSuperClassInPackageClass() throws Exception {
-    doExportABTest("ignoresSuperClassInPackageClass");
+    doSuccessfulValidationTest("ignoresSuperClassInPackageClass");
   }
 
   @Test
   public void ignoresSuperClassInPrivateInnerClass() throws Exception {
-    doExportABTest("ignoresSuperClassInPrivateInnerClass");
+    doSuccessfulValidationTest("ignoresSuperClassInPrivateInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 }

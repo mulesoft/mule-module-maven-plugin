@@ -18,36 +18,36 @@ public class ClassFieldExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedPublicInstanceField() throws Exception {
-    doExportABTest("exportedPublicInstanceField");
+    doSuccessfulValidationTest("exportedPublicInstanceField");
   }
 
   @Test
   public void exportedProtectedInstanceField() throws Exception {
-    doExportABTest("exportedProtectedInstanceField");
+    doSuccessfulValidationTest("exportedProtectedInstanceField");
   }
 
   @Test
   public void missingProtectedInstanceField() throws Exception {
-    doExportAMissingBTest("missingProtectedInstanceField");
+    doMissingExportTest("missingProtectedInstanceField");
   }
 
   @Test
   public void missingPublicInstanceField() throws Exception {
-    doExportAMissingBTest("missingPublicInstanceField");
+    doMissingExportTest("missingPublicInstanceField");
   }
 
   @Test
   public void ignoresPrivateInstanceField() throws Exception {
-    doExportABTest("ignoresPrivateInstanceField");
+    doSuccessfulValidationTest("ignoresPrivateInstanceField");
   }
 
   @Test
   public void ignoresPackageInstanceField() throws Exception {
-    doExportABTest("ignoresPackageInstanceField");
+    doSuccessfulValidationTest("ignoresPackageInstanceField");
   }
 
   @Test
   public void ignoresProtectedInstanceFieldInFinalClass() throws Exception {
-    doExportABTest("ignoresProtectedInstanceFieldInFinalClass");
+    doSuccessfulValidationTest("ignoresProtectedInstanceFieldInFinalClass");
   }
 }

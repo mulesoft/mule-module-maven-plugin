@@ -61,6 +61,8 @@ public class DefaultClassVisitor extends ClassVisitor {
   public void visit(final int version, final int access, final String name, final String signature,
                     final String superName, final String[] interfaces) {
     analyzerLogger.log("Analyzing class: " + name + (signature != null ? signature : ""));
+    resultCollector.addName(packageName, name);
+
     skipClass = isPrivate(access) || isPackage(access);
     if (skipClass) {
       String accessString = isPrivate(access) ? "private" : "package";

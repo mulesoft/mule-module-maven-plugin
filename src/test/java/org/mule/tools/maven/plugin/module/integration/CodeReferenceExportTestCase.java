@@ -18,12 +18,12 @@ public class CodeReferenceExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void ignoresTypeReferenceInMethod() throws Exception {
-    doExportABTest("ignoresTypeReferenceInMethod");
+    doSuccessfulValidationTest("ignoresTypeReferenceInMethod");
   }
 
   @Test
   public void ignoresTypeReferenceInStaticInitializer() throws Exception {
-    doExportABTest("ignoresTypeReferenceInStaticInitializer");
+    doSuccessfulValidationTest("ignoresTypeReferenceInStaticInitializer");
   }
 
 }
