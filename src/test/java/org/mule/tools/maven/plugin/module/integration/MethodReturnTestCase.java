@@ -18,36 +18,36 @@ public class MethodReturnTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedReturnPackageInPublicMethod() throws Exception {
-    doSuccessfulValidationTest("exportedReturnInPublicMethod");
+    doSuccessfulStandardValidationTest("exportedReturnInPublicMethod");
   }
 
   @Test
   public void exportedReturnPackageInProtectedMethod() throws Exception {
-    doSuccessfulValidationTest("exportedReturnInProtectedMethod");
+    doSuccessfulStandardValidationTest("exportedReturnInProtectedMethod");
   }
 
   @Test
   public void missingExportedReturnPackageInPublicMethod() throws Exception {
-    doMissingExportTest("missingReturnInPublicMethod");
+    doMissingStandardExportTest("missingReturnInPublicMethod");
   }
 
   @Test
   public void missingExportedReturnPackageInProtectedMethod() throws Exception {
-    doMissingExportTest("missingReturnInProtectedMethod");
+    doMissingStandardExportTest("missingReturnInProtectedMethod");
   }
 
   @Test
   public void ignoresReturnPackageInPrivateMethod() throws Exception {
-    doSuccessfulValidationTest("ignoresReturnInPrivateMethod");
+    doSuccessfulStandardValidationTest("ignoresReturnInPrivateMethod");
   }
 
   @Test
   public void ignoresReturnPackageInPackageMethod() throws Exception {
-    doSuccessfulValidationTest("ignoresReturnInPackageMethod");
+    doSuccessfulStandardValidationTest("ignoresReturnInPackageMethod");
   }
 
   @Test
   public void ignoresReturnPackageInProtectedMethodFromFinalClass() throws Exception {
-    doSuccessfulValidationTest("ignoresReturnInProtectedMethodFromFinalClass");
+    doSuccessfulStandardValidationTest("ignoresReturnInProtectedMethodFromFinalClass");
   }
 }

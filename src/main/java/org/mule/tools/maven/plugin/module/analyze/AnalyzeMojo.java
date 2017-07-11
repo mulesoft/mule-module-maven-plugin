@@ -9,8 +9,6 @@ package org.mule.tools.maven.plugin.module.analyze;
 
 import static java.lang.System.lineSeparator;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +37,12 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
   public static final String NO_MODULE_API_PROBLEMS_FOUND = "No module API problems found";
   public static final String MODULE_API_PROBLEMS_FOUND = "Module API problems found";
   public static final String PACKAGES_TO_EXPORT_ERROR = "Packages that must be exported:";
+  public static final String PRIVILEGED_PACKAGES_TO_EXPORT_ERROR = "Packages that must be exported:";
   public static final String NOT_ANALYZED_PACKAGES_ERROR = "Following packages were not analyzed:";
+  public static final String NOT_ANALYZED_PRIVILEGED_PACKAGES_ERROR = "Following privileged packages were not analyzed:";
+  public static final String DUPLICATED_EXPORTED_PACKAGES = "Following packages are already exported by a module dependency:";
+  public static final String DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES =
+      "Following privileged packages are already exported by a module dependency:";
 
   /**
    * The plexus context to look-up the right {@link ModuleApiAnalyzer} implementation depending on the mojo configuration.
@@ -79,10 +82,12 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
       return;
     }
 
-    boolean error = checkDependencies();
+    boolean error = checkModuleApi();
 
     if (error) {
       throw new MojoExecutionException(MODULE_API_PROBLEMS_FOUND);
+    } else {
+      getLog().info(NO_MODULE_API_PROBLEMS_FOUND);
     }
   }
 
@@ -114,8 +119,8 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     this.skip = skip;
   }
 
-  private boolean checkDependencies() throws MojoExecutionException {
-    ProjectDependencyAnalysis analysis;
+  private boolean checkModuleApi() throws MojoExecutionException {
+    ProjectAnalysisResult analysis;
     try {
       final AnalyzerLogger analyzerLogger = verbose ? new VerboseAnalyzerLogger(getLog()) : new SilentAnalyzerLogger();
       analysis = createProjectDependencyAnalyzer().analyze(project, analyzerLogger);
@@ -123,41 +128,88 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
       throw new MojoExecutionException("Cannot analyze module API", exception);
     }
 
-    final Map<String, Set<String>> undeclaredExportedPackages = new HashMap<>(analysis.getUndeclaredPackageDeps());
-    final Set<String> packagesToExport = new HashSet<>(analysis.getPackagesToExport());
-    final Set<String> noAnalyzedPackages = new HashSet<>(analysis.getNotAnalyzedPackages());
+    boolean stardardApiError = false;
+    boolean privilegedApiError = false;
 
-    boolean reported = false;
-    boolean warning = false;
+    if (analysis.getStandardApi() != null) {
+      stardardApiError = processStandardApiResult(analysis);
+    }
 
+    if (analysis.getPrivilegedAPi() != null) {
+      privilegedApiError = processPrivilegedApiResult(analysis);
+    }
+
+    return stardardApiError || privilegedApiError;
+  }
+
+  private boolean processStandardApiResult(ProjectAnalysisResult analysis) {
+    boolean error = false;
+
+    final Map<String, Set<String>> undeclaredExportedPackages = analysis.getStandardApi().getUndeclaredPackageDeps();
+    final Set<String> packagesToExport = analysis.getStandardApi().getPackagesToExport();
+    final Set<String> noAnalyzedPackages = analysis.getStandardApi().getNotAnalyzedPackages();
+    final Set<String> duplicatedPackages = analysis.getStandardApi().getDuplicatedPackages();
 
     if (!undeclaredExportedPackages.isEmpty()) {
       getLog().info("Used undeclared exported packages found:");
 
       if (verbose) {
-        logUnExportedDependenciesPerPackage(analysis.getUndeclaredPackageDeps());
+        logUnExportedDependenciesPerPackage(analysis.getStandardApi().getUndeclaredPackageDeps());
       }
-      reported = true;
-      warning = true;
+      error = true;
     }
 
     if (!noAnalyzedPackages.isEmpty()) {
-      getLog().info(buildNotAnalyzedPackageError(noAnalyzedPackages));
-      reported = true;
-      warning = true;
+      getLog().info(buildPackageErrorMessage(NOT_ANALYZED_PACKAGES_ERROR, noAnalyzedPackages));
+      error = true;
     }
 
     if (!packagesToExport.isEmpty()) {
-      getLog().info(buildMissingExportedPackagesError(packagesToExport));
-      reported = true;
-      warning = true;
+      getLog().info(buildPackageErrorMessage(PACKAGES_TO_EXPORT_ERROR, packagesToExport));
+      error = true;
     }
 
-    if (!reported) {
-      getLog().info(NO_MODULE_API_PROBLEMS_FOUND);
+    if (!duplicatedPackages.isEmpty()) {
+      getLog().info(buildPackageErrorMessage(DUPLICATED_EXPORTED_PACKAGES, duplicatedPackages));
+      error = true;
     }
 
-    return warning;
+    return error;
+  }
+
+  private boolean processPrivilegedApiResult(ProjectAnalysisResult analysis) {
+    boolean error = false;
+
+    final Map<String, Set<String>> undeclaredExportedPackages = analysis.getPrivilegedAPi().getUndeclaredPackageDeps();
+    final Set<String> packagesToExport = analysis.getPrivilegedAPi().getPackagesToExport();
+    final Set<String> noAnalyzedPackages = analysis.getPrivilegedAPi().getNotAnalyzedPackages();
+    final Set<String> duplicatedPackages = analysis.getPrivilegedAPi().getDuplicatedPackages();
+
+    if (!undeclaredExportedPackages.isEmpty()) {
+      getLog().info("Used undeclared privileged exported packages found:");
+
+      if (verbose) {
+        logUnExportedDependenciesPerPackage(analysis.getPrivilegedAPi().getUndeclaredPackageDeps());
+      }
+      error = true;
+    }
+
+    if (!noAnalyzedPackages.isEmpty()) {
+      getLog().info(buildPackageErrorMessage(NOT_ANALYZED_PRIVILEGED_PACKAGES_ERROR, noAnalyzedPackages));
+      error = true;
+    }
+
+    if (!packagesToExport.isEmpty()) {
+      getLog().info(buildPackageErrorMessage(PRIVILEGED_PACKAGES_TO_EXPORT_ERROR, packagesToExport));
+      error = true;
+    }
+
+    if (!duplicatedPackages.isEmpty()) {
+      getLog().info(buildPackageErrorMessage(DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES, duplicatedPackages));
+      error = true;
+    }
+
+    return error;
   }
 
   private void logUnExportedDependenciesPerPackage(Map<String, Set<String>> artifacts) {
@@ -181,9 +233,9 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     }
   }
 
-  private static String buildMissingExportedPackagesError(Set<String> packageNames) {
+  private static String buildPackageErrorMessage(String message, Set<String> packageNames) {
     StringBuilder builder = new StringBuilder();
-    builder.append(PACKAGES_TO_EXPORT_ERROR);
+    builder.append(message);
 
     for (String packageName : packageNames) {
       builder.append(lineSeparator()).append(packageName);
@@ -192,12 +244,6 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
   }
 
   private static String buildNotAnalyzedPackageError(Set<String> packageNames) {
-    StringBuilder builder = new StringBuilder();
-    builder.append(NOT_ANALYZED_PACKAGES_ERROR);
-
-    for (String packageName : packageNames) {
-      builder.append(lineSeparator()).append(packageName);
-    }
-    return builder.toString();
+    return buildPackageErrorMessage(NOT_ANALYZED_PACKAGES_ERROR, packageNames);
   }
 }
