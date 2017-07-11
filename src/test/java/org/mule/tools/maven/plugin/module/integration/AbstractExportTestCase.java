@@ -73,7 +73,7 @@ public abstract class AbstractExportTestCase {
   }
 
   /**
-   * Tests a successful validation scenario of a
+   * Tests a successful validation scenario of a standard API
    *
    * @param projectName name of the folder containing the maven project to test.
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
@@ -126,11 +126,11 @@ public abstract class AbstractExportTestCase {
   }
 
   /**
-    * Tests a failing validation scenario
+   * Tests a failing validation scenario
    *
-     * @param projectName name of the folder containing the maven project to test.
+   * @param projectName name of the folder containing the maven project to test.
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
-    * @throws Exception
+   * @throws Exception
    */
   protected void doMissingPrivilegedExportTest(String projectName, String... analyzedClasses) throws Exception {
     doMissingExportTest(projectName, PRIVILEGED_PACKAGES_TO_EXPORT_ERROR, analyzedClasses);

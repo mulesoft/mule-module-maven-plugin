@@ -37,7 +37,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
   public static final String NO_MODULE_API_PROBLEMS_FOUND = "No module API problems found";
   public static final String MODULE_API_PROBLEMS_FOUND = "Module API problems found";
   public static final String PACKAGES_TO_EXPORT_ERROR = "Packages that must be exported:";
-  public static final String PRIVILEGED_PACKAGES_TO_EXPORT_ERROR = "Packages that must be exported:";
+  public static final String PRIVILEGED_PACKAGES_TO_EXPORT_ERROR = "Privileged packages that must be exported:";
   public static final String NOT_ANALYZED_PACKAGES_ERROR = "Following packages were not analyzed:";
   public static final String NOT_ANALYZED_PRIVILEGED_PACKAGES_ERROR = "Following privileged packages were not analyzed:";
   public static final String DUPLICATED_EXPORTED_PACKAGES = "Following packages are already exported by a module dependency:";

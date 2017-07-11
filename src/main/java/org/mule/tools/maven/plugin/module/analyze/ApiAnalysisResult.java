@@ -56,9 +56,9 @@ public class ApiAnalysisResult {
     return duplicatedPackages;
   }
 
-  /*
-       * @see java.lang.Object#hashCode()
-       */
+  /**
+   * @see java.lang.Object#hashCode()
+   */
   public int hashCode() {
     int hashCode = getUndeclaredPackageDeps().hashCode();
     hashCode = (hashCode * 37) + getPackagesToExport().hashCode();
@@ -67,7 +67,7 @@ public class ApiAnalysisResult {
     return hashCode;
   }
 
-  /*
+  /**
    * @see java.lang.Object#equals(java.lang.Object)
    */
   public boolean equals(Object object) {
@@ -82,7 +82,7 @@ public class ApiAnalysisResult {
     return false;
   }
 
-  /*
+  /***
    * @see java.lang.Object#toString()
    */
   public String toString() {
