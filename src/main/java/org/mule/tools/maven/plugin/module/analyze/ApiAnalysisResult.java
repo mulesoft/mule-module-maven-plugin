@@ -7,31 +7,34 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Project dependencies analysis result.
  */
-public class ProjectDependencyAnalysis {
+public class ApiAnalysisResult {
 
   private final Map<String, Set<String>> undeclaredPackageDeps;
   private final Set<String> packagesToExport;
   private final Set<String> notAnalyzedPackages;
+  private final Set<String> duplicatedPackages;
 
-  public ProjectDependencyAnalysis() {
-    this(new HashMap<>(), new HashSet<>(), new HashSet<>());
+  public ApiAnalysisResult() {
+    this(emptyMap(), emptySet(), emptySet(), emptySet());
   }
 
 
-  public ProjectDependencyAnalysis(Map<String, Set<String>> undeclaredPackageDeps, Set<String> packagesToExport,
-                                   Set<String> notAnalyzedPackages) {
+  public ApiAnalysisResult(Map<String, Set<String>> undeclaredPackageDeps, Set<String> packagesToExport,
+                           Set<String> notAnalyzedPackages, Set<String> duplicatedPackages) {
 
     this.undeclaredPackageDeps = undeclaredPackageDeps;
     this.packagesToExport = packagesToExport;
     this.notAnalyzedPackages = notAnalyzedPackages;
+    this.duplicatedPackages = duplicatedPackages;
   }
 
   /**
@@ -49,9 +52,11 @@ public class ProjectDependencyAnalysis {
     return notAnalyzedPackages;
   }
 
-  /*
-     * @see java.lang.Object#hashCode()
-     */
+  public Set<String> getDuplicatedPackages() {
+    return duplicatedPackages;
+  }
+
+  @Override
   public int hashCode() {
     int hashCode = getUndeclaredPackageDeps().hashCode();
     hashCode = (hashCode * 37) + getPackagesToExport().hashCode();
@@ -60,12 +65,10 @@ public class ProjectDependencyAnalysis {
     return hashCode;
   }
 
-  /*
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
+  @Override
   public boolean equals(Object object) {
-    if (object instanceof ProjectDependencyAnalysis) {
-      ProjectDependencyAnalysis analysis = (ProjectDependencyAnalysis) object;
+    if (object instanceof ApiAnalysisResult) {
+      ApiAnalysisResult analysis = (ApiAnalysisResult) object;
 
       return getUndeclaredPackageDeps().equals(analysis.getUndeclaredPackageDeps())
           && getPackagesToExport().equals(analysis.getPackagesToExport())
@@ -75,9 +78,7 @@ public class ProjectDependencyAnalysis {
     return false;
   }
 
-  /*
-   * @see java.lang.Object#toString()
-   */
+  @Override
   public String toString() {
     StringBuilder buffer = new StringBuilder();
 

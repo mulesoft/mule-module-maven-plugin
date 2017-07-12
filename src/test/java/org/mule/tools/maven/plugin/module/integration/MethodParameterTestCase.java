@@ -18,37 +18,37 @@ public class MethodParameterTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedParameterInPublicMethod() throws Exception {
-    doSuccessfulValidationTest("exportedParameterInPublicMethod");
+    doSuccessfulStandardValidationTest("exportedParameterInPublicMethod");
   }
 
   @Test
   public void exportedParameterInProtectedMethod() throws Exception {
-    doSuccessfulValidationTest("exportedParameterInProtectedMethod");
+    doSuccessfulStandardValidationTest("exportedParameterInProtectedMethod");
   }
 
   @Test
   public void missingExportedParameterInPublicMethod() throws Exception {
-    doMissingExportTest("missingParameterInPublicMethod");
+    doMissingStandardExportTest("missingParameterInPublicMethod");
   }
 
   @Test
   public void missingExportedParameterInProtectedMethod() throws Exception {
-    doMissingExportTest("missingParameterInProtectedMethod");
+    doMissingStandardExportTest("missingParameterInProtectedMethod");
   }
 
   @Test
   public void ignoresParameterInPrivateMethod() throws Exception {
-    doSuccessfulValidationTest("ignoresParameterInPrivateMethod");
+    doSuccessfulStandardValidationTest("ignoresParameterInPrivateMethod");
   }
 
   @Test
   public void ignoresParameterInPackageMethod() throws Exception {
-    doSuccessfulValidationTest("ignoresParameterInPackageMethod");
+    doSuccessfulStandardValidationTest("ignoresParameterInPackageMethod");
   }
 
   @Test
   public void ignoresParamInProtectedMethodFromFinalClass() throws Exception {
-    doSuccessfulValidationTest("ignoresParameterInProtectedMethodFromFinalClass");
+    doSuccessfulStandardValidationTest("ignoresParameterInProtectedMethodFromFinalClass");
   }
 
 }

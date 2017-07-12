@@ -11,9 +11,9 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PACKAGES_TO_EXPORT_ERROR;
 import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.PROJECT_IS_NOT_A_MULE_MODULE;
 import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.buildOptionalPackageExportedMessage;
-import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.buildRedundantExportedPackageMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class ModuleTestCase extends AbstractExportTestCase {
 
     List<String> fooLog = logs.get(FOO_MODULE_ID);
     assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
-    assertMissingExportedPackages(fooLog, BAR_PACKAGE);
+    assertMissingExportedPackages(fooLog, PACKAGES_TO_EXPORT_ERROR, BAR_PACKAGE);
   }
 
   @Test
@@ -71,16 +71,7 @@ public class ModuleTestCase extends AbstractExportTestCase {
 
   @Test
   public void redundantExportPackageFromModule() throws Exception {
-    Map<String, List<String>> logs = buildMultiModule("redundantExportPackageFromModule");
-
-    List<String> barLog = logs.get(BAR_MODULE_ID);
-    assertAnalyzedClasses(barLog, PATH_CLASS_B);
-    assertValidModuleApi(barLog);
-
-    List<String> fooLog = logs.get(FOO_MODULE_ID);
-    assertValidModuleApi(fooLog);
-    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
-    assertThat(fooLog, hasItem(INFO_LOG_PREFIX + buildRedundantExportedPackageMessage(BAR_PACKAGE)));
+    doDuplicatedExportTest("redundantExportPackageFromModule", BAR_PACKAGE);
   }
 
   @Test

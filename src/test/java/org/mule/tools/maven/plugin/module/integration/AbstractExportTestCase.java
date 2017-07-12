@@ -14,10 +14,13 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_EXPORTED_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.MODULE_API_PROBLEMS_FOUND;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NOT_ANALYZED_PACKAGES_ERROR;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_MODULE_API_PROBLEMS_FOUND;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PACKAGES_TO_EXPORT_ERROR;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PRIVILEGED_PACKAGES_TO_EXPORT_ERROR;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -65,23 +68,39 @@ public abstract class AbstractExportTestCase {
    * @param projectName name of the folder containing the maven project to test.
    * @throws Exception
    */
-  protected void doSuccessfulValidationTest(String projectName) throws Exception {
-    doSuccessfulValidationTest(projectName, ANALYZED_CLASSES_A_B);
+  protected void doSuccessfulStandardValidationTest(String projectName) throws Exception {
+    doSuccessfulStandardValidationTest(projectName, ANALYZED_CLASSES_A_B);
   }
 
   /**
-   * Tests a successful validation scenario
+   * Tests a successful validation scenario of a standard API
    *
    * @param projectName name of the folder containing the maven project to test.
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
-  protected void doSuccessfulValidationTest(String projectName, String... analyzedClasses) throws Exception {
+  protected void doSuccessfulStandardValidationTest(String projectName, String... analyzedClasses) throws Exception {
+    doSuccessfulValidationTest(projectName, PACKAGES_TO_EXPORT_ERROR, analyzedClasses);
+  }
+
+  /**
+   * Tests a successful validation scenario of a privileged API
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @param analyzedClasses full paths of classes that should be analyzed during the test.
+   * @throws Exception
+   */
+  protected void doSuccessfulPrivilegedValidationTest(String projectName, String... analyzedClasses) throws Exception {
+    doSuccessfulValidationTest(projectName, PRIVILEGED_PACKAGES_TO_EXPORT_ERROR, analyzedClasses);
+  }
+
+  private void doSuccessfulValidationTest(String projectName, String packagesToExportError, String[] analyzedClasses)
+      throws Exception {
     MavenExecutionResult result = runMaven(projectName);
 
     result.assertLogText(NO_MODULE_API_PROBLEMS_FOUND);
-    result.assertNoLogText(PACKAGES_TO_EXPORT_ERROR);
     result.assertLogText("Found module:");
+    result.assertNoLogText(packagesToExportError);
     assertAnalyzedClasses(getLogLines(result), analyzedClasses);
   }
 
@@ -91,8 +110,8 @@ public abstract class AbstractExportTestCase {
    * @param projectName name of the folder containing the maven project to test.
    * @throws Exception
    */
-  protected void doMissingExportTest(String projectName) throws Exception {
-    doMissingExportTest(projectName, ANALYZED_CLASSES_A_B);
+  protected void doMissingStandardExportTest(String projectName) throws Exception {
+    doMissingStandardExportTest(projectName, ANALYZED_CLASSES_A_B);
   }
 
   /**
@@ -102,14 +121,63 @@ public abstract class AbstractExportTestCase {
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
-  protected void doMissingExportTest(String projectName, String... analyzedClasses) throws Exception {
+  protected void doMissingStandardExportTest(String projectName, String... analyzedClasses) throws Exception {
+    doMissingExportTest(projectName, PACKAGES_TO_EXPORT_ERROR, analyzedClasses);
+  }
+
+  /**
+   * Tests a failing validation scenario
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @param analyzedClasses full paths of classes that should be analyzed during the test.
+   * @throws Exception
+   */
+  protected void doMissingPrivilegedExportTest(String projectName, String... analyzedClasses) throws Exception {
+    doMissingExportTest(projectName, PRIVILEGED_PACKAGES_TO_EXPORT_ERROR, analyzedClasses);
+  }
+
+  private void doMissingExportTest(String projectName, String packagesToExportError, String[] analyzedClasses) throws Exception {
     MavenExecutionResult result = runMaven(projectName);
 
     result.assertLogText(MODULE_API_PROBLEMS_FOUND);
     result.assertLogText("Found module:");
     List<String> logLines = getLogLines(result);
     assertAnalyzedClasses(logLines, analyzedClasses);
-    assertMissingExportedPackages(logLines, BAR_PACKAGE);
+    assertMissingExportedPackages(logLines, packagesToExportError, BAR_PACKAGE);
+  }
+
+  /**
+   * Tests a failing validation scenario caused by duplicated exported packages
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @param duplicatedPackages packages that expected to be duplicated.
+   * @throws Exception
+   */
+  protected void doDuplicatedExportTest(String projectName, String... duplicatedPackages)
+      throws Exception {
+    doDuplicatedExportTest(projectName, duplicatedPackages, DUPLICATED_EXPORTED_PACKAGES);
+  }
+
+  /**
+   * Tests a failing validation scenario caused by duplicated privileged exported packages
+   *
+   * @param projectName name of the folder containing the maven project to test.
+   * @param duplicatedPackages packages that expected to be duplicated.
+   * @throws Exception
+   */
+  protected void doDuplicatedPrivilegedExportTest(String projectName, String... duplicatedPackages)
+      throws Exception {
+    doDuplicatedExportTest(projectName, duplicatedPackages, DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES);
+  }
+
+  private void doDuplicatedExportTest(String projectName, String[] duplicatedPackages, String errorMessage)
+      throws Exception {
+    MavenExecutionResult result = runMaven(projectName);
+
+    result.assertLogText(MODULE_API_PROBLEMS_FOUND);
+    result.assertLogText("Found module:");
+    List<String> logLines = getLogLines(result);
+    assertDuplicatedExportedPackages(logLines, errorMessage, duplicatedPackages);
   }
 
   /**
@@ -158,11 +226,20 @@ public abstract class AbstractExportTestCase {
    * Asserts that there are the expected log entries regarding missing exported packages
    *
    * @param log log lines to check
+   * @param errorMessage
    * @param packages packages that are expected to be missing
    */
-  protected void assertMissingExportedPackages(List<String> log, String... packages) {
+  protected void assertMissingExportedPackages(List<String> log, String errorMessage, String... packages) {
     String[] lines = new String[packages.length + 1];
-    lines[0] = INFO_LOG_PREFIX + PACKAGES_TO_EXPORT_ERROR;
+    lines[0] = INFO_LOG_PREFIX + errorMessage;
+    arraycopy(packages, 0, lines, 1, packages.length);
+
+    assertMultiLogLine(log, lines);
+  }
+
+  private void assertDuplicatedExportedPackages(List<String> log, String errorMessage, String... packages) {
+    String[] lines = new String[packages.length + 1];
+    lines[0] = INFO_LOG_PREFIX + errorMessage;
     arraycopy(packages, 0, lines, 1, packages.length);
 
     assertMultiLogLine(log, lines);
@@ -241,8 +318,11 @@ public abstract class AbstractExportTestCase {
       }
     }
 
-    StringBuilder builder = new StringBuilder("Multi log line not present: ");
+    StringBuilder builder = new StringBuilder("Expected multi-line log: ");
     stream(lines).forEach(s -> builder.append("\n").append(s));
+    builder.append("\nbut was");
+    log.stream().forEach(s -> builder.append(s));
+
     throw new AssertionError(builder.toString());
   }
 

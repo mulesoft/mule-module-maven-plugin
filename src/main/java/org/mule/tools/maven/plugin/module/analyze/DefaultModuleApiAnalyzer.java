@@ -7,6 +7,7 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_EXPORTED_PACKAGES;
 import static org.mule.tools.maven.plugin.module.analyze.JrePackageFinder.find;
 
 import java.io.File;
@@ -49,15 +50,13 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
         : className.substring(0, className.lastIndexOf(PACKAGE_SEPARATOR));
   }
 
-  /*
-   * @see org.mule.tools.maven.plugin.module.analyze.ProjectDependencyAnalyzer#analyze(org.apache.maven.project.MavenProject)
-   */
-  public ProjectDependencyAnalysis analyze(MavenProject project, AnalyzerLogger analyzerLogger)
+  @Override
+  public ProjectAnalysisResult analyze(MavenProject project, AnalyzerLogger analyzerLogger)
       throws ModuleApiAnalyzerException {
     final Properties properties = getModuleProperties(project);
     if (properties == null) {
       analyzerLogger.log(PROJECT_IS_NOT_A_MULE_MODULE);
-      return new ProjectDependencyAnalysis();
+      return new ProjectAnalysisResult(null, null);
     }
 
     try {
@@ -68,23 +67,63 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
       Set<String> externalExportedPackages =
           discoverExternalExportedPackages(project, analyzerLogger, (String) properties.get("module.name"));
 
-      removeExternalModuleExportedPackage(analyzerLogger, projectExportedPackages, externalExportedPackages);
-
       final Map<String, Set<String>> projectPackageDependencies = findPackageDependencies(project, analyzerLogger);
-      final Map<String, Set<String>> missingExportedPackages = new HashMap<>();
       final Map<String, Set<String>> externalPackageDeps = calculateExternalDeps(project, analyzerLogger);
 
-      Set<String> exportedPackageClosure = new HashSet<>(projectExportedPackages);
-      Set<String> missingAnalyzedPackages = new HashSet<>();
-      final Set<String> jrePackages = find();
+      ApiAnalysisResult standardApiAnalysisResult =
+          analyzeApi(analyzerLogger, projectExportedPackages, projectOptionalPackages, externalExportedPackages,
+                     projectPackageDependencies,
+                     externalPackageDeps);
 
-      boolean dirty;
-      do {
-        Set<String> diff = new HashSet<>();
-        Set<String> exportedByOtherModule = new HashSet<>();
-        for (String exportedPackage : exportedPackageClosure) {
-          if (!ignorePackage(analyzerLogger, exportedPackage, jrePackages, externalExportedPackages)) {
-            Set<String> packageDeps = projectPackageDependencies.get(exportedPackage);
+      Set<String> projectPrivilegedExportedPackages = getModulePrivilegedExportedPackages(analyzerLogger, properties);
+
+      ApiAnalysisResult privilegedApiAnalysisResult = null;
+
+      if (!projectPrivilegedExportedPackages.isEmpty()) {
+        Set<String> exportedPackages = new HashSet<>(projectExportedPackages);
+        exportedPackages.addAll(externalExportedPackages);
+
+        privilegedApiAnalysisResult =
+            analyzeApi(analyzerLogger, projectPrivilegedExportedPackages, projectOptionalPackages, exportedPackages,
+                       projectPackageDependencies,
+                       externalPackageDeps);
+      }
+
+      return new ProjectAnalysisResult(standardApiAnalysisResult, privilegedApiAnalysisResult);
+    } catch (Exception exception) {
+      throw new ModuleApiAnalyzerException("Cannot analyze dependencies", exception);
+    }
+  }
+
+  private ApiAnalysisResult analyzeApi(AnalyzerLogger analyzerLogger, Set<String> projectExportedPackages,
+                                       Set<String> projectOptionalPackages, Set<String> externalExportedPackages,
+                                       Map<String, Set<String>> projectPackageDependencies,
+                                       Map<String, Set<String>> externalPackageDeps) {
+
+    Set<String> duplicatedPackages = removeExternalModuleExportedPackage(projectExportedPackages, externalExportedPackages);
+    projectExportedPackages.removeAll(duplicatedPackages);
+
+    final Set<String> exportedPackageClosure = new HashSet<>(projectExportedPackages);
+    final Set<String> missingAnalyzedPackages = new HashSet<>();
+    final Set<String> jrePackages = find();
+    final Map<String, Set<String>> missingExportedPackages = new HashMap<>();
+
+    boolean dirty;
+    do {
+      Set<String> diff = new HashSet<>();
+      Set<String> exportedByOtherModule = new HashSet<>();
+      for (String exportedPackage : exportedPackageClosure) {
+        if (!ignorePackage(analyzerLogger, exportedPackage, jrePackages, externalExportedPackages)) {
+          Set<String> packageDeps = projectPackageDependencies.get(exportedPackage);
+          if (packageDeps != null) {
+            for (String packageDep : packageDeps) {
+              if (!exportedPackageClosure.contains(packageDep)
+                  && !ignorePackage(analyzerLogger, packageDep, jrePackages, externalExportedPackages)) {
+                diff.add(packageDep);
+              }
+            }
+          } else {
+            packageDeps = externalPackageDeps.get(exportedPackage);
             if (packageDeps != null) {
               for (String packageDep : packageDeps) {
                 if (!exportedPackageClosure.contains(packageDep)
@@ -93,42 +132,41 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
                 }
               }
             } else {
-              packageDeps = externalPackageDeps.get(exportedPackage);
-              if (packageDeps != null) {
-                for (String packageDep : packageDeps) {
-                  if (!exportedPackageClosure.contains(packageDep)
-                      && !ignorePackage(analyzerLogger, packageDep, jrePackages, externalExportedPackages)) {
-                    diff.add(packageDep);
-                  }
-                }
-              } else {
-                if (!externalExportedPackages.contains(exportedPackage) && !projectOptionalPackages.contains(exportedPackage)) {
-                  missingAnalyzedPackages.add(exportedPackage);
-                }
+              if (!externalExportedPackages.contains(exportedPackage) && !projectOptionalPackages.contains(exportedPackage)) {
+                missingAnalyzedPackages.add(exportedPackage);
               }
             }
           }
         }
-        exportedPackageClosure.addAll(diff);
-        exportedPackageClosure.removeAll(exportedByOtherModule);
-        diff.removeAll(exportedByOtherModule);
-        dirty = !diff.isEmpty();
-      } while (dirty);
-
-      StringBuilder builder = new StringBuilder("Exported package closure:");
-      for (String exportedPackage : exportedPackageClosure) {
-        builder.append("\n").append(exportedPackage);
       }
-      analyzerLogger.log(builder.toString());
+      exportedPackageClosure.addAll(diff);
+      exportedPackageClosure.removeAll(exportedByOtherModule);
+      diff.removeAll(exportedByOtherModule);
+      dirty = !diff.isEmpty();
+    } while (dirty);
 
-      Set<String> packagesToExport = new HashSet<>(exportedPackageClosure);
-      packagesToExport.removeAll(projectExportedPackages);
-      packagesToExport.removeAll(projectOptionalPackages);
+    logPackageClosure(analyzerLogger, exportedPackageClosure);
 
-      return new ProjectDependencyAnalysis(missingExportedPackages, packagesToExport, missingAnalyzedPackages);
-    } catch (Exception exception) {
-      throw new ModuleApiAnalyzerException("Cannot analyze dependencies", exception);
+    Set<String> packagesToExport =
+        sanitizePackagesToExport(projectExportedPackages, projectOptionalPackages, exportedPackageClosure);
+
+    return new ApiAnalysisResult(missingExportedPackages, packagesToExport, missingAnalyzedPackages, duplicatedPackages);
+  }
+
+  private Set<String> sanitizePackagesToExport(Set<String> projectExportedPackages, Set<String> projectOptionalPackages,
+                                               Set<String> exportedPackageClosure) {
+    Set<String> packagesToExport = new HashSet<>(exportedPackageClosure);
+    packagesToExport.removeAll(projectExportedPackages);
+    packagesToExport.removeAll(projectOptionalPackages);
+    return packagesToExport;
+  }
+
+  private void logPackageClosure(AnalyzerLogger analyzerLogger, Set<String> exportedPackageClosure) {
+    StringBuilder builder = new StringBuilder("Exported package closure:");
+    for (String exportedPackage : exportedPackageClosure) {
+      builder.append("\n").append(exportedPackage);
     }
+    analyzerLogger.log(builder.toString());
   }
 
   private void checkExportedOptionalPackage(AnalyzerLogger analyzerLogger,
@@ -148,14 +186,16 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     }
   }
 
-  private void removeExternalModuleExportedPackage(AnalyzerLogger analyzerLogger, Set<String> projectExportedPackages,
-                                                   Set<String> externalExportedPackages) {
+  private Set<String> removeExternalModuleExportedPackage(Set<String> projectExportedPackages,
+                                                          Set<String> externalExportedPackages) {
+    Set<String> duplicatedPackages = new HashSet<>();
+
     for (String externalExportedPackage : externalExportedPackages) {
       if (projectExportedPackages.contains(externalExportedPackage)) {
-        analyzerLogger.log(buildRedundantExportedPackageMessage(externalExportedPackage));
-        projectExportedPackages.remove(externalExportedPackage);
+        duplicatedPackages.add(externalExportedPackage);
       }
     }
+    return duplicatedPackages;
   }
 
   /**
@@ -171,7 +211,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
    * @return a message for a redundantly exported package
    */
   public static String buildRedundantExportedPackageMessage(String packageName) {
-    return "Exported package '" + packageName + "' already exported by a module dependency";
+    return DUPLICATED_EXPORTED_PACKAGES + packageName;
   }
 
   /**
@@ -285,6 +325,11 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
 
   private Set<String> getModuleExportedPackages(AnalyzerLogger analyzerLogger, Properties properties) throws IOException {
     return getModulePackagesFromProperty(analyzerLogger, properties, "artifact.export.classPackages");
+  }
+
+  private Set<String> getModulePrivilegedExportedPackages(AnalyzerLogger analyzerLogger, Properties properties)
+      throws IOException {
+    return getModulePackagesFromProperty(analyzerLogger, properties, "artifact.privileged.classPackages");
   }
 
   private Set<String> getModuleOptionalPackages(AnalyzerLogger analyzerLogger, Properties properties) throws IOException {
