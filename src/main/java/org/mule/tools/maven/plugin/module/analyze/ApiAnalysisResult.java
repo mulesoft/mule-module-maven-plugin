@@ -56,9 +56,7 @@ public class ApiAnalysisResult {
     return duplicatedPackages;
   }
 
-  /**
-   * @see java.lang.Object#hashCode()
-   */
+  @Override
   public int hashCode() {
     int hashCode = getUndeclaredPackageDeps().hashCode();
     hashCode = (hashCode * 37) + getPackagesToExport().hashCode();
@@ -67,9 +65,7 @@ public class ApiAnalysisResult {
     return hashCode;
   }
 
-  /**
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
+  @Override
   public boolean equals(Object object) {
     if (object instanceof ApiAnalysisResult) {
       ApiAnalysisResult analysis = (ApiAnalysisResult) object;
@@ -82,9 +78,7 @@ public class ApiAnalysisResult {
     return false;
   }
 
-  /***
-   * @see java.lang.Object#toString()
-   */
+  @Override
   public String toString() {
     StringBuilder buffer = new StringBuilder();
 
