@@ -18,103 +18,103 @@ public class AnnotationsExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedRuntimeAnnotationInPublicClass() throws Exception {
-    doSuccessfulValidationTest("exportedRuntimeAnnotationInPublicClass");
+    doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicClass");
   }
 
   @Test
   public void missingRuntimeAnnotationInPublicClass() throws Exception {
     final String missingRuntimeAnnotationInPublicClass = "missingRuntimeAnnotationInPublicClass";
-    doMissingExportTest(missingRuntimeAnnotationInPublicClass);
+    doMissingStandardExportTest(missingRuntimeAnnotationInPublicClass);
   }
 
   @Test
   public void ignoresCompileAnnotationInPublicClass() throws Exception {
-    doSuccessfulValidationTest("ignoresCompileAnnotationInPublicClass");
+    doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicClass");
   }
 
   @Test
   public void ignoresSourceAnnotationInPublicClass() throws Exception {
-    doSuccessfulValidationTest("ignoresSourceAnnotationInPublicClass");
+    doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicClass");
   }
 
   @Test
   public void ignoresRuntimeAnnotationInPackageClass() throws Exception {
-    doSuccessfulValidationTest("ignoresRuntimeAnnotationInPackageClass");
+    doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageClass");
   }
 
   @Test
   public void exportedRuntimeAnnotationInPublicMethod() throws Exception {
     //TODO(pablo.kraan): what about private/protected/package methods?
-    doSuccessfulValidationTest("exportedRuntimeAnnotationInPublicMethod");
+    doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicMethod");
   }
 
   @Test
   public void missingRuntimeAnnotationInPublicMethod() throws Exception {
-    doMissingExportTest("missingRuntimeAnnotationInPublicMethod");
+    doMissingStandardExportTest("missingRuntimeAnnotationInPublicMethod");
   }
 
   @Test
   public void ignoresCompileAnnotationInPublicMethod() throws Exception {
-    doSuccessfulValidationTest("ignoresCompileAnnotationInPublicMethod");
+    doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicMethod");
   }
 
   @Test
   public void ignoresSourceAnnotationInPublicMethod() throws Exception {
-    doSuccessfulValidationTest("ignoresSourceAnnotationInPublicMethod");
+    doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicMethod");
   }
 
   @Test
   public void ignoresRuntimeAnnotationInPackageMethod() throws Exception {
-    doSuccessfulValidationTest("ignoresRuntimeAnnotationInPackageMethod");
+    doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageMethod");
   }
 
   @Test
   public void exportedRuntimeAnnotationInPublicField() throws Exception {
-    doSuccessfulValidationTest("exportedRuntimeAnnotationInPublicField");
+    doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicField");
   }
 
   @Test
   public void missingRuntimeAnnotationInPublicField() throws Exception {
-    doMissingExportTest("missingRuntimeAnnotationInPublicField");
+    doMissingStandardExportTest("missingRuntimeAnnotationInPublicField");
   }
 
   @Test
   public void ignoresCompileAnnotationInPublicField() throws Exception {
-    doSuccessfulValidationTest("ignoresCompileAnnotationInPublicField");
+    doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicField");
   }
 
   @Test
   public void ignoresSourceAnnotationInPublicField() throws Exception {
-    doSuccessfulValidationTest("ignoresSourceAnnotationInPublicField");
+    doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicField");
   }
 
   @Test
   public void ignoresRuntimeAnnotationInPackageField() throws Exception {
-    doSuccessfulValidationTest("ignoresRuntimeAnnotationInPackageMethod");
+    doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageMethod");
   }
 
   @Test
   public void exportedRuntimeAnnotationInPublicMethodParam() throws Exception {
-    doSuccessfulValidationTest("exportedRuntimeAnnotationInPublicMethodParam");
+    doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicMethodParam");
   }
 
   @Test
   public void missingRuntimeAnnotationInPublicMethodParam() throws Exception {
-    doMissingExportTest("missingRuntimeAnnotationInPublicMethodParam");
+    doMissingStandardExportTest("missingRuntimeAnnotationInPublicMethodParam");
   }
 
   @Test
   public void ignoresCompileAnnotationInPublicMethodParam() throws Exception {
-    doSuccessfulValidationTest("ignoresCompileAnnotationInPublicMethodParam");
+    doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicMethodParam");
   }
 
   @Test
   public void ignoresSourceAnnotationInPublicMethodParam() throws Exception {
-    doSuccessfulValidationTest("ignoresSourceAnnotationInPublicMethodParam");
+    doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicMethodParam");
   }
 
   @Test
   public void ignoresRuntimeAnnotationInPackageMethodParam() throws Exception {
-    doSuccessfulValidationTest("ignoresRuntimeAnnotationInPackageMethodParam");
+    doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageMethodParam");
   }
 }
