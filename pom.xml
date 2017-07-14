@@ -30,6 +30,21 @@
         <maven>${mavenVersion}</maven>
     </prerequisites>
 
+    <developers>
+        <developer>
+            <id>canoasan</id>
+            <name>Matias Baldini</name>
+            <email>matias.baldini@mulesoft.com</email>
+            <roles>
+                <role>Project Manager</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>pablokraan</id>
+            <name>Pablo Kraan</name>
+        </developer>
+    </developers>
+
     <properties>
         <maven>3.0.4</maven>
         <mavenVersion>2.2.1</mavenVersion>
