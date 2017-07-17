@@ -31,7 +31,8 @@ import org.apache.maven.project.MavenProject;
  */
 public class ModuleDiscoverer {
 
-  private static final String MULE_MODULE_PROPERTIES = "META-INF" + File.separator + "mule-module.properties";
+  private static final String MULE_MODULE_PROPERTIES = "mule-module.properties";
+  private static final String MULE_MODULE_PROPERTIES_LOCATION = "META-INF" + File.separator + MULE_MODULE_PROPERTIES;
 
   private final ModuleFactory moduleFactory = new ModuleFactory();
 
@@ -51,7 +52,7 @@ public class ModuleDiscoverer {
       try {
         module = moduleFactory.create(analyzerLogger, (String) properties.get("module.name"), properties);
       } catch (IOException e) {
-        throw new ModuleApiAnalyzerException("Cannot read project's mule-module.properties", e);
+        throw new ModuleApiAnalyzerException("Cannot read project's " + MULE_MODULE_PROPERTIES, e);
       }
     }
 
@@ -87,7 +88,7 @@ public class ModuleDiscoverer {
                                                                   currentThread().getContextClassLoader());
 
       try {
-        final Enumeration<URL> resources = contextClassLoader.getResources(MULE_MODULE_PROPERTIES);
+        final Enumeration<URL> resources = contextClassLoader.getResources(MULE_MODULE_PROPERTIES_LOCATION);
         while (resources.hasMoreElements()) {
           final URL url = resources.nextElement();
           Properties properties = loadProperties(url);
@@ -99,7 +100,7 @@ public class ModuleDiscoverer {
           }
         }
       } catch (Exception e) {
-        throw new ModuleApiAnalyzerException("Cannot read " + MULE_MODULE_PROPERTIES, e);
+        throw new ModuleApiAnalyzerException("Cannot read " + MULE_MODULE_PROPERTIES_LOCATION, e);
       }
     } catch (Exception e) {
       throw new ModuleApiAnalyzerException("Error getting project resources", e);
@@ -131,7 +132,7 @@ public class ModuleDiscoverer {
       for (int i = 0; i < projectResources.size(); i++) {
         final Resource resource = projectResources.get(i);
 
-        File moduleProperties = new File(resource.getDirectory(), MULE_MODULE_PROPERTIES);
+        File moduleProperties = new File(resource.getDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
         if (moduleProperties.exists()) {
           result = moduleProperties;
           break;
