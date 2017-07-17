@@ -7,6 +7,9 @@
 
 package org.mule.tools.maven.plugin.module.integration;
 
+import java.util.List;
+import java.util.Map;
+
 import io.takari.maven.testing.executor.MavenRuntime;
 import org.junit.Test;
 
@@ -31,4 +34,21 @@ public class PrivilegedExportTestCase extends AbstractExportTestCase {
     doDuplicatedPrivilegedExportTest("duplicatedExportInPrivilegedApi", "org.foo");
   }
 
+  @Test
+  public void noPrivilegedExportPackageFromModule() throws Exception {
+    Map<String, List<String>> logs = buildMultiModule("noPrivilegedExportPackageFromModule");
+
+    List<String> barLog = logs.get(BAR_MODULE_ID);
+    assertAnalyzedClasses(barLog, PATH_CLASS_B);
+    assertValidModuleApi(barLog);
+
+    List<String> fooLog = logs.get(FOO_MODULE_ID);
+    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
+    assertValidModuleApi(fooLog);
+  }
+
+  @Test
+  public void redundantPrivilegedExportPackageFromModule() throws Exception {
+    doDuplicatedPrivilegedExportTest("redundantPrivilegedExportPackageFromModule", BAR_PACKAGE);
+  }
 }

@@ -7,9 +7,6 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -22,19 +19,17 @@ public class ApiAnalysisResult {
   private final Set<String> packagesToExport;
   private final Set<String> notAnalyzedPackages;
   private final Set<String> duplicatedPackages;
-
-  public ApiAnalysisResult() {
-    this(emptyMap(), emptySet(), emptySet(), emptySet());
-  }
-
+  private final Set<String> exportedPackageClosure;
 
   public ApiAnalysisResult(Map<String, Set<String>> undeclaredPackageDeps, Set<String> packagesToExport,
-                           Set<String> notAnalyzedPackages, Set<String> duplicatedPackages) {
+                           Set<String> notAnalyzedPackages, Set<String> duplicatedPackages,
+                           Set<String> exportedPackageClosure) {
 
     this.undeclaredPackageDeps = undeclaredPackageDeps;
     this.packagesToExport = packagesToExport;
     this.notAnalyzedPackages = notAnalyzedPackages;
     this.duplicatedPackages = duplicatedPackages;
+    this.exportedPackageClosure = exportedPackageClosure;
   }
 
   /**
@@ -54,6 +49,10 @@ public class ApiAnalysisResult {
 
   public Set<String> getDuplicatedPackages() {
     return duplicatedPackages;
+  }
+
+  public Set<String> getExportedPackageClosure() {
+    return exportedPackageClosure;
   }
 
   @Override
