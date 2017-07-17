@@ -25,8 +25,6 @@ public class ModuleTestCase extends AbstractExportTestCase {
 
 
   private static final String BAR_LIBRARY_ID = "Bar Library 1.0-SNAPSHOT";
-  private static final String FOO_MODULE_ID = "Foo Module 1.0-SNAPSHOT";
-  private static final String BAR_MODULE_ID = "Bar Module 1.0-SNAPSHOT";
 
   public ModuleTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
     super(builder, "module");
