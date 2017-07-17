@@ -7,25 +7,19 @@
 
 package org.mule.tools.maven.plugin.module.analyze;
 
-import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_EXPORTED_PACKAGES;
 import static org.mule.tools.maven.plugin.module.analyze.JrePackageFinder.find;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -44,6 +38,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
    */
   @Requirement
   private DependencyAnalyzer dependencyAnalyzer;
+  private final ModuleDiscoverer moduleDiscoverer = new ModuleDiscoverer();
 
   public static String getPackageName(String className) {
     return (className.lastIndexOf(PACKAGE_SEPARATOR) < 0) ? EMPTY_PACKAGE
@@ -53,41 +48,46 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   @Override
   public ProjectAnalysisResult analyze(MavenProject project, AnalyzerLogger analyzerLogger)
       throws ModuleApiAnalyzerException {
-    final Properties properties = getModuleProperties(project);
-    if (properties == null) {
+
+    Module module = moduleDiscoverer.discoverProjectModule(project, analyzerLogger);
+    if (module == null) {
       analyzerLogger.log(PROJECT_IS_NOT_A_MULE_MODULE);
       return new ProjectAnalysisResult(null, null);
     }
 
     try {
-      Set<String> projectExportedPackages = getModuleExportedPackages(analyzerLogger, properties);
-      Set<String> projectOptionalPackages = getModuleOptionalPackages(analyzerLogger, properties);
-      checkExportedOptionalPackage(analyzerLogger, projectExportedPackages, projectOptionalPackages);
+      List<Module> modules = moduleDiscoverer.discoverExternalModules(project, analyzerLogger, module.getName());
 
-      Set<String> externalExportedPackages =
-          discoverExternalExportedPackages(project, analyzerLogger, (String) properties.get("module.name"));
+      checkExportedOptionalPackage(analyzerLogger, module.getExportedPackages(), module.getOptionalExportedPackages());
+
+      Set<String> externalExportedPackages = getExternalExportedPackages(modules);
 
       final Map<String, Set<String>> projectPackageDependencies = findPackageDependencies(project, analyzerLogger);
       final Map<String, Set<String>> externalPackageDeps = calculateExternalDeps(project, analyzerLogger);
 
       ApiAnalysisResult standardApiAnalysisResult =
-          analyzeApi(analyzerLogger, projectExportedPackages, projectOptionalPackages, externalExportedPackages,
+          analyzeApi(analyzerLogger, module.getExportedPackages(), module.getOptionalExportedPackages(), externalExportedPackages,
                      projectPackageDependencies,
                      externalPackageDeps);
 
-      Set<String> projectPrivilegedExportedPackages = getModulePrivilegedExportedPackages(analyzerLogger, properties);
+      logPackageClosure(analyzerLogger, standardApiAnalysisResult.getExportedPackageClosure());
 
       ApiAnalysisResult privilegedApiAnalysisResult = null;
 
-      if (!projectPrivilegedExportedPackages.isEmpty()) {
-        Set<String> exportedPackages = new HashSet<>(projectExportedPackages);
+      if (!module.getExportedPrivilegedPackages().isEmpty()) {
+        Set<String> externalPrivilegedExportedPackages = getExternalExportedPrivilegedPackages(modules);
+        Set<String> exportedPackages = new HashSet<>(module.getExportedPackages());
         exportedPackages.addAll(externalExportedPackages);
+        exportedPackages.addAll(externalPrivilegedExportedPackages);
 
         privilegedApiAnalysisResult =
-            analyzeApi(analyzerLogger, projectPrivilegedExportedPackages, projectOptionalPackages, exportedPackages,
+            analyzeApi(analyzerLogger, module.getExportedPrivilegedPackages(), module.getOptionalExportedPackages(),
+                       exportedPackages,
                        projectPackageDependencies,
                        externalPackageDeps);
       }
+
+      logPrivilegedPackageClosure(analyzerLogger, standardApiAnalysisResult.getExportedPackageClosure());
 
       return new ProjectAnalysisResult(standardApiAnalysisResult, privilegedApiAnalysisResult);
     } catch (Exception exception) {
@@ -145,12 +145,11 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
       dirty = !diff.isEmpty();
     } while (dirty);
 
-    logPackageClosure(analyzerLogger, exportedPackageClosure);
-
     Set<String> packagesToExport =
         sanitizePackagesToExport(projectExportedPackages, projectOptionalPackages, exportedPackageClosure);
 
-    return new ApiAnalysisResult(missingExportedPackages, packagesToExport, missingAnalyzedPackages, duplicatedPackages);
+    return new ApiAnalysisResult(missingExportedPackages, packagesToExport, missingAnalyzedPackages, duplicatedPackages,
+                                 exportedPackageClosure);
   }
 
   private Set<String> sanitizePackagesToExport(Set<String> projectExportedPackages, Set<String> projectOptionalPackages,
@@ -162,7 +161,15 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   }
 
   private void logPackageClosure(AnalyzerLogger analyzerLogger, Set<String> exportedPackageClosure) {
-    StringBuilder builder = new StringBuilder("Exported package closure:");
+    logPackageClosure(analyzerLogger, exportedPackageClosure, "Exported package closure:");
+  }
+
+  private void logPrivilegedPackageClosure(AnalyzerLogger analyzerLogger, Set<String> exportedPackageClosure) {
+    logPackageClosure(analyzerLogger, exportedPackageClosure, "Exported privileged package closure:");
+  }
+
+  private void logPackageClosure(AnalyzerLogger analyzerLogger, Set<String> exportedPackageClosure, String message) {
+    StringBuilder builder = new StringBuilder(message);
     for (String exportedPackage : exportedPackageClosure) {
       builder.append("\n").append(exportedPackage);
     }
@@ -204,14 +211,6 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
    */
   public static String buildOptionalPackageExportedMessage(List<String> packages) {
     return "Module exports packages defined as optional: " + packages;
-  }
-
-  /**
-   * @param packageName a class package
-   * @return a message for a redundantly exported package
-   */
-  public static String buildRedundantExportedPackageMessage(String packageName) {
-    return DUPLICATED_EXPORTED_PACKAGES + packageName;
   }
 
   /**
@@ -258,117 +257,22 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     return result;
   }
 
-  private Properties getModuleProperties(MavenProject project) throws ModuleApiAnalyzerException {
-    Properties properties = null;
-    try {
-      final List<Resource> projectResources = project.getBuild().getResources();
-      File result = null;
-      for (int i = 0; i < projectResources.size(); i++) {
-        final Resource resource = projectResources.get(i);
-
-        File moduleProperties1 = new File(resource.getDirectory(), "META-INF" + File.separator + "mule-module.properties");
-        if (moduleProperties1.exists()) {
-          result = moduleProperties1;
-          break;
-        }
-      }
-
-      final File moduleProperties = result;
-      if (moduleProperties != null) {
-        properties = loadProperties(moduleProperties.toURI().toURL());
-      }
-    } catch (IOException e) {
-      throw new ModuleApiAnalyzerException("Cannot access module properties", e);
-    }
-    return properties;
-  }
-
-  private Set<String> discoverExternalExportedPackages(MavenProject project, AnalyzerLogger analyzerLogger,
-                                                       String projectModuleName)
+  private Set<String> getExternalExportedPackages(List<Module> modules)
       throws ModuleApiAnalyzerException {
-    final Set<String> result = new HashSet<>();
-    Set<URL> urls = new HashSet<>();
-    List<String> elements;
-    try {
-      elements = project.getRuntimeClasspathElements();
-      elements.addAll(project.getCompileClasspathElements());
-
-      for (String element : elements) {
-        urls.add(new File(element).toURI().toURL());
-      }
-
-      ClassLoader contextClassLoader = URLClassLoader.newInstance(
-                                                                  urls.toArray(new URL[0]),
-                                                                  Thread.currentThread().getContextClassLoader());
-
-      try {
-        final Enumeration<URL> resources = contextClassLoader.getResources("META-INF/mule-module.properties");
-        while (resources.hasMoreElements()) {
-          final URL url = resources.nextElement();
-          Properties properties = loadProperties(url);
-
-          // Skips project module properties
-          if (!properties.get("module.name").equals(projectModuleName)) {
-            final Set<String> modulePackages = getModuleExportedPackages(analyzerLogger, properties);
-            result.addAll(modulePackages);
-          }
-        }
-      } catch (Exception e) {
-        throw new ModuleApiAnalyzerException("Cannot read mule-module.properties", e);
-      }
-    } catch (Exception e) {
-      throw new ModuleApiAnalyzerException("Error getting project resources", e);
+    Set<String> result = new HashSet<>();
+    for (Module module : modules) {
+      result.addAll(module.getExportedPackages());
     }
-
     return result;
   }
 
-  private Set<String> getModuleExportedPackages(AnalyzerLogger analyzerLogger, Properties properties) throws IOException {
-    return getModulePackagesFromProperty(analyzerLogger, properties, "artifact.export.classPackages");
-  }
-
-  private Set<String> getModulePrivilegedExportedPackages(AnalyzerLogger analyzerLogger, Properties properties)
-      throws IOException {
-    return getModulePackagesFromProperty(analyzerLogger, properties, "artifact.privileged.classPackages");
-  }
-
-  private Set<String> getModuleOptionalPackages(AnalyzerLogger analyzerLogger, Properties properties) throws IOException {
-    return getModulePackagesFromProperty(analyzerLogger, properties, "artifact.export.optionalPackages");
-  }
-
-  private Set<String> getModulePackagesFromProperty(AnalyzerLogger analyzerLogger, Properties properties, String key) {
-    final Set<String> optionalPackages = new HashSet<>();
-
-    final String classPackages = (String) properties.get(key);
-    if (classPackages != null) {
-      StringBuilder builder = new StringBuilder("Found module: " + properties.get("module.name") + " with property=" + key + ":");
-      for (String classPackage : classPackages.split(",")) {
-        if (classPackage != null) {
-          classPackage = classPackage.trim();
-          if (classPackage != null) {
-            optionalPackages.add(classPackage);
-            builder.append("\n").append(classPackage);
-          }
-        }
-      }
-      analyzerLogger.log(builder.toString());
+  private Set<String> getExternalExportedPrivilegedPackages(List<Module> modules)
+      throws ModuleApiAnalyzerException {
+    Set<String> result = new HashSet<>();
+    for (Module module : modules) {
+      result.addAll(module.getExportedPrivilegedPackages());
     }
-    return optionalPackages;
-  }
-
-  private Properties loadProperties(URL url) throws IOException {
-    Properties properties = new Properties();
-
-    InputStream resourceStream = null;
-    try {
-      resourceStream = url.openStream();
-      properties.load(resourceStream);
-    } finally {
-      if (resourceStream != null) {
-        resourceStream.close();
-      }
-    }
-    return properties;
+    return result;
   }
 
   private Map<String, Set<String>> calculateExternalDeps(MavenProject project, AnalyzerLogger analyzerLogger) throws IOException {
