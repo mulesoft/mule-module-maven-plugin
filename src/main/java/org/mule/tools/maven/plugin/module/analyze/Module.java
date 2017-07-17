@@ -11,8 +11,8 @@ import java.util.Set;
 
 /**
  * Contains all the required information about a given Mule module that is needed for the API analysis.
-  *
-  * @since 1.0
+ *
+ * @since 1.0
  */
 public class Module {
 
