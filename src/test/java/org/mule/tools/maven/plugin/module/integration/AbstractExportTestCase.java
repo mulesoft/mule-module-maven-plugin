@@ -60,6 +60,7 @@ public abstract class AbstractExportTestCase {
   private final String folder;
 
   public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception {
+    //    this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose", "-X").build();
     this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose").build();
     this.folder = folder;
   }

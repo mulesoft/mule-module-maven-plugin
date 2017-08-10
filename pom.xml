@@ -50,6 +50,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+        <muleModuleMavenPluginVersion>${project.version}</muleModuleMavenPluginVersion>
     </properties>
 
     <scm>
@@ -342,7 +343,7 @@
                 <executions>
                     <execution>
                         <id>testProperties</id>
-                        <phase>process-test-resources</phase>
+                        <phase>process-test-classes</phase>
                         <goals>
                             <goal>testProperties</goal>
                         </goals>
