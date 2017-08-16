@@ -15,9 +15,7 @@
     </modules>
 
 
-    <properties>
-        <it-plugin.version>1.0-SNAPSHOT</it-plugin.version>
-    </properties>
+
 
     <build>
         <pluginManagement>
