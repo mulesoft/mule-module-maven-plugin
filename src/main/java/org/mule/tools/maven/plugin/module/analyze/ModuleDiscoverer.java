@@ -32,7 +32,7 @@ import org.apache.maven.project.MavenProject;
 public class ModuleDiscoverer {
 
   private static final String MULE_MODULE_PROPERTIES = "mule-module.properties";
-  private static final String MULE_MODULE_PROPERTIES_LOCATION = "META-INF" + File.separator + MULE_MODULE_PROPERTIES;
+  private static final String MULE_MODULE_PROPERTIES_LOCATION = "META-INF/" + MULE_MODULE_PROPERTIES;
 
   private final ModuleFactory moduleFactory = new ModuleFactory();
 
