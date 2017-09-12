@@ -50,6 +50,9 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+
+        <!-- Empty argLine added for use by the jacoco prepare-agent goal -->
+        <argLine></argLine>
     </properties>
 
     <scm>
@@ -355,7 +358,7 @@
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <!-- Need of more heap space in order to run the unit tests !-->
-                    <argLine>-Xmx384m</argLine>
+                    <argLine>@{argLine} -Xmx384m</argLine>
                     <systemPropertyVariables>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
