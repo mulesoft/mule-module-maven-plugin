@@ -356,6 +356,7 @@
                 <configuration>
                     <!-- Need of more heap space in order to run the unit tests !-->
                     <argLine>-Xmx384m</argLine>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
                     <systemPropertyVariables>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
