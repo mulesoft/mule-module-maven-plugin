@@ -57,7 +57,6 @@
         <publisher.version>v2-rev13-1.19.0</publisher.version>
         <asm.version>5.0.4</asm.version>
         <jdk.version>1.8</jdk.version>
-        <skipGpg>true</skipGpg>
         <license.path>LICENSE_HEADER.txt</license.path>
         <javaFormatter.plugin.version>2.0.1</javaFormatter.plugin.version>
         <license.maven.plugin.version>2.11</license.maven.plugin.version>
@@ -65,6 +64,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+        <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
     </properties>
 
     <scm>
@@ -334,23 +334,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <skip>${skipGpg}</skip>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>io.takari.maven.plugins</groupId>
                 <artifactId>takari-lifecycle-plugin</artifactId>
                 <version>1.10.0</version>
@@ -456,4 +439,71 @@
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <skipVerifications>false</skipVerifications>
+                <skipGpg>false</skipGpg>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <skip>${skipGpg}</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>${maven.enforcer.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>enforce-no-snapshots-in-deps</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireReleaseDeps>
+                                            <message>No Snapshots Allowed in Deps!</message>
+                                        </requireReleaseDeps>
+                                        <requireReleaseVersion>
+                                            <message>No Snapshots Allowed in Project Version!</message>
+                                        </requireReleaseVersion>
+                                        <requirePluginVersions>
+                                            <message>Best Practice is to always define plugin versions!</message>
+                                            <unCheckedPluginList>
+                                                org.apache.maven.plugins:maven-plugin-plugin,
+                                                org.apache.maven.plugins:maven-site-plugin,
+                                                org.apache.maven.plugins:maven-resources-plugin,
+                                                org.apache.maven.plugins:maven-jar-plugin,
+                                                org.apache.maven.plugins:maven-clean-plugin,
+                                                org.apache.maven.plugins:maven-install-plugin,
+                                                org.apache.maven.plugins:maven-deploy-plugin
+                                            </unCheckedPluginList>
+                                        </requirePluginVersions>
+                                    </rules>
+                                    <skip>${skipNoSnapshotsEnforcerPluginRule}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
