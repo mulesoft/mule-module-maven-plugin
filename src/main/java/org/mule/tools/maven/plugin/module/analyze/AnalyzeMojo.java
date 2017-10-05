@@ -8,6 +8,8 @@
 package org.mule.tools.maven.plugin.module.analyze;
 
 import static java.lang.System.lineSeparator;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 import java.util.Map;
 import java.util.Set;
@@ -15,10 +17,8 @@ import java.util.Set;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
@@ -29,8 +29,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 /**
  * Analyzes the exported API in a mule module and checks that there are no missing exported packages.
  */
-@Mojo(name = "analyze", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true,
-    defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "analyze", requiresDependencyResolution = TEST, threadSafe = true, defaultPhase = COMPILE)
 public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
 
   public static final String NO_MODULE_API_PROBLEMS_FOUND = "No module API problems found";
