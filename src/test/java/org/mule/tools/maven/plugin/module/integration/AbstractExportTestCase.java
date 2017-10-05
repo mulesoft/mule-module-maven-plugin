@@ -271,7 +271,7 @@ public abstract class AbstractExportTestCase {
 
   private MavenExecutionResult runMaven(String projectName) throws Exception {
     File basedir = resources.getBasedir(folder + separator + projectName);
-    return mavenRuntime.forProject(basedir).execute("mule-module:analyze");
+    return mavenRuntime.forProject(basedir).execute("compile", "mule-module:analyze");
   }
 
   private Map<String, List<String>> splitLog(List<String> logLines) {
