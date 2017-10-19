@@ -434,8 +434,7 @@
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <!-- Need of more heap space in order to run the unit tests !-->
-                    <argLine>-Xmx384m</argLine>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <argLine>-Dfile.encoding=UTF-8 -Xmx384m -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectjVersion}/aspectjweaver-${aspectjVersion}.jar -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile='${session.executionRootDirectory}/target/jacoco.exec'</argLine>
                     <systemPropertyVariables>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
