@@ -421,6 +421,7 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                     <systemPropertyVariables>
                         <maven.home>${maven.home}</maven.home>
+                        <surefire.project.version>${project.version}</surefire.project.version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

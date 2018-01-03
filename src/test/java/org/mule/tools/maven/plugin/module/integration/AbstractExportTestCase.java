@@ -46,8 +46,9 @@ public abstract class AbstractExportTestCase {
   protected static final String BAR_PACKAGE = "org.bar";
   protected static final String[] ANALYZED_CLASSES_A_B = {PATH_CLASS_A, PATH_CLASS_B};
   protected static final String[] ANALYZED_CLASSES_A_B_C = {PATH_CLASS_A, PATH_CLASS_B, CLASS_PATH_C};
-  protected static final String FOO_MODULE_ID = "Foo Module 1.0-SNAPSHOT";
-  protected static final String BAR_MODULE_ID = "Bar Module 1.0-SNAPSHOT";
+  protected static final String PROJECT_VERSION = System.getProperty("surefire.project.version");
+  protected static final String FOO_MODULE_ID = "Foo Module " + PROJECT_VERSION;
+  protected static final String BAR_MODULE_ID = "Bar Module " + PROJECT_VERSION;
 
   private static final String sectionSeparator = INFO_LOG_PREFIX +
       "------------------------------------------------------------------------";
