@@ -125,6 +125,7 @@
         <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
+        <license.maven.plugin.version>2.11</license.maven.plugin.version>
     </properties>
 
     <scm>
@@ -365,11 +366,15 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.8.0</version>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license.maven.plugin.version}</version>
                 <configuration>
-                    <header>${license.path}</header>
+                    <header>com/mycila/maven/plugin/license/templates/CPAL.txt</header>
+                    <properties>
+                        <owner>MuleSoft, Inc</owner>
+                        <project.url>http://www.mulesoft.com</project.url>
+                    </properties>
                     <excludes>
                         <exclude>target/**</exclude>
                         <exclude>.gitignore</exclude>
@@ -384,6 +389,12 @@
                         <exclude>**/archetype-resources/**</exclude>
                         <exclude>**/src/main/java/package.html</exclude>
                     </excludes>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
                 </configuration>
                 <executions>
                     <execution>
