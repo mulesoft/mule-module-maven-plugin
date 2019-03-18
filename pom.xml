@@ -367,7 +367,7 @@
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
-                <version>1.8.0</version>
+                <version>2.11.0</version>
                 <configuration>
                     <header>${license.path}</header>
                     <excludes>
@@ -384,6 +384,9 @@
                         <exclude>**/archetype-resources/**</exclude>
                         <exclude>**/src/main/java/package.html</exclude>
                     </excludes>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>
