@@ -64,7 +64,7 @@ public class ResultCollector {
       packageDeps.put(packageName, deps);
     }
     final String depPackageName = getPackageName(name);
-    //TODO(pablo.kraan): is OK just to ignore the default package?
+    // TODO(pablo.kraan): is OK just to ignore the default package?
     if (!packageName.equals(depPackageName) && !"".equals(depPackageName) && !deps.contains(depPackageName)) {
       analyzerLogger.log("Adding dependency from " + packageName + " to " + depPackageName);
       deps.add(depPackageName);

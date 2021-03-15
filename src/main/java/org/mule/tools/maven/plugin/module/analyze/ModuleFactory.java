@@ -22,8 +22,8 @@ public class ModuleFactory {
    * Creates a module from a Mule module descriptor
    *
    * @param analyzerLogger collects all the logging information generated during the project analysis
-   * @param moduleName name of the module to create
-   * @param properties module descriptor properties
+   * @param moduleName     name of the module to create
+   * @param properties     module descriptor properties
    * @return a non null module that corresponds to the given properties
    * @throws IOException
    */

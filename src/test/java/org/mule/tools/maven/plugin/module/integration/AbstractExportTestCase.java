@@ -77,7 +77,7 @@ public abstract class AbstractExportTestCase {
   /**
    * Tests a successful validation scenario of a standard API
    *
-   * @param projectName name of the folder containing the maven project to test.
+   * @param projectName     name of the folder containing the maven project to test.
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
@@ -88,7 +88,7 @@ public abstract class AbstractExportTestCase {
   /**
    * Tests a successful validation scenario of a privileged API
    *
-   * @param projectName name of the folder containing the maven project to test.
+   * @param projectName     name of the folder containing the maven project to test.
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
@@ -119,7 +119,7 @@ public abstract class AbstractExportTestCase {
   /**
    * Tests a failing validation scenario
    *
-   * @param projectName name of the folder containing the maven project to test.
+   * @param projectName     name of the folder containing the maven project to test.
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
@@ -130,7 +130,7 @@ public abstract class AbstractExportTestCase {
   /**
    * Tests a failing validation scenario
    *
-   * @param projectName name of the folder containing the maven project to test.
+   * @param projectName     name of the folder containing the maven project to test.
    * @param analyzedClasses full paths of classes that should be analyzed during the test.
    * @throws Exception
    */
@@ -151,7 +151,7 @@ public abstract class AbstractExportTestCase {
   /**
    * Tests a failing validation scenario caused by duplicated exported packages
    *
-   * @param projectName name of the folder containing the maven project to test.
+   * @param projectName        name of the folder containing the maven project to test.
    * @param duplicatedPackages packages that expected to be duplicated.
    * @throws Exception
    */
@@ -163,7 +163,7 @@ public abstract class AbstractExportTestCase {
   /**
    * Tests a failing validation scenario caused by duplicated privileged exported packages
    *
-   * @param projectName name of the folder containing the maven project to test.
+   * @param projectName        name of the folder containing the maven project to test.
    * @param duplicatedPackages packages that expected to be duplicated.
    * @throws Exception
    */
@@ -227,9 +227,9 @@ public abstract class AbstractExportTestCase {
   /**
    * Asserts that there are the expected log entries regarding missing exported packages
    *
-   * @param log log lines to check
+   * @param log          log lines to check
    * @param errorMessage
-   * @param packages packages that are expected to be missing
+   * @param packages     packages that are expected to be missing
    */
   protected void assertMissingExportedPackages(List<String> log, String errorMessage, String... packages) {
     String[] lines = new String[packages.length + 1];
@@ -250,7 +250,7 @@ public abstract class AbstractExportTestCase {
   /**
    * Asserts that there are the expected log entries regarding missing analyzed classes
    *
-   * @param log log lines to check
+   * @param log        log lines to check
    * @param classNames names of the classes that are expected to be analyzed
    */
   protected void assertAnalyzedClasses(List<String> log, String... classNames) {

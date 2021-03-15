@@ -30,7 +30,7 @@ public class JrePackageFinder {
     try {
       final Properties properties = loadProperties(JrePackageFinder.class.getClassLoader().getResource(JRE_PACKAGES_PROPERTIES));
 
-      //TODO(pablo.kraan): MULE-12497:  Manage different JRE version on module maven plugin
+      // TODO(pablo.kraan): MULE-12497: Manage different JRE version on module maven plugin
       final String jreVersionProperty = "jre-1.8";
       if (!properties.keySet().contains(jreVersionProperty)) {
         throw new IllegalStateException(UNABLE_TO_DETERMINE_JRE_PACKAGES_ERROR);

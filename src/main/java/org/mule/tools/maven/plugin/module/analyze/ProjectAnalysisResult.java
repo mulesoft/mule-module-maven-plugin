@@ -17,7 +17,7 @@ public class ProjectAnalysisResult {
   /**
    * Creates a new analysis result for the project
    *
-   * @param standardApi analysis result for the standard module API.
+   * @param standardApi   analysis result for the standard module API.
    * @param privilegedAPi analysis result for the privileged module API.
    */
   public ProjectAnalysisResult(ApiAnalysisResult standardApi, ApiAnalysisResult privilegedAPi) {
