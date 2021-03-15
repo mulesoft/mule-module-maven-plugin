@@ -36,8 +36,7 @@ public class DependencyClassFileVisitor implements ClassFileVisitor {
   }
 
   /*
-   * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String,
-   *      java.io.InputStream)
+   * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String, java.io.InputStream)
    */
   public void visitClass(String className, InputStream in) {
     // TODO(pablo.kraan): MULE-14419 - ignoring classes defined inside META-INF folder and module-info until Java 9 is supported

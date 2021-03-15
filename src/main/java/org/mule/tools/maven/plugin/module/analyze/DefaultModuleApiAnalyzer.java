@@ -28,7 +28,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
 
   public static final String PROJECT_IS_NOT_A_MULE_MODULE = "Project is not a mule module";
 
-  //TODO(pablo.kraan): move these things ot a util class
+  // TODO(pablo.kraan): move these things ot a util class
   private static final char PACKAGE_SEPARATOR = '.';
   private static final String EMPTY_PACKAGE = "";
 

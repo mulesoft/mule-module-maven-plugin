@@ -23,8 +23,7 @@ public class CollectorClassFileVisitor
   }
 
   /*
-   * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String,
-   *      java.io.InputStream)
+   * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String, java.io.InputStream)
    */
   public void visitClass(String className, InputStream in) {
     classes.add(className);

@@ -23,10 +23,10 @@ public class Module {
   /**
    * Creates a new module
    *
-   * @param name name of the module.
-   * @param exportedPackages Java packages that are exported on the standard module's API.
+   * @param name                       name of the module.
+   * @param exportedPackages           Java packages that are exported on the standard module's API.
    * @param exportedPrivilegedPackages Java packages that are exported on the privileged module's API.
-   * @param optionalExportedPackages Java packages that are exported optionally when present on another module.
+   * @param optionalExportedPackages   Java packages that are exported optionally when present on another module.
    */
   public Module(String name, Set<String> exportedPackages, Set<String> exportedPrivilegedPackages,
                 Set<String> optionalExportedPackages) {

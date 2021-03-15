@@ -38,7 +38,7 @@ public class ModuleDiscoverer {
   /**
    * Discovers the module corresponding to the Maven project under analysis
    *
-   * @param project project being analyzed.
+   * @param project        project being analyzed.
    * @param analyzerLogger collects all the logging information generated during the project analysis
    * @return a module corresponding to the project being analyzed, null if the project is not a Mule module
    * @throws ModuleApiAnalyzerException
@@ -61,8 +61,8 @@ public class ModuleDiscoverer {
   /**
    * Discovers all the Mule modules used as dependencies on the Maven project under analysis
    *
-   * @param project project being analyzed.
-   * @param analyzerLogger collects all the logging information generated during the project analysis
+   * @param project           project being analyzed.
+   * @param analyzerLogger    collects all the logging information generated during the project analysis
    * @param projectModuleName name of the module that corresponds to the project being analyzed
    * @return a list containing all the Mule modules that are dependencies of the analyzed project.
    * @throws ModuleApiAnalyzerException

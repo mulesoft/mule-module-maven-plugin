@@ -43,7 +43,7 @@ public class AnnotationsExportTestCase extends AbstractExportTestCase {
 
   @Test
   public void exportedRuntimeAnnotationInPublicMethod() throws Exception {
-    //TODO(pablo.kraan): what about private/protected/package methods?
+    // TODO(pablo.kraan): what about private/protected/package methods?
     doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicMethod");
   }
 
