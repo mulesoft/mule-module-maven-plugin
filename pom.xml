@@ -426,7 +426,7 @@
             <plugin>
                 <groupId>io.takari.maven.plugins</groupId>
                 <artifactId>takari-lifecycle-plugin</artifactId>
-                <version>1.10.0</version>
+                <version>1.13.10</version>
                 <executions>
                     <execution>
                         <id>testProperties</id>
