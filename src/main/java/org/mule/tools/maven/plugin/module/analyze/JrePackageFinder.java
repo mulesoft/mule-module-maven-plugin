@@ -6,7 +6,6 @@
  */
 package org.mule.tools.maven.plugin.module.analyze;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.codehaus.plexus.util.PropertyUtils.loadProperties;
 
 import java.util.HashSet;
@@ -40,7 +39,7 @@ public class JrePackageFinder {
       final Set<String> result = new HashSet<>();
       for (String jrePackage : packages.split(",")) {
         jrePackage = jrePackage.trim();
-        if (!isEmpty(jrePackage)) {
+        if (!jrePackage.isEmpty()) {
           result.add(jrePackage);
         }
       }
