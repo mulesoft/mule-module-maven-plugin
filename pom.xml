@@ -269,7 +269,7 @@
         <dependency>
             <groupId>classworlds</groupId>
             <artifactId>classworlds</artifactId>
-            <version>1.1</version>
+            <version>20040709.190353</version>
         </dependency>
 
         <!-- dependencies to annotations -->
