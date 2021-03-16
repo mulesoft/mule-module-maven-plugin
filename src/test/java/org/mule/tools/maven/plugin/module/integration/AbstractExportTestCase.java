@@ -8,6 +8,7 @@ package org.mule.tools.maven.plugin.module.integration;
 
 import static java.io.File.separator;
 import static java.lang.System.arraycopy;
+import static java.lang.System.getProperty;
 import static java.util.Arrays.stream;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -26,6 +27,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import io.takari.maven.testing.TestResources;
@@ -46,11 +48,9 @@ public abstract class AbstractExportTestCase {
   protected static final String[] ANALYZED_CLASSES_A_B = {PATH_CLASS_A, PATH_CLASS_B};
   protected static final String[] ANALYZED_CLASSES_A_B_C = {PATH_CLASS_A, PATH_CLASS_B, CLASS_PATH_C};
   protected static final String PROJECT_VERSION = System.getProperty("surefire.project.version");
-  protected static final String FOO_MODULE_ID = "Foo Module " + PROJECT_VERSION;
-  protected static final String BAR_MODULE_ID = "Bar Module " + PROJECT_VERSION;
-
-  private static final String sectionSeparator = INFO_LOG_PREFIX +
-      "------------------------------------------------------------------------";
+  protected static final String FOO_MODULE_ID = "Foo Module ";
+  protected static final String BAR_MODULE_ID = "Bar Module ";
+  private static final Pattern moduleTitleStart = Pattern.compile("\\[INFO\\]\\s-+<.*>-+");
   private static final String ANALYZING_CLASS_PREFIX = INFO_LOG_PREFIX + "Analyzing class: ";
   private static final String MAVEN_BUILD_PREFIX = "[INFO] Building ";
 
@@ -60,7 +60,9 @@ public abstract class AbstractExportTestCase {
   private final String folder;
 
   public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception {
-    this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose").build();
+    this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose", "--batch-mode",
+                                               "-Dmaven.repo.local=" + getProperty("maven.repo.local", ""))
+        .build();
     this.folder = folder;
   }
 
@@ -280,13 +282,13 @@ public abstract class AbstractExportTestCase {
     int i = 0;
     while (i < logLines.size()) {
       String currentLine = logLines.get(i);
-      if (sectionSeparator.equals(currentLine)) {
+      if (moduleTitleStart.matcher(currentLine).find()) {
         if (i + 1 < logLines.size() && logLines.get(i + 1).startsWith(MAVEN_BUILD_PREFIX)) {
           int moduleLogStart = i;
-          String moduleName = logLines.get(i + 1).substring(MAVEN_BUILD_PREFIX.length());
+          String moduleName = logLines.get(i + 1).substring(MAVEN_BUILD_PREFIX.length()).split(PROJECT_VERSION)[0];
           i = i + 3;
 
-          while (i < logLines.size() && !(logLines.get(i).equals(sectionSeparator))) {
+          while (i < logLines.size() && !(moduleTitleStart.matcher(logLines.get(i)).find())) {
             i++;
           }
 

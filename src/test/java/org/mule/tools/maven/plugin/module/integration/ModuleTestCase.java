@@ -23,7 +23,7 @@ import org.junit.Test;
 public class ModuleTestCase extends AbstractExportTestCase {
 
 
-  private static final String BAR_LIBRARY_ID = "Bar Library " + PROJECT_VERSION;
+  private static final String BAR_LIBRARY_ID = "Bar Library ";
 
   public ModuleTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
     super(builder, "module");

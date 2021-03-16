@@ -14,9 +14,6 @@
         <module>fooModule</module>
     </modules>
 
-
-
-
     <build>
         <pluginManagement>
             <plugins>
@@ -30,4 +27,3 @@
         </pluginManagement>
     </build>
 </project>
-
