@@ -112,7 +112,7 @@
     <properties>
         <maven>3.0.4</maven>
         <mavenVersion>2.2.1</mavenVersion>
-        <doxiaVersion>1.4</doxiaVersion>
+        <doxiaVersion>1.9.1</doxiaVersion>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven-plugin-plugin.version>3.3</maven-plugin-plugin.version>
         <maven.api.version>3.0.4</maven.api.version>
