@@ -1,1 +1,2 @@
 projectType: runtime
+devBranchesRegex: "1\\.3\\.0"
