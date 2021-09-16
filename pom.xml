@@ -6,7 +6,7 @@
 
     <groupId>org.mule.tools.maven</groupId>
     <artifactId>mule-module-maven-plugin</artifactId>
-    <version>1.1.1-HF-SNAPSHOT</version>
+    <version>1.1.1-20210915</version>
     <packaging>maven-plugin</packaging>
 
     <name>Mule Module Analyzer Plugin</name>
