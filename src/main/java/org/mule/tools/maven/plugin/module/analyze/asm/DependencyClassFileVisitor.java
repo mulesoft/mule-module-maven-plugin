@@ -40,7 +40,7 @@ public class DependencyClassFileVisitor implements ClassFileVisitor {
    */
   public void visitClass(String className, InputStream in) {
     // TODO(pablo.kraan): MULE-14419 - ignoring classes defined inside META-INF folder and module-info until Java 9 is supported
-    if (className.startsWith("META-INF.") || className.equals("module-info")) {
+    if (className.startsWith("META-INF.") || className.contains(".META-INF.") || className.equals("module-info")) {
       return;
     }
 
