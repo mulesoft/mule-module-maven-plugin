@@ -86,10 +86,16 @@ public class ModuleDiscoverer {
                                                                   urls.toArray(new URL[0]),
                                                                   currentThread().getContextClassLoader());
 
+      final Enumeration<URL> resources;
       try {
-        final Enumeration<URL> resources = contextClassLoader.getResources(MULE_MODULE_PROPERTIES_LOCATION);
-        while (resources.hasMoreElements()) {
-          final URL url = resources.nextElement();
+        resources = contextClassLoader.getResources(MULE_MODULE_PROPERTIES_LOCATION);
+      } catch (Exception e) {
+        throw new ModuleApiAnalyzerException("Cannot read " + MULE_MODULE_PROPERTIES_LOCATION, e);
+      }
+
+      while (resources.hasMoreElements()) {
+        final URL url = resources.nextElement();
+        try {
           Properties properties = loadProperties(url);
 
           // Skips project module properties
@@ -97,9 +103,9 @@ public class ModuleDiscoverer {
           if (!moduleName.equals(projectModuleName)) {
             result.add(moduleFactory.create(analyzerLogger, moduleName, properties));
           }
+        } catch (Exception e) {
+          throw new ModuleApiAnalyzerException("Cannot read " + MULE_MODULE_PROPERTIES_LOCATION + " from " + url.toString(), e);
         }
-      } catch (Exception e) {
-        throw new ModuleApiAnalyzerException("Cannot read " + MULE_MODULE_PROPERTIES_LOCATION, e);
       }
     } catch (Exception e) {
       throw new ModuleApiAnalyzerException("Error getting project resources", e);
@@ -111,14 +117,8 @@ public class ModuleDiscoverer {
   private Properties loadProperties(URL url) throws IOException {
     Properties properties = new Properties();
 
-    InputStream resourceStream = null;
-    try {
-      resourceStream = url.openStream();
+    try (InputStream resourceStream = url.openStream()) {
       properties.load(resourceStream);
-    } finally {
-      if (resourceStream != null) {
-        resourceStream.close();
-      }
     }
     return properties;
   }
@@ -128,9 +128,7 @@ public class ModuleDiscoverer {
     try {
       final List<Resource> projectResources = project.getBuild().getResources();
       File result = null;
-      for (int i = 0; i < projectResources.size(); i++) {
-        final Resource resource = projectResources.get(i);
-
+      for (final Resource resource : projectResources) {
         File moduleProperties = new File(resource.getDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
         if (moduleProperties.exists()) {
           result = moduleProperties;
