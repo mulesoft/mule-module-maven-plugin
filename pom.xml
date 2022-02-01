@@ -84,7 +84,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-        <plexus.component.metadata.version>2.1.0</plexus.component.metadata.version>
+        <plexus.component.metadata.version>2.1.1</plexus.component.metadata.version>
         <takari.lifecycle.plugin.version>1.13.10</takari.lifecycle.plugin.version>
         <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
         <license.maven.plugin.version>2.11</license.maven.plugin.version>
