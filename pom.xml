@@ -74,7 +74,7 @@
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
         <maven-core.version>3.6.3</maven-core.version>
         <asm.version>9.1</asm.version>
-        <takari.test.version>3.0.0</takari.test.version>
+        <takari.test.version>3.0.1</takari.test.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jdk.version>1.8</jdk.version>
@@ -83,9 +83,9 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-        <plexus.component.metadata.version>2.1.0</plexus.component.metadata.version>
+        <plexus.component.metadata.version>2.1.1</plexus.component.metadata.version>
         <takari.lifecycle.plugin.version>1.13.10</takari.lifecycle.plugin.version>
-        <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
+        <maven.enforcer.plugin.version>1.4.2.jenkins-1</maven.enforcer.plugin.version>
 
         <mulesoftLicenseVersion>1.1.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
