@@ -71,14 +71,14 @@
 
     <properties>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-        <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
-        <maven-core.version>3.6.3</maven-core.version>
-        <asm.version>9.1</asm.version>
+        <maven-plugin-annotations.version>3.9.0</maven-plugin-annotations.version>
+        <maven-core.version>3.9.4</maven-core.version>
+        <asm.version>9.5</asm.version>
         <takari.test.version>3.0.0</takari.test.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jdk.version>1.8</jdk.version>
-        <javaFormatter.plugin.version>2.14.0</javaFormatter.plugin.version>
+        <javaFormatter.plugin.version>2.23.0</javaFormatter.plugin.version>
         <formatterGoal>validate</formatterGoal>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <skipVerifications>false</skipVerifications>
@@ -92,14 +92,14 @@
         <licensePath>LICENSE_HEADER_80.txt</licensePath>
         <licenseYear>2023</licenseYear>
 
-        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-        <maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
-        <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <maven.plugin.plugin.version>3.9.0</maven.plugin.plugin.version>
+        <maven.clean.plugin.version>3.3.1</maven.clean.plugin.version>
         <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
-        <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
-        <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
-        <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
-        <maven.site.plugin.version>3.9.1</maven.site.plugin.version>
+        <maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
+        <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
+        <maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
+        <maven.site.plugin.version>3.12.1</maven.site.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
     </properties>
 
