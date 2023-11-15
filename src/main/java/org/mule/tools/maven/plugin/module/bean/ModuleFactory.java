@@ -11,8 +11,12 @@ import static java.util.stream.Collectors.toCollection;
 import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -64,9 +68,24 @@ public class ModuleFactory {
   }
 
   private Set<ServiceDefinition> getModuleServiceDefinitions(ModuleLogger analyzerLogger, Properties properties) {
-    return getValuesFromProperty(analyzerLogger, properties, "artifact.export.services")
-        .stream()
-        .map(ServiceDefinition::new)
+    final Set<String> valuesFromProperty = getValuesFromProperty(analyzerLogger, properties, "artifact.export.services");
+
+    Map<String, List<String>> services = new TreeMap<>();
+
+    for (String valueFromProperty : valuesFromProperty) {
+      final String[] split = valueFromProperty.split(":");
+
+      services.computeIfAbsent(split[0], k -> new ArrayList<>())
+          .add(split[1]);
+    }
+
+    return services.entrySet().stream()
+        .map(entry -> {
+          final ServiceDefinition serviceDefinition = new ServiceDefinition();
+          serviceDefinition.setServiceInterface(entry.getKey());
+          serviceDefinition.setServiceImplementations(entry.getValue());
+          return serviceDefinition;
+        })
         .collect(toCollection(TreeSet::new));
   }
 

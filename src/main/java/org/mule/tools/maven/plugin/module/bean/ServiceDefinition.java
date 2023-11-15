@@ -6,16 +6,12 @@
  */
 package org.mule.tools.maven.plugin.module.bean;
 
-public class ServiceDefinition {
+import java.util.List;
+
+public class ServiceDefinition implements Comparable<ServiceDefinition> {
 
   private String serviceInterface;
-  private String serviceImplementation;
-
-  ServiceDefinition(String string) {
-    final String[] split = string.split(":");
-    serviceInterface = split[0];
-    serviceImplementation = split[1];
-  }
+  private List<String> serviceImplementations;
 
   public String getServiceInterface() {
     return serviceInterface;
@@ -25,16 +21,16 @@ public class ServiceDefinition {
     this.serviceInterface = serviceInterface;
   }
 
-  public String getServiceImplementation() {
-    return serviceImplementation;
+  public List<String> getServiceImplementations() {
+    return serviceImplementations;
   }
 
-  public void setServiceImplementation(String serviceImplementation) {
-    this.serviceImplementation = serviceImplementation;
+  public void setServiceImplementations(List<String> serviceImplementations) {
+    this.serviceImplementations = serviceImplementations;
   }
 
   @Override
-  public String toString() {
-    return serviceInterface + ":" + serviceImplementation;
+  public int compareTo(ServiceDefinition o) {
+    return this.getServiceInterface().compareTo(o.getServiceInterface());
   }
 }
