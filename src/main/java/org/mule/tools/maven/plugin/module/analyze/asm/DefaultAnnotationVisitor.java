@@ -6,7 +6,7 @@
  */
 package org.mule.tools.maven.plugin.module.analyze.asm;
 
-import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
@@ -20,9 +20,9 @@ public class DefaultAnnotationVisitor extends AnnotationVisitor {
 
   private final String packageName;
   private final ResultCollector resultCollector;
-  private final AnalyzerLogger analyzerLogger;
+  private final ModuleLogger analyzerLogger;
 
-  public DefaultAnnotationVisitor(String packageName, ResultCollector resultCollector, AnalyzerLogger analyzerLogger) {
+  public DefaultAnnotationVisitor(String packageName, ResultCollector resultCollector, ModuleLogger analyzerLogger) {
     super(Opcodes.ASM5);
     this.packageName = packageName;
     this.resultCollector = resultCollector;

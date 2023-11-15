@@ -8,7 +8,7 @@ package org.mule.tools.maven.plugin.module.analyze.asm;
 
 import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.getPackageName;
 
-import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,9 +21,9 @@ public class ResultCollector {
 
   private final Set<String> classes = new HashSet<String>();
   private final Map<String, Set<String>> packageDeps = new HashMap<String, Set<String>>();
-  private final AnalyzerLogger analyzerLogger;
+  private final ModuleLogger analyzerLogger;
 
-  public ResultCollector(AnalyzerLogger analyzerLogger) {
+  public ResultCollector(ModuleLogger analyzerLogger) {
     this.analyzerLogger = analyzerLogger;
   }
 

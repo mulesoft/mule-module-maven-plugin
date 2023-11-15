@@ -6,9 +6,11 @@
  */
 package org.mule.tools.maven.plugin.module.analyze;
 
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
+
 import org.apache.maven.plugin.logging.Log;
 
-public class VerboseAnalyzerLogger implements AnalyzerLogger {
+public class VerboseAnalyzerLogger implements ModuleLogger {
 
   private final Log logger;
 

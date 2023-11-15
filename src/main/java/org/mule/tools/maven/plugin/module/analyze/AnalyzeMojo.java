@@ -10,6 +10,8 @@ import static java.lang.System.lineSeparator;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -119,7 +121,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
   private boolean checkModuleApi() throws MojoExecutionException {
     ProjectAnalysisResult analysis;
     try {
-      final AnalyzerLogger analyzerLogger = verbose ? new VerboseAnalyzerLogger(getLog()) : new SilentAnalyzerLogger();
+      final ModuleLogger analyzerLogger = verbose ? new VerboseAnalyzerLogger(getLog()) : new SilentAnalyzerLogger();
       analysis = createProjectDependencyAnalyzer().analyze(project, analyzerLogger);
     } catch (ModuleApiAnalyzerException exception) {
       throw new MojoExecutionException("Cannot analyze module API", exception);

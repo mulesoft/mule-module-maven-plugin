@@ -8,6 +8,9 @@ package org.mule.tools.maven.plugin.module.analyze;
 
 import static org.mule.tools.maven.plugin.module.analyze.JrePackageFinder.find;
 
+import org.mule.tools.maven.plugin.module.bean.Module;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -45,7 +48,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   }
 
   @Override
-  public ProjectAnalysisResult analyze(MavenProject project, AnalyzerLogger analyzerLogger)
+  public ProjectAnalysisResult analyze(MavenProject project, ModuleLogger analyzerLogger)
       throws ModuleApiAnalyzerException {
 
     Module module = moduleDiscoverer.discoverProjectModule(project, analyzerLogger);
@@ -94,7 +97,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     }
   }
 
-  private ApiAnalysisResult analyzeApi(AnalyzerLogger analyzerLogger, Set<String> projectExportedPackages,
+  private ApiAnalysisResult analyzeApi(ModuleLogger analyzerLogger, Set<String> projectExportedPackages,
                                        Set<String> projectOptionalPackages, Set<String> externalExportedPackages,
                                        Map<String, Set<String>> projectPackageDependencies,
                                        Map<String, Set<String>> externalPackageDeps) {
@@ -159,15 +162,15 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     return packagesToExport;
   }
 
-  private void logPackageClosure(AnalyzerLogger analyzerLogger, Set<String> exportedPackageClosure) {
+  private void logPackageClosure(ModuleLogger analyzerLogger, Set<String> exportedPackageClosure) {
     logPackageClosure(analyzerLogger, exportedPackageClosure, "Exported package closure:");
   }
 
-  private void logPrivilegedPackageClosure(AnalyzerLogger analyzerLogger, Set<String> exportedPackageClosure) {
+  private void logPrivilegedPackageClosure(ModuleLogger analyzerLogger, Set<String> exportedPackageClosure) {
     logPackageClosure(analyzerLogger, exportedPackageClosure, "Exported privileged package closure:");
   }
 
-  private void logPackageClosure(AnalyzerLogger analyzerLogger, Set<String> exportedPackageClosure, String message) {
+  private void logPackageClosure(ModuleLogger analyzerLogger, Set<String> exportedPackageClosure, String message) {
     StringBuilder builder = new StringBuilder(message);
     for (String exportedPackage : exportedPackageClosure) {
       builder.append("\n").append(exportedPackage);
@@ -175,7 +178,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     analyzerLogger.log(builder.toString());
   }
 
-  private void checkExportedOptionalPackage(AnalyzerLogger analyzerLogger,
+  private void checkExportedOptionalPackage(ModuleLogger analyzerLogger,
                                             Set<String> projectExportedPackages, Set<String> projectOptionalPackages)
       throws ModuleApiAnalyzerException {
     List<String> packages = new ArrayList<>();
@@ -236,7 +239,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     return "Removing JRE package " + packageName + " from export package closure";
   }
 
-  private boolean ignorePackage(AnalyzerLogger analyzerLogger, String packageName, Set<String> jrePackages,
+  private boolean ignorePackage(ModuleLogger analyzerLogger, String packageName, Set<String> jrePackages,
                                 Set<String> otherModuleExportedPackages) {
     boolean result = false;
 
@@ -274,7 +277,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     return result;
   }
 
-  private Map<String, Set<String>> calculateExternalDeps(MavenProject project, AnalyzerLogger analyzerLogger) throws IOException {
+  private Map<String, Set<String>> calculateExternalDeps(MavenProject project, ModuleLogger analyzerLogger) throws IOException {
     final Map<String, Set<String>> result = new HashMap<>();
     for (Object projectArtifact : project.getArtifacts()) {
       final Artifact artifact = (Artifact) projectArtifact;
@@ -299,7 +302,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     return result;
   }
 
-  protected Map<String, Set<String>> findPackageDependencies(MavenProject project, AnalyzerLogger analyzerLogger)
+  protected Map<String, Set<String>> findPackageDependencies(MavenProject project, ModuleLogger analyzerLogger)
       throws IOException {
     String outputDirectory = project.getBuild().getOutputDirectory();
     final Map<String, Set<String>> packageDeps = findPackageDependencies(outputDirectory, analyzerLogger);
@@ -307,7 +310,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
     return packageDeps;
   }
 
-  private Map<String, Set<String>> findPackageDependencies(String path, AnalyzerLogger analyzerLogger)
+  private Map<String, Set<String>> findPackageDependencies(String path, ModuleLogger analyzerLogger)
       throws IOException {
     URL url = new File(path).toURI().toURL();
 

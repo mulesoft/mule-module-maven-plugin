@@ -6,9 +6,9 @@
  */
 package org.mule.tools.maven.plugin.module.analyze.asm;
 
-import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
 import org.mule.tools.maven.plugin.module.analyze.ClassFileVisitorUtils;
 import org.mule.tools.maven.plugin.module.analyze.DependencyAnalyzer;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +24,7 @@ public class ASMDependencyAnalyzer
   /*
    * @see org.mule.tools.maven.plugin.module.analyze.DependencyAnalyzer#analyze(java.net.URL)
    */
-  public Map<String, Set<String>> analyze(URL url, AnalyzerLogger analyzerLogger)
+  public Map<String, Set<String>> analyze(URL url, ModuleLogger analyzerLogger)
       throws IOException {
     DependencyClassFileVisitor visitor = new DependencyClassFileVisitor(analyzerLogger);
 

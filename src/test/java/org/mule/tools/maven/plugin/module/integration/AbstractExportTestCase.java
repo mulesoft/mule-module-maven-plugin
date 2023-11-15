@@ -6,14 +6,6 @@
  */
 package org.mule.tools.maven.plugin.module.integration;
 
-import static java.io.File.separator;
-import static java.lang.System.arraycopy;
-import static java.lang.System.getProperty;
-import static java.util.Arrays.stream;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_EXPORTED_PACKAGES;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.MODULE_API_PROBLEMS_FOUND;
@@ -21,6 +13,16 @@ import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NOT_ANALYZE
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_MODULE_API_PROBLEMS_FOUND;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PACKAGES_TO_EXPORT_ERROR;
 import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PRIVILEGED_PACKAGES_TO_EXPORT_ERROR;
+
+import static java.io.File.separator;
+import static java.lang.System.arraycopy;
+import static java.lang.System.getProperty;
+import static java.util.Arrays.stream;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -34,6 +36,7 @@ import io.takari.maven.testing.TestResources;
 import io.takari.maven.testing.executor.MavenExecutionResult;
 import io.takari.maven.testing.executor.MavenRuntime;
 import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
+
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
@@ -61,7 +64,9 @@ public abstract class AbstractExportTestCase {
 
   public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception {
     this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose", "--batch-mode",
-                                               "-Dmaven.repo.local=" + getProperty("maven.repo.local", ""))
+                                               "-Dmaven.repo.local=" + getProperty("maven.repo.local", ""),
+                                               "-Dmaven.compiler.source=1.8",
+                                               "-Dmaven.compiler.target=1.8")
         .build();
     this.folder = folder;
   }

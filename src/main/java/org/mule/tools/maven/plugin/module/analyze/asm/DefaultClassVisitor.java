@@ -12,7 +12,7 @@ import static org.mule.tools.maven.plugin.module.analyze.asm.AccessUtils.isPriva
 import static org.mule.tools.maven.plugin.module.analyze.asm.AccessUtils.isProtected;
 import static org.mule.tools.maven.plugin.module.analyze.asm.AccessUtils.isPublic;
 
-import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -31,7 +31,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
 public class DefaultClassVisitor extends ClassVisitor {
 
   private final ResultCollector resultCollector;
-  private final AnalyzerLogger analyzerLogger;
+  private final ModuleLogger analyzerLogger;
 
   private final String packageName;
   private final SignatureVisitor signatureVisitor;
@@ -46,7 +46,7 @@ public class DefaultClassVisitor extends ClassVisitor {
 
   public DefaultClassVisitor(String packageName, SignatureVisitor signatureVisitor, AnnotationVisitor annotationVisitor,
                              FieldVisitor fieldVisitor, MethodVisitor methodVisitor,
-                             ResultCollector resultCollector, AnalyzerLogger analyzerLogger) {
+                             ResultCollector resultCollector, ModuleLogger analyzerLogger) {
     super(Opcodes.ASM5);
     this.packageName = packageName;
     this.signatureVisitor = signatureVisitor;

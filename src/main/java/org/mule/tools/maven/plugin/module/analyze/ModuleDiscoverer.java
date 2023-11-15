@@ -8,6 +8,10 @@ package org.mule.tools.maven.plugin.module.analyze;
 
 import static java.lang.Thread.currentThread;
 
+import org.mule.tools.maven.plugin.module.bean.Module;
+import org.mule.tools.maven.plugin.module.bean.ModuleFactory;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +47,7 @@ public class ModuleDiscoverer {
    * @return a module corresponding to the project being analyzed, null if the project is not a Mule module
    * @throws ModuleApiAnalyzerException
    */
-  public Module discoverProjectModule(MavenProject project, AnalyzerLogger analyzerLogger)
+  public Module discoverProjectModule(MavenProject project, ModuleLogger analyzerLogger)
       throws ModuleApiAnalyzerException {
     Module module = null;
     Properties properties = getModuleProperties(project);
@@ -67,7 +71,7 @@ public class ModuleDiscoverer {
    * @return a list containing all the Mule modules that are dependencies of the analyzed project.
    * @throws ModuleApiAnalyzerException
    */
-  public List<Module> discoverExternalModules(MavenProject project, AnalyzerLogger analyzerLogger,
+  public List<Module> discoverExternalModules(MavenProject project, ModuleLogger analyzerLogger,
                                               String projectModuleName)
       throws ModuleApiAnalyzerException {
     final List<Module> result = new LinkedList<>();

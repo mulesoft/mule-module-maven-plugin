@@ -4,9 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze;
+package org.mule.tools.maven.plugin.module.common;
 
-public interface AnalyzerLogger {
+public interface ModuleLogger {
 
   void log(String message);
 }

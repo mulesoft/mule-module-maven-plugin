@@ -6,15 +6,20 @@
  */
 package org.mule.tools.maven.plugin.module.integration;
 
+import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.buildRemovedJrePackageMessage;
+import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.buildRemovedSunPackageMessage;
+
+import static org.apache.commons.lang3.JavaVersion.JAVA_11;
+import static org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.buildRemovedJrePackageMessage;
-import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.buildRemovedSunPackageMessage;
+import static org.junit.Assume.assumeFalse;
 
 import java.util.List;
 
 import io.takari.maven.testing.executor.MavenRuntime;
+
 import org.junit.Test;
 
 public class MiscellaneousTestCase extends AbstractExportTestCase {
@@ -30,6 +35,8 @@ public class MiscellaneousTestCase extends AbstractExportTestCase {
 
   @Test
   public void ignoresJreExportedPackage() throws Exception {
+    assumeFalse(isJavaVersionAtLeast(JAVA_11));
+
     List<String> log = buildSingleModule("ignoresJreExportedPackage");
 
     assertValidModuleApi(log);

@@ -7,8 +7,9 @@
 package org.mule.tools.maven.plugin.module.analyze.asm;
 
 import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.getPackageName;
-import org.mule.tools.maven.plugin.module.analyze.AnalyzerLogger;
+
 import org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,9 +29,9 @@ import org.objectweb.asm.signature.SignatureVisitor;
 public class DependencyClassFileVisitor implements ClassFileVisitor {
 
   private final ResultCollector resultCollector;
-  private final AnalyzerLogger analyzerLogger;
+  private final ModuleLogger analyzerLogger;
 
-  public DependencyClassFileVisitor(AnalyzerLogger analyzerLogger) {
+  public DependencyClassFileVisitor(ModuleLogger analyzerLogger) {
     this.analyzerLogger = analyzerLogger;
     resultCollector = new ResultCollector(analyzerLogger);
   }

@@ -77,7 +77,7 @@
         <takari.test.version>3.0.0</takari.test.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>11</jdk.version>
         <javaFormatter.plugin.version>2.14.0</javaFormatter.plugin.version>
         <formatterGoal>validate</formatterGoal>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
@@ -280,6 +280,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+				</configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -6,6 +6,8 @@
  */
 package org.mule.tools.maven.plugin.module.analyze;
 
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,7 +32,7 @@ public final class ClassFileVisitorUtils {
     // private constructor for utility class
   }
 
-  public static void accept(URL url, ClassFileVisitor visitor, AnalyzerLogger analyzerLogger)
+  public static void accept(URL url, ClassFileVisitor visitor, ModuleLogger analyzerLogger)
       throws IOException {
     analyzerLogger.log("Analyzing: " + url);
     if (url.getPath().endsWith(".jar")) {
