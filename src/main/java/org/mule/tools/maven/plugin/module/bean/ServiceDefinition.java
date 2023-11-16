@@ -7,6 +7,7 @@
 package org.mule.tools.maven.plugin.module.bean;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ServiceDefinition implements Comparable<ServiceDefinition> {
 
@@ -33,4 +34,23 @@ public class ServiceDefinition implements Comparable<ServiceDefinition> {
   public int compareTo(ServiceDefinition o) {
     return this.getServiceInterface().compareTo(o.getServiceInterface());
   }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(serviceImplementations, serviceInterface);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ServiceDefinition other = (ServiceDefinition) obj;
+    return Objects.equals(serviceImplementations, other.serviceImplementations)
+        && Objects.equals(serviceInterface, other.serviceInterface);
+  }
+
 }

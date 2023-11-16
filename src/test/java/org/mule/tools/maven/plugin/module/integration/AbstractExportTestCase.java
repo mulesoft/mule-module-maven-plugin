@@ -21,8 +21,8 @@ import static java.util.Arrays.stream;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -63,10 +63,16 @@ public abstract class AbstractExportTestCase {
   private final String folder;
 
   public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception {
-    this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose", "--batch-mode",
+    this(builder, folder, "1.8");
+  }
+
+  public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder, String sourceLevel) throws Exception {
+    this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose",
+                                               "--batch-mode",
                                                "-Dmaven.repo.local=" + getProperty("maven.repo.local", ""),
-                                               "-Dmaven.compiler.source=1.8",
-                                               "-Dmaven.compiler.target=1.8")
+                                               "-Dmaven.compiler.source=" + sourceLevel,
+                                               "-Dmaven.compiler.target=" + sourceLevel,
+                                               "-e")
         .build();
     this.folder = folder;
   }
@@ -276,9 +282,13 @@ public abstract class AbstractExportTestCase {
     assertThat(log, hasItem(containsString(NO_MODULE_API_PROBLEMS_FOUND)));
   }
 
-  private MavenExecutionResult runMaven(String projectName) throws Exception {
+  protected MavenExecutionResult runMaven(String projectName) throws Exception {
+    return runMaven(projectName, "compile", "mule-module:analyze");
+  }
+
+  protected MavenExecutionResult runMaven(String projectName, String... goals) throws Exception {
     File basedir = resources.getBasedir(folder + separator + projectName);
-    return mavenRuntime.forProject(basedir).execute("compile", "mule-module:analyze");
+    return mavenRuntime.forProject(basedir).execute(goals);
   }
 
   private Map<String, List<String>> splitLog(List<String> logLines) {

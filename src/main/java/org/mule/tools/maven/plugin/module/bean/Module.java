@@ -15,6 +15,16 @@ import java.util.Set;
  */
 public class Module {
 
+  public static final String MULE_MODULE_PROPERTIES = "mule-module.properties";
+  public static final String MULE_MODULE_PROPERTIES_LOCATION = "META-INF/" + MULE_MODULE_PROPERTIES;
+
+  public static final String MODULE_NAME = "module.name";
+  public static final String EXPORT_CLASS_PACKAGES = "artifact.export.classPackages";
+  public static final String PRIVILEGED_CLASS_PACKAGES = "artifact.privileged.classPackages";
+  public static final String PRIVILEGED_ARTIFACT_IDS = "artifact.privileged.artifactIds";
+  public static final String EXPORT_OPTIONAL_PACKAGES = "artifact.export.optionalPackages";
+  public static final String EXPORT_SERVICES = "artifact.export.services";
+
   private final String name;
   private final Set<String> exportedPackages;
   private final Set<String> exportedPrivilegedPackages;

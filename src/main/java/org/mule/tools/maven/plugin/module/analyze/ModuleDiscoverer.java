@@ -6,6 +6,10 @@
  */
 package org.mule.tools.maven.plugin.module.analyze;
 
+import static org.mule.tools.maven.plugin.module.bean.Module.MODULE_NAME;
+import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES;
+import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES_LOCATION;
+
 import static java.lang.Thread.currentThread;
 
 import org.mule.tools.maven.plugin.module.bean.Module;
@@ -34,9 +38,6 @@ import org.apache.maven.project.MavenProject;
  */
 public class ModuleDiscoverer {
 
-  private static final String MULE_MODULE_PROPERTIES = "mule-module.properties";
-  private static final String MULE_MODULE_PROPERTIES_LOCATION = "META-INF/" + MULE_MODULE_PROPERTIES;
-
   private final ModuleFactory moduleFactory = new ModuleFactory();
 
   /**
@@ -53,7 +54,7 @@ public class ModuleDiscoverer {
     Properties properties = getModuleProperties(project);
     if (properties != null) {
       try {
-        module = moduleFactory.create(analyzerLogger, (String) properties.get("module.name"), properties);
+        module = moduleFactory.create(analyzerLogger, (String) properties.get(MODULE_NAME), properties);
       } catch (IOException e) {
         throw new ModuleApiAnalyzerException("Cannot read project's " + MULE_MODULE_PROPERTIES, e);
       }
@@ -103,7 +104,7 @@ public class ModuleDiscoverer {
           Properties properties = loadProperties(url);
 
           // Skips project module properties
-          String moduleName = (String) properties.get("module.name");
+          String moduleName = (String) properties.get(MODULE_NAME);
           if (!moduleName.equals(projectModuleName)) {
             result.add(moduleFactory.create(analyzerLogger, moduleName, properties));
           }

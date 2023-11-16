@@ -22,6 +22,10 @@ public class PrivilegedApiReflectiveWrapper {
   }
 
   public String[] getPrivilegedPackages() {
+    if (privilegedApiInfo == null) {
+      return new String[0];
+    }
+
     try {
       return (String[]) privilegedApiAnnotationClass.getDeclaredMethod("privilegedPackages")
           .invoke(privilegedApiInfo);
@@ -31,6 +35,10 @@ public class PrivilegedApiReflectiveWrapper {
   }
 
   public String[] getPrivilegedArtifactIds() {
+    if (privilegedApiInfo == null) {
+      return new String[0];
+    }
+
     try {
       return (String[]) privilegedApiAnnotationClass.getDeclaredMethod("privilegedArtifactIds")
           .invoke(privilegedApiInfo);

@@ -6,6 +6,13 @@
  */
 package org.mule.tools.maven.plugin.module.generate;
 
+import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_CLASS_PACKAGES;
+import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_SERVICES;
+import static org.mule.tools.maven.plugin.module.bean.Module.MODULE_NAME;
+import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES_LOCATION;
+import static org.mule.tools.maven.plugin.module.bean.Module.PRIVILEGED_ARTIFACT_IDS;
+import static org.mule.tools.maven.plugin.module.bean.Module.PRIVILEGED_CLASS_PACKAGES;
+
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.ModuleLayer.boot;
 import static java.lang.ModuleLayer.defineModulesWithOneLoader;
@@ -14,21 +21,31 @@ import static java.lang.module.ModuleFinder.ofSystem;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 
+import static org.apache.commons.io.IOUtils.LINE_SEPARATOR_UNIX;
+import static org.apache.commons.io.IOUtils.write;
+import static org.apache.commons.io.IOUtils.writeLines;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_CLASSES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
 
 import org.mule.tools.maven.plugin.module.bean.ServiceDefinition;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.ModuleLayer.Controller;
 import java.lang.module.Configuration;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -54,6 +71,11 @@ public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
+    if (!project.getPackaging().equals("jar")) {
+      getLog().info("Project is of type '" + project.getPackaging() + "', not 'jar'. Skipping...");
+      return;
+    }
+
     try {
       doExecute();
     } catch (MojoExecutionException | MojoFailureException e) {
@@ -64,16 +86,26 @@ public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
   }
 
   public void doExecute() throws MojoFailureException, Exception {
-    final Module currentModule = resolveCurrentModule();
+    getLog().info("Resolving current module...");
+    final Optional<java.lang.Module> currentModuleOpt = resolveCurrentModule();
+    if (currentModuleOpt.isEmpty()) {
+      getLog().info("No module found. Skipping...");
+      return;
+    }
+    java.lang.Module currentModule = currentModuleOpt.get();
+
+    getLog().info("Loading module information for '" + currentModule.getName() + "'...");
     final org.mule.tools.maven.plugin.module.bean.Module muleModule = toMuleModule(currentModule);
 
-    // TODO generate and save .properties
-    // TODO generate service descriptors
+    getLog().info("Setting properties for mule module '" + currentModule.getName() + "'...");
+    final Properties properties = toMuleModuleProperties(muleModule);
 
-    System.out.println(muleModule);
+    getLog().info("Saving generated files for module '" + currentModule.getName() + "'...");
+    writeFiles(muleModule, properties);
   }
 
-  private org.mule.tools.maven.plugin.module.bean.Module toMuleModule(final Module currentModule) throws ClassNotFoundException {
+  private org.mule.tools.maven.plugin.module.bean.Module toMuleModule(final java.lang.Module currentModule)
+      throws ClassNotFoundException {
     final PrivilegedApiReflectiveWrapper privilegedApiReflectiveWrapper = new PrivilegedApiReflectiveWrapper(currentModule);
 
     final Set<String> exportedPrivilegedPackages = Stream.of(privilegedApiReflectiveWrapper.getPrivilegedPackages())
@@ -103,7 +135,8 @@ public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
                                                               moduleServiceDefinitions);
   }
 
-  private Set<String> resolveExportedPackages(final Module currentModule, final Set<String> exportedPrivilegedPackages) {
+  private Set<String> resolveExportedPackages(final java.lang.Module currentModule,
+                                              final Set<String> exportedPrivilegedPackages) {
     final Set<String> exportedPackages = currentModule.getPackages()
         .stream()
         .filter(not(exportedPrivilegedPackages::contains))
@@ -117,7 +150,7 @@ public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
         .filter(req -> currentModule.getLayer().findModule(req.name())
             .map(reqMod -> {
               try {
-                return reqMod.getResourceAsStream("/META-INF/mule-module.properties") == null;
+                return reqMod.getResourceAsStream(MULE_MODULE_PROPERTIES_LOCATION) == null;
               } catch (IOException e) {
                 throw new RuntimeException(e);
               }
@@ -130,7 +163,7 @@ public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
     return exportedPackages;
   }
 
-  private Module resolveCurrentModule() throws MojoFailureException {
+  private Optional<java.lang.Module> resolveCurrentModule() throws MojoFailureException {
     try {
       final ModuleFinder finder = ModuleFinder.of(project.getCompileClasspathElements()
           .stream()
@@ -147,17 +180,94 @@ public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
                                                          singletonList(boot()),
                                                          getSystemClassLoader());
 
-      final String currentModuleName = finder.findAll()
+      return finder.findAll()
           .stream()
           .filter(modRef -> modRef.location().map(loc -> !loc.toString().endsWith(".jar")).orElse(false))
           .map(modRef -> modRef.descriptor().name())
           .findFirst()
-          .get();
-      return controller.layer()
-          .findModule(currentModuleName)
-          .get();
+          .flatMap(controller.layer()::findModule);
     } catch (DependencyResolutionRequiredException e) {
       throw new MojoFailureException(e.getMessage(), e);
+    }
+  }
+
+  private Properties toMuleModuleProperties(final org.mule.tools.maven.plugin.module.bean.Module muleModule) {
+    final Properties properties = new Properties();
+
+    properties.put(MODULE_NAME, muleModule.getName());
+
+    if (!muleModule.getExportedPackages().isEmpty()) {
+      properties.put(EXPORT_CLASS_PACKAGES,
+                     muleModule.getExportedPackages().stream().collect(joining(",")));
+    }
+
+    if (!muleModule.getExportedPrivilegedPackages().isEmpty()) {
+      properties.put(PRIVILEGED_CLASS_PACKAGES,
+                     muleModule.getExportedPrivilegedPackages().stream().collect(joining(",")));
+    }
+
+    if (!muleModule.getModulePrivilegedArtifactIds().isEmpty()) {
+      properties.put(PRIVILEGED_ARTIFACT_IDS,
+                     muleModule.getModulePrivilegedArtifactIds().stream().collect(joining(",")));
+    }
+
+    if (!muleModule.getModuleServiceDefinitions().isEmpty()) {
+      StringBuilder propertyValue = new StringBuilder();
+      for (ServiceDefinition serviceDefinition : muleModule.getModuleServiceDefinitions()) {
+        for (String serviceImplementation : serviceDefinition.getServiceImplementations()) {
+          propertyValue.append(serviceDefinition.getServiceInterface())
+              .append(":")
+              .append(serviceImplementation)
+              .append(",");
+        }
+      }
+
+      properties.put(EXPORT_SERVICES,
+                     propertyValue.substring(0, propertyValue.length() - 1));
+    }
+
+    return properties;
+  }
+
+  private void writeFiles(final org.mule.tools.maven.plugin.module.bean.Module muleModule, final Properties properties)
+      throws MojoFailureException, IOException, FileNotFoundException {
+    if (!muleModule.getModuleServiceDefinitions().isEmpty()) {
+      for (ServiceDefinition serviceDefinition : muleModule.getModuleServiceDefinitions()) {
+        final File outputServiceFile =
+            new File(project.getBuild().getOutputDirectory(), "META-INF/services/" + serviceDefinition.getServiceInterface());
+        if (!outputServiceFile.getParentFile().isDirectory() || !outputServiceFile.getParentFile().exists()) {
+          if (!outputServiceFile.getParentFile().mkdirs()) {
+            throw new MojoFailureException("Could not create directory '" + outputServiceFile.getParentFile().getAbsolutePath()
+                + "'.");
+          }
+        }
+
+        if (!outputServiceFile.exists()) {
+          getLog().info("Writing '" + outputServiceFile.getAbsolutePath() + "'...");
+          try (final OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputServiceFile))) {
+            write("#Generated by org.mule.tools.maven.plugin.module.generate.GenerateMojo" + LINE_SEPARATOR_UNIX, fw);
+            writeLines(serviceDefinition.getServiceImplementations(), LINE_SEPARATOR_UNIX, fw);
+
+            fw.flush();
+          }
+        } else {
+          getLog().info("Service descriptor for '" + serviceDefinition.getServiceInterface() + "' already present, skipping.");
+        }
+      }
+    }
+
+    final File outputModuleFile = new File(project.getBuild().getOutputDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
+    if (!outputModuleFile.getParentFile().isDirectory() || !outputModuleFile.getParentFile().exists()) {
+      if (!outputModuleFile.getParentFile().mkdirs()) {
+        throw new MojoFailureException("Could not create directory '" + outputModuleFile.getParentFile().getAbsolutePath()
+            + "'.");
+      }
+    }
+
+    getLog().info("Writing '" + outputModuleFile.getAbsolutePath() + "'...");
+    try (final FileOutputStream fos = new FileOutputStream(outputModuleFile)) {
+      properties.store(fos, "Generated by org.mule.tools.maven.plugin.module.generate.GenerateMojo");
+      fos.flush();
     }
   }
 

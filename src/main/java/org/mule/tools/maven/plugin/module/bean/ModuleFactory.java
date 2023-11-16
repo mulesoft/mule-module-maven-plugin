@@ -6,6 +6,12 @@
  */
 package org.mule.tools.maven.plugin.module.bean;
 
+import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_CLASS_PACKAGES;
+import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_OPTIONAL_PACKAGES;
+import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_SERVICES;
+import static org.mule.tools.maven.plugin.module.bean.Module.PRIVILEGED_ARTIFACT_IDS;
+import static org.mule.tools.maven.plugin.module.bean.Module.PRIVILEGED_CLASS_PACKAGES;
+
 import static java.util.stream.Collectors.toCollection;
 
 import org.mule.tools.maven.plugin.module.common.ModuleLogger;
@@ -51,24 +57,24 @@ public class ModuleFactory {
   }
 
   private Set<String> getModuleExportedPackages(ModuleLogger analyzerLogger, Properties properties) throws IOException {
-    return getValuesFromProperty(analyzerLogger, properties, "artifact.export.classPackages");
+    return getValuesFromProperty(analyzerLogger, properties, EXPORT_CLASS_PACKAGES);
   }
 
   private Set<String> getModulePrivilegedExportedPackages(ModuleLogger analyzerLogger, Properties properties)
       throws IOException {
-    return getValuesFromProperty(analyzerLogger, properties, "artifact.privileged.classPackages");
+    return getValuesFromProperty(analyzerLogger, properties, PRIVILEGED_CLASS_PACKAGES);
   }
 
   private Set<String> getModuleOptionalPackages(ModuleLogger analyzerLogger, Properties properties) throws IOException {
-    return getValuesFromProperty(analyzerLogger, properties, "artifact.export.optionalPackages");
+    return getValuesFromProperty(analyzerLogger, properties, EXPORT_OPTIONAL_PACKAGES);
   }
 
   private Set<String> getModulePrivilegedArtifactIds(ModuleLogger analyzerLogger, Properties properties) throws IOException {
-    return getValuesFromProperty(analyzerLogger, properties, "artifact.privileged.artifactIds");
+    return getValuesFromProperty(analyzerLogger, properties, PRIVILEGED_ARTIFACT_IDS);
   }
 
   private Set<ServiceDefinition> getModuleServiceDefinitions(ModuleLogger analyzerLogger, Properties properties) {
-    final Set<String> valuesFromProperty = getValuesFromProperty(analyzerLogger, properties, "artifact.export.services");
+    final Set<String> valuesFromProperty = getValuesFromProperty(analyzerLogger, properties, EXPORT_SERVICES);
 
     Map<String, List<String>> services = new TreeMap<>();
 
