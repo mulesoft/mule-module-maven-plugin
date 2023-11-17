@@ -7,7 +7,8 @@
 package org.mule.tools.maven.plugin.module.analyze;
 
 import static java.lang.System.lineSeparator;
-import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+
+import static org.apache.maven.plugins.annotations.LifecyclePhase.VALIDATE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 import org.mule.tools.maven.plugin.module.common.ModuleLogger;
@@ -30,7 +31,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 /**
  * Analyzes the exported API in a mule module and checks that there are no missing exported packages.
  */
-@Mojo(name = "analyze", requiresDependencyResolution = TEST, threadSafe = true, defaultPhase = COMPILE)
+@Mojo(name = "analyze", requiresDependencyResolution = TEST, threadSafe = true, defaultPhase = VALIDATE)
 public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
 
   public static final String NO_MODULE_API_PROBLEMS_FOUND = "No module API problems found";
@@ -69,6 +70,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
   /*
    * @see org.apache.maven.plugin.Mojo#execute()
    */
+  @Override
   public void execute()
       throws MojoExecutionException, MojoFailureException {
     if (isSkip()) {
@@ -105,6 +107,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     }
   }
 
+  @Override
   public void contextualize(Context context)
       throws ContextException {
     this.context = context;
@@ -122,7 +125,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     ProjectAnalysisResult analysis;
     try {
       final ModuleLogger analyzerLogger = verbose ? new VerboseAnalyzerLogger(getLog()) : new SilentAnalyzerLogger();
-      analysis = createProjectDependencyAnalyzer().analyze(project, analyzerLogger);
+      analysis = createProjectDependencyAnalyzer().analyze(project, analyzerLogger, getLog());
     } catch (ModuleApiAnalyzerException exception) {
       throw new MojoExecutionException("Cannot analyze module API", exception);
     }

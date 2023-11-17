@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -48,12 +49,12 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   }
 
   @Override
-  public ProjectAnalysisResult analyze(MavenProject project, ModuleLogger analyzerLogger)
+  public ProjectAnalysisResult analyze(MavenProject project, ModuleLogger analyzerLogger, Log log)
       throws ModuleApiAnalyzerException {
 
     Module module = moduleDiscoverer.discoverProjectModule(project, analyzerLogger);
     if (module == null) {
-      analyzerLogger.log(PROJECT_IS_NOT_A_MULE_MODULE);
+      log.info(PROJECT_IS_NOT_A_MULE_MODULE);
       return new ProjectAnalysisResult(null, null);
     }
 

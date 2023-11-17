@@ -6,6 +6,7 @@
  */
 package org.mule.tools.maven.plugin.module.integration;
 
+import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyzer.PROJECT_IS_NOT_A_MULE_MODULE;
 import static org.mule.tools.maven.plugin.module.bean.Module.MODULE_NAME;
 import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES_LOCATION;
 
@@ -17,6 +18,7 @@ import static org.apache.commons.io.IOUtils.readLines;
 import static org.apache.commons.lang3.JavaVersion.JAVA_11;
 import static org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
@@ -55,6 +57,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     MavenExecutionResult result = runMaven(string, "package", "mule-module:analyze");
     result.assertErrorFreeLog();
     assertThat(result.getLog(), hasItem("[INFO] No module API problems found"));
+    assertThat(result.getLog(), not(hasItem("[INFO] " + PROJECT_IS_NOT_A_MULE_MODULE)));
     return result;
   }
 
@@ -83,7 +86,21 @@ public class GenerateTestCase extends AbstractExportTestCase {
   }
 
   @Test
-  public void somthingOnMetaInf() throws Exception {
+  public void requiresTransitiveOnJvmModule() throws Exception {
+    MavenExecutionResult result = doRunMaven("requiresTransitiveOnJvmModule");
+    final Module muleModule = loadMuleModuleProperties(".", result);
+
+    assertThat(muleModule.getName(), is("org.foo.simple"));
+    // not contains any java.xml package
+    assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.foo"));
+    assertThat(muleModule.getExportedPrivilegedPackages(), empty());
+    assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
+    assertThat(muleModule.getModuleServiceDefinitions(), empty());
+    assertThat(muleModule.getOptionalExportedPackages(), empty());
+  }
+
+  @Test
+  public void somethingOnMetaInf() throws Exception {
     MavenExecutionResult result = doRunMaven("somethingOnMetaInf");
     final Module muleModule = loadMuleModuleProperties(".", result);
 
@@ -124,12 +141,59 @@ public class GenerateTestCase extends AbstractExportTestCase {
 
   @Test
   public void requiresTransitiveNonMuleModule() throws Exception {
-    MavenExecutionResult result = doRunMaven("requiresTransitiveNonMuleModule");
+    MavenExecutionResult result = runMaven("requiresTransitiveNonMuleModule", "package", "mule-module:analyze");
+    result.assertErrorFreeLog();
+    assertThat(result.getLog(), hasItem("[INFO] No module API problems found"));
+
+    final long nonMuleModuleProjects = result.getLog()
+        .stream()
+        .filter(log -> log.equals("[INFO] " + PROJECT_IS_NOT_A_MULE_MODULE))
+        .count();
+    // Only one occurrence for `non-mule-sub-module`
+    assertThat(nonMuleModuleProjects, is(1L));
+
     final Module muleModule =
         loadMuleModuleProperties("mule-module-with-non-mule-transitive", result);
 
     assertThat(muleModule.getName(), is("org.bar.simple.wrapper"));
     assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.foo", "org.bar"));
+    assertThat(muleModule.getExportedPrivilegedPackages(), empty());
+    assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
+    assertThat(muleModule.getModuleServiceDefinitions(), empty());
+    assertThat(muleModule.getOptionalExportedPackages(), empty());
+  }
+
+  @Test
+  public void requiresTransitiveNonMuleModuleIndirectly() throws Exception {
+    MavenExecutionResult result = runMaven("requiresTransitiveNonMuleModuleIndirectly", "package", "mule-module:analyze");
+    result.assertErrorFreeLog();
+    assertThat(result.getLog(), hasItem("[INFO] No module API problems found"));
+
+    final long nonMuleModuleProjects = result.getLog()
+        .stream()
+        .filter(log -> log.equals("[INFO] " + PROJECT_IS_NOT_A_MULE_MODULE))
+        .count();
+    // Only one occurrence for `non-mule-sub-module`
+    assertThat(nonMuleModuleProjects, is(1L));
+
+    final Module muleModule =
+        loadMuleModuleProperties("mule-module-with-mule-transitive", result);
+
+    assertThat(muleModule.getName(), is("org.baz.simple.wrapper"));
+    assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.baz"));
+    assertThat(muleModule.getExportedPrivilegedPackages(), empty());
+    assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
+    assertThat(muleModule.getModuleServiceDefinitions(), empty());
+    assertThat(muleModule.getOptionalExportedPackages(), empty());
+  }
+
+  @Test
+  public void requiresTransitiveOnJavaxModule() throws Exception {
+    MavenExecutionResult result = doRunMaven("requiresTransitiveOnJavaxModule");
+    final Module muleModule = loadMuleModuleProperties(".", result);
+
+    assertThat(muleModule.getName(), is("org.foo.simple"));
+    assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.foo", "javax.inject"));
     assertThat(muleModule.getExportedPrivilegedPackages(), empty());
     assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
     assertThat(muleModule.getModuleServiceDefinitions(), empty());

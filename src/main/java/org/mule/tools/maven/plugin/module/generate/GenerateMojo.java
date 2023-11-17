@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.ModuleLayer.Controller;
 import java.lang.module.Configuration;
+import java.lang.module.ModuleDescriptor.Requires;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,6 +52,7 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -61,7 +63,7 @@ import org.apache.maven.project.MavenProject;
  * Generates mule-module.properties file form module-info.java if present.
  */
 @Mojo(name = "generate", requiresDependencyResolution = COMPILE, threadSafe = true, defaultPhase = PROCESS_CLASSES)
-public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
+public class GenerateMojo extends AbstractMojo {
 
   /**
    * The Maven project to analyze.
@@ -147,20 +149,26 @@ public class GenerateMojo extends org.apache.maven.plugin.AbstractMojo {
         .getDescriptor().requires()
         .stream()
         .filter(req -> req.modifiers().contains(TRANSITIVE))
-        .filter(req -> currentModule.getLayer().findModule(req.name())
-            .map(reqMod -> {
-              try {
-                return reqMod.getResourceAsStream(MULE_MODULE_PROPERTIES_LOCATION) == null;
-              } catch (IOException e) {
-                throw new RuntimeException(e);
-              }
-            })
-            .orElse(false))
+        // only take into account modules brought by the artifact being built, not the ones from the jvm
+        .filter(req -> boot().findModule(req.name()).isEmpty())
+        .filter(not(req -> isMuleModuleRequired(currentModule, req)))
         .map(req -> currentModule.getLayer().findModule(req.name()).get())
         .flatMap(transitiveNonMuleModule -> resolveExportedPackages(transitiveNonMuleModule, exportedPrivilegedPackages).stream())
         .collect(toList()));
 
     return exportedPackages;
+  }
+
+  private Boolean isMuleModuleRequired(final java.lang.Module currentModule, Requires req) {
+    return currentModule.getLayer().findModule(req.name())
+        .map(reqMod -> {
+          try {
+            return reqMod.getResourceAsStream(MULE_MODULE_PROPERTIES_LOCATION) != null;
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        })
+        .orElse(false);
   }
 
   private Optional<java.lang.Module> resolveCurrentModule() throws MojoFailureException {

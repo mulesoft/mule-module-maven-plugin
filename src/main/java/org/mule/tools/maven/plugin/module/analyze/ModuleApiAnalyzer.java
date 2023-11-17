@@ -8,6 +8,7 @@ package org.mule.tools.maven.plugin.module.analyze;
 
 import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -17,5 +18,5 @@ public interface ModuleApiAnalyzer {
 
   String ROLE = ModuleApiAnalyzer.class.getName();
 
-  ProjectAnalysisResult analyze(MavenProject project, ModuleLogger analyzerLogger) throws ModuleApiAnalyzerException;
+  ProjectAnalysisResult analyze(MavenProject project, ModuleLogger analyzerLogger, Log log) throws ModuleApiAnalyzerException;
 }

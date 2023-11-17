@@ -131,13 +131,20 @@ public class ModuleDiscoverer {
   private Properties getModuleProperties(MavenProject project) throws ModuleApiAnalyzerException {
     Properties properties = null;
     try {
-      final List<Resource> projectResources = project.getBuild().getResources();
       File result = null;
-      for (final Resource resource : projectResources) {
-        File moduleProperties = new File(resource.getDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
-        if (moduleProperties.exists()) {
-          result = moduleProperties;
-          break;
+      File modulePropertiesCompiled = new File(project.getBuild().getOutputDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
+      if (modulePropertiesCompiled.exists()) {
+        result = modulePropertiesCompiled;
+      }
+
+      if (result == null) {
+        final List<Resource> projectResources = project.getBuild().getResources();
+        for (final Resource resource : projectResources) {
+          File moduleProperties = new File(resource.getDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
+          if (moduleProperties.exists()) {
+            result = moduleProperties;
+            break;
+          }
         }
       }
 
