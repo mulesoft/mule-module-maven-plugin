@@ -6,7 +6,15 @@
  */
 package org.mule.tools.maven.plugin.module.analyze;
 
+import static org.mule.tools.maven.plugin.module.bean.Module.MODULE_NAME;
+import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES;
+import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES_LOCATION;
+
 import static java.lang.Thread.currentThread;
+
+import org.mule.tools.maven.plugin.module.bean.Module;
+import org.mule.tools.maven.plugin.module.bean.ModuleFactory;
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +38,6 @@ import org.apache.maven.project.MavenProject;
  */
 public class ModuleDiscoverer {
 
-  private static final String MULE_MODULE_PROPERTIES = "mule-module.properties";
-  private static final String MULE_MODULE_PROPERTIES_LOCATION = "META-INF/" + MULE_MODULE_PROPERTIES;
-
   private final ModuleFactory moduleFactory = new ModuleFactory();
 
   /**
@@ -43,13 +48,13 @@ public class ModuleDiscoverer {
    * @return a module corresponding to the project being analyzed, null if the project is not a Mule module
    * @throws ModuleApiAnalyzerException
    */
-  public Module discoverProjectModule(MavenProject project, AnalyzerLogger analyzerLogger)
+  public Module discoverProjectModule(MavenProject project, ModuleLogger analyzerLogger)
       throws ModuleApiAnalyzerException {
     Module module = null;
     Properties properties = getModuleProperties(project);
     if (properties != null) {
       try {
-        module = moduleFactory.create(analyzerLogger, (String) properties.get("module.name"), properties);
+        module = moduleFactory.create(analyzerLogger, (String) properties.get(MODULE_NAME), properties);
       } catch (IOException e) {
         throw new ModuleApiAnalyzerException("Cannot read project's " + MULE_MODULE_PROPERTIES, e);
       }
@@ -67,7 +72,7 @@ public class ModuleDiscoverer {
    * @return a list containing all the Mule modules that are dependencies of the analyzed project.
    * @throws ModuleApiAnalyzerException
    */
-  public List<Module> discoverExternalModules(MavenProject project, AnalyzerLogger analyzerLogger,
+  public List<Module> discoverExternalModules(MavenProject project, ModuleLogger analyzerLogger,
                                               String projectModuleName)
       throws ModuleApiAnalyzerException {
     final List<Module> result = new LinkedList<>();
@@ -99,7 +104,7 @@ public class ModuleDiscoverer {
           Properties properties = loadProperties(url);
 
           // Skips project module properties
-          String moduleName = (String) properties.get("module.name");
+          String moduleName = (String) properties.get(MODULE_NAME);
           if (!moduleName.equals(projectModuleName)) {
             result.add(moduleFactory.create(analyzerLogger, moduleName, properties));
           }
@@ -126,13 +131,20 @@ public class ModuleDiscoverer {
   private Properties getModuleProperties(MavenProject project) throws ModuleApiAnalyzerException {
     Properties properties = null;
     try {
-      final List<Resource> projectResources = project.getBuild().getResources();
       File result = null;
-      for (final Resource resource : projectResources) {
-        File moduleProperties = new File(resource.getDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
-        if (moduleProperties.exists()) {
-          result = moduleProperties;
-          break;
+      File modulePropertiesCompiled = new File(project.getBuild().getOutputDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
+      if (modulePropertiesCompiled.exists()) {
+        result = modulePropertiesCompiled;
+      }
+
+      if (result == null) {
+        final List<Resource> projectResources = project.getBuild().getResources();
+        for (final Resource resource : projectResources) {
+          File moduleProperties = new File(resource.getDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
+          if (moduleProperties.exists()) {
+            result = moduleProperties;
+            break;
+          }
         }
       }
 

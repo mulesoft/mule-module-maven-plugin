@@ -6,7 +6,9 @@
  */
 package org.mule.tools.maven.plugin.module.analyze;
 
-public class SilentAnalyzerLogger implements AnalyzerLogger {
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
+
+public class SilentAnalyzerLogger implements ModuleLogger {
 
   @Override
   public void log(String message) {

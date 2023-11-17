@@ -6,6 +6,8 @@
  */
 package org.mule.tools.maven.plugin.module.analyze;
 
+import org.mule.tools.maven.plugin.module.common.ModuleLogger;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
@@ -18,5 +20,5 @@ public interface DependencyAnalyzer {
 
   String ROLE = DependencyAnalyzer.class.getName();
 
-  Map<String, Set<String>> analyze(URL url, AnalyzerLogger analyzerLogger) throws IOException;
+  Map<String, Set<String>> analyze(URL url, ModuleLogger analyzerLogger) throws IOException;
 }
