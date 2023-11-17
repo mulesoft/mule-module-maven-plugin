@@ -24,13 +24,13 @@
                     <groupId>org.mule.tools.maven</groupId>
                     <artifactId>mule-module-maven-plugin</artifactId>
                     <version>${it-plugin.version}</version>
-	                <executions>
-	                    <execution>
-	                        <goals>
-	                            <goal>generate</goal>
-	                        </goals>
-	                    </execution>
-	                </executions>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

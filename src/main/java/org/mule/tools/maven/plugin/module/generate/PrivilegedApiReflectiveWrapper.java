@@ -10,7 +10,7 @@ import org.mule.api.annotation.jpms.PrivilegedApi;
 
 import java.lang.annotation.Annotation;
 
-// Use reflection to workaround the annotation being loaded by two differnet classloaders.
+// Use reflection to workaround the annotation being loaded by two different classloaders.
 public class PrivilegedApiReflectiveWrapper {
 
   private final Class privilegedApiAnnotationClass;

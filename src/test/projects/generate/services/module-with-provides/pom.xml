@@ -13,12 +13,12 @@
     <packaging>jar</packaging>
     <name>module-with-provides</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.foo</groupId>
-			<artifactId>module-with-uses</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.foo</groupId>
+            <artifactId>module-with-uses</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>
 
