@@ -13,6 +13,7 @@ import static org.apache.commons.lang3.JavaVersion.JAVA_11;
 import static org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assume.assumeFalse;
 
@@ -43,5 +44,27 @@ public class MiscellaneousTestCase extends AbstractExportTestCase {
     assertThat(log, hasItem(containsString(buildRemovedJrePackageMessage("org.w3c.dom"))));
     assertThat(log, hasItem(containsString(buildRemovedSunPackageMessage("com.sun.corba.se.pept.transport"))));
     assertThat(log, hasItem(containsString(buildRemovedSunPackageMessage("sun.misc"))));
+  }
+
+  @Test
+  public void exportedServices() throws Exception {
+    List<String> log = buildSingleModule("services");
+
+    assertValidModuleApi(log);
+  }
+
+  @Test
+  public void invalidExportedServices() throws Exception {
+    List<String> log = buildSingleModule("servicesInvalid");
+
+    assertThat(log,
+               not(hasItem("[ERROR] Failed to execute goal org.mule.tools.maven:mule-module-maven-plugin:1.7.0-SNAPSHOT:analyze (default-cli) on project empty-project: Execution default-cli of goal org.mule.tools.maven:mule-module-maven-plugin:1.7.0-SNAPSHOT:analyze failed: Invalid service definition 'notAServiceDefinition'. Must be of format '<interface fqcn>:<implementation fqcn>' -> [Help 1]")));
+  }
+
+  @Test
+  public void emptyExportedServices() throws Exception {
+    List<String> log = buildSingleModule("servicesEmpty");
+
+    assertValidModuleApi(log);
   }
 }
