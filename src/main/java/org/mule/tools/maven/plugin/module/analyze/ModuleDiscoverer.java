@@ -55,7 +55,7 @@ public class ModuleDiscoverer {
     if (properties != null) {
       try {
         module = moduleFactory.create(analyzerLogger, (String) properties.get(MODULE_NAME), properties);
-      } catch (IOException e) {
+      } catch (IllegalStateException | IOException e) {
         throw new ModuleApiAnalyzerException("Cannot read project's " + MULE_MODULE_PROPERTIES, e);
       }
     }

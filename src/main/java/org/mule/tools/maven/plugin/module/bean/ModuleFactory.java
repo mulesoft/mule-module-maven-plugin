@@ -74,12 +74,17 @@ public class ModuleFactory {
   }
 
   private Set<ServiceDefinition> getModuleServiceDefinitions(ModuleLogger analyzerLogger, Properties properties) {
-    final Set<String> valuesFromProperty = getValuesFromProperty(analyzerLogger, properties, EXPORT_SERVICES);
+    final Set<String> rawServiceDefinitions = getValuesFromProperty(analyzerLogger, properties, EXPORT_SERVICES);
 
     Map<String, List<String>> services = new TreeMap<>();
 
-    for (String valueFromProperty : valuesFromProperty) {
+    for (String valueFromProperty : rawServiceDefinitions) {
       final String[] split = valueFromProperty.split(":");
+
+      if (split.length != 2) {
+        throw new IllegalStateException("Invalid service definition '" + valueFromProperty
+            + "'. Must be of format '<interface fqcn>:<implementation fqcn>'");
+      }
 
       services.computeIfAbsent(split[0], k -> new ArrayList<>())
           .add(split[1]);
@@ -96,22 +101,22 @@ public class ModuleFactory {
   }
 
   private Set<String> getValuesFromProperty(ModuleLogger analyzerLogger, Properties properties, String key) {
-    final Set<String> optionalPackages = new TreeSet<>();
+    final Set<String> values = new TreeSet<>();
 
-    final String classPackages = (String) properties.get(key);
-    if (classPackages != null) {
+    final String rawValues = (String) properties.get(key);
+    if (rawValues != null) {
       StringBuilder builder = new StringBuilder("Found module: " + properties.get("module.name") + " with property=" + key + ":");
-      for (String classPackage : classPackages.split(",")) {
-        if (classPackage != null) {
-          classPackage = classPackage.trim();
-          if (classPackage != null) {
-            optionalPackages.add(classPackage);
-            builder.append("\n").append(classPackage);
+      for (String value : rawValues.split(",")) {
+        if (value != null) {
+          value = value.trim();
+          if (value != null && !"".equals(value)) {
+            values.add(value);
+            builder.append("\n").append(value);
           }
         }
       }
       analyzerLogger.log(builder.toString());
     }
-    return optionalPackages;
+    return values;
   }
 }

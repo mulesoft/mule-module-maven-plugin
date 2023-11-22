@@ -44,4 +44,26 @@ public class MiscellaneousTestCase extends AbstractExportTestCase {
     assertThat(log, hasItem(containsString(buildRemovedSunPackageMessage("com.sun.corba.se.pept.transport"))));
     assertThat(log, hasItem(containsString(buildRemovedSunPackageMessage("sun.misc"))));
   }
+
+  @Test
+  public void exportedServices() throws Exception {
+    List<String> log = buildSingleModule("services");
+
+    assertValidModuleApi(log);
+  }
+
+  @Test
+  public void invalidExportedServices() throws Exception {
+    List<String> log = buildSingleModule("servicesInvalid");
+
+    assertThat(log, hasItem(containsString("Cannot analyze module API: Cannot read project's mule-module.properties: "
+        + "Invalid service definition 'notAServiceDefinition'. Must be of format '<interface fqcn>:<implementation fqcn>")));
+  }
+
+  @Test
+  public void emptyExportedServices() throws Exception {
+    List<String> log = buildSingleModule("servicesEmpty");
+
+    assertValidModuleApi(log);
+  }
 }

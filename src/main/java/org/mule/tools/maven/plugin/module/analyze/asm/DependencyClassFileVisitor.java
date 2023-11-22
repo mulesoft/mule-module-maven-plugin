@@ -39,6 +39,7 @@ public class DependencyClassFileVisitor implements ClassFileVisitor {
   /*
    * @see org.mule.tools.maven.plugin.module.analyze.ClassFileVisitor#visitClass(java.lang.String, java.io.InputStream)
    */
+  @Override
   public void visitClass(String className, InputStream in) {
     // TODO(pablo.kraan): MULE-14419 - ignoring classes defined inside META-INF folder and module-info until Java 9 is supported
     if (className.startsWith("META-INF.") || className.contains(".META-INF.") || className.equals("module-info")) {
@@ -59,6 +60,8 @@ public class DependencyClassFileVisitor implements ClassFileVisitor {
                                   analyzerLogger);
 
       reader.accept(classVisitor, 0);
+    } catch (UnsupportedOperationException exception) {
+      throw new IllegalArgumentException("Unable to process '" + className + "': " + exception.toString(), exception);
     } catch (IOException exception) {
       exception.printStackTrace();
     } catch (IndexOutOfBoundsException e) {
