@@ -17,7 +17,11 @@ public class PrivilegedApiReflectiveWrapper {
   private final Annotation privilegedApiInfo;
 
   public PrivilegedApiReflectiveWrapper(Module currentModule) throws ClassNotFoundException {
-    privilegedApiAnnotationClass = currentModule.getClassLoader().loadClass(PrivilegedApi.class.getName());
+    try {
+      privilegedApiAnnotationClass = currentModule.getClassLoader().loadClass(PrivilegedApi.class.getName());
+    } catch (Throwable t) {
+      System.out.println("Error loading 'PrivilegedApi' for module '" + currentModule.getName() + "':" + currentModule);
+    }
     privilegedApiInfo = currentModule.getAnnotation(privilegedApiAnnotationClass);
   }
 
