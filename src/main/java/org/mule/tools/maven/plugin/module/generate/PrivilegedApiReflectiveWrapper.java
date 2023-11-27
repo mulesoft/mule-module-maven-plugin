@@ -21,6 +21,7 @@ public class PrivilegedApiReflectiveWrapper {
       privilegedApiAnnotationClass = currentModule.getClassLoader().loadClass(PrivilegedApi.class.getName());
     } catch (Throwable t) {
       System.out.println("Error loading 'PrivilegedApi' for module '" + currentModule.getName() + "':" + currentModule);
+      throw t;
     }
     privilegedApiInfo = currentModule.getAnnotation(privilegedApiAnnotationClass);
   }
