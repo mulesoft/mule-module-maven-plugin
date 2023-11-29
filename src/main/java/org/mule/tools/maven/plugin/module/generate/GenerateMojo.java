@@ -74,7 +74,7 @@ public class GenerateMojo extends AbstractMojo {
   /**
    * Skip plugin execution completely.
    */
-  @Parameter(property = "muleModule.analyze.skip", defaultValue = "false")
+  @Parameter(property = "muleModule.generate.skip", defaultValue = "false")
   private boolean skip;
 
   @Override
