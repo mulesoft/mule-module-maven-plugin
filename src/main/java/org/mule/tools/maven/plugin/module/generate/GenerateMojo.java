@@ -24,12 +24,14 @@ import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import static org.apache.commons.io.IOUtils.LINE_SEPARATOR_UNIX;
 import static org.apache.commons.io.IOUtils.write;
 import static org.apache.commons.io.IOUtils.writeLines;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_CLASSES;
-import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
+import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 import org.mule.tools.maven.plugin.module.bean.ServiceDefinition;
 
@@ -44,6 +46,7 @@ import java.lang.module.ModuleDescriptor.Requires;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -62,7 +65,11 @@ import org.apache.maven.project.MavenProject;
 /**
  * Generates mule-module.properties file form module-info.java if present.
  */
-@Mojo(name = "generate", requiresDependencyResolution = COMPILE, threadSafe = true, defaultPhase = PROCESS_CLASSES)
+@Mojo(name = "generate",
+    requiresDependencyResolution = TEST,
+    requiresDependencyCollection = TEST,
+    threadSafe = true,
+    defaultPhase = PROCESS_CLASSES)
 public class GenerateMojo extends AbstractMojo {
 
   /**
@@ -137,7 +144,9 @@ public class GenerateMojo extends AbstractMojo {
         .map(provides -> {
           final ServiceDefinition serviceDefinition = new ServiceDefinition();
           serviceDefinition.setServiceInterface(provides.service());
-          serviceDefinition.setServiceImplementations(provides.providers());
+          serviceDefinition.setServiceImplementations(provides.providers()
+              .stream()
+              .collect(toList()));
           return serviceDefinition;
         })
         .collect(toCollection(TreeSet::new));
@@ -148,6 +157,13 @@ public class GenerateMojo extends AbstractMojo {
                                                               optionalPackages,
                                                               modulePrivilegedArtifactIds,
                                                               moduleServiceDefinitions);
+  }
+
+  private boolean isProvidedServiceExported(final Set<String> exportedPrivilegedPackages, final Set<String> exportedPackages,
+                                            String providedService) {
+    final String packageName = providedService.substring(0, providedService.lastIndexOf("."));
+
+    return exportedPackages.contains(packageName) || exportedPrivilegedPackages.contains(packageName);
   }
 
   private Set<String> resolveExportedPackages(final java.lang.Module currentModule,
@@ -186,14 +202,28 @@ public class GenerateMojo extends AbstractMojo {
 
   private Optional<java.lang.Module> resolveCurrentModule() throws MojoFailureException {
     try {
-      final ModuleFinder finder = ModuleFinder.of(project.getCompileClasspathElements()
-          .stream()
-          .map(cpe -> Paths.get(cpe))
-          .toArray(Path[]::new));
-      final List<String> roots = finder.findAll()
+      final ModuleFinder currentModuleFinder = ModuleFinder.of(Path.of(project.getBuild().getOutputDirectory()));
+      final List<String> roots = currentModuleFinder.findAll()
           .stream()
           .map(moduleRef -> moduleRef.descriptor().name())
           .collect(toList());
+
+      final Optional<Path> xmlApisPath = Optional.ofNullable(project.getArtifactMap().get("xml-apis:xml-apis"))
+          .map(xmlApisArtifact -> xmlApisArtifact.getFile().toPath());
+
+      Collection<String> directTestDependencies = project.getDependencies()
+          .stream()
+          .filter(dependency -> SCOPE_TEST.equals(dependency.getScope()))
+          .map(dependency -> project.getArtifactMap().get(dependency.getGroupId() + ":" + dependency.getArtifactId()))
+          .map(artifact -> artifact.getFile().getAbsolutePath())
+          .collect(toSet());
+
+      final ModuleFinder finder = ModuleFinder.of(Stream.concat(project.getCompileClasspathElements()
+          .stream(), directTestDependencies.stream())
+          .map(cpe -> Paths.get(cpe))
+          // Do not use xml-apis which causes a split package with the xml module in the JVM
+          .filter(path -> !xmlApisPath.map(path::equals).orElse(false))
+          .toArray(Path[]::new));
 
       final Configuration configuration = boot().configuration().resolve(finder, ofSystem(), roots);
 
@@ -241,15 +271,20 @@ public class GenerateMojo extends AbstractMojo {
       StringBuilder propertyValue = new StringBuilder();
       for (ServiceDefinition serviceDefinition : muleModule.getModuleServiceDefinitions()) {
         for (String serviceImplementation : serviceDefinition.getServiceImplementations()) {
-          propertyValue.append(serviceDefinition.getServiceInterface())
-              .append(":")
-              .append(serviceImplementation)
-              .append(",");
+          if (isProvidedServiceExported(muleModule.getExportedPackages(), muleModule.getExportedPrivilegedPackages(),
+                                        serviceImplementation)) {
+            propertyValue.append(serviceDefinition.getServiceInterface())
+                .append(":")
+                .append(serviceImplementation)
+                .append(",");
+          }
         }
       }
 
-      properties.put(EXPORT_SERVICES,
-                     propertyValue.substring(0, propertyValue.length() - 1));
+      if (propertyValue.length() > 0) {
+        properties.put(EXPORT_SERVICES,
+                       propertyValue.substring(0, propertyValue.length() - 1));
+      }
     }
 
     return properties;

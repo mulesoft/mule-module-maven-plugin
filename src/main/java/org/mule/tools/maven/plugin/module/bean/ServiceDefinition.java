@@ -53,4 +53,9 @@ public class ServiceDefinition implements Comparable<ServiceDefinition> {
         && Objects.equals(serviceInterface, other.serviceInterface);
   }
 
+  @Override
+  public String toString() {
+    return this.getClass().getName() + "{" + serviceInterface + ": " + serviceImplementations.toString() + "}";
+  }
+
 }
