@@ -284,6 +284,7 @@ public class GenerateMojo extends AbstractMojo {
       }
     }
 
+    getLog().info("Input file " + project.getBuild().getOutputDirectory());
     final File outputModuleFile = new File(project.getBuild().getOutputDirectory(), MULE_MODULE_PROPERTIES_LOCATION);
     if (!outputModuleFile.getParentFile().isDirectory() || !outputModuleFile.getParentFile().exists()) {
       if (!outputModuleFile.getParentFile().mkdirs()) {
