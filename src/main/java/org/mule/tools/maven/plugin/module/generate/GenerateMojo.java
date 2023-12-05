@@ -108,6 +108,7 @@ public class GenerateMojo extends AbstractMojo {
     java.lang.Module currentModule = currentModuleOpt.get();
 
     getLog().info("Loading module information for '" + currentModule.getName() + "'...");
+    getLog().info("Info: " + currentModule.getPackages().stream().collect(toList()));
     final org.mule.tools.maven.plugin.module.bean.Module muleModule = toMuleModule(currentModule);
 
     getLog().info("Setting properties for mule module '" + currentModule.getName() + "'...");
