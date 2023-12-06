@@ -187,6 +187,30 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
+  // W-14610690
+  @Test
+  public void transitiveMuleModuleAsTestDependency() throws Exception {
+    MavenExecutionResult result = runMaven("transitiveMuleModuleAsTestDependency", "package", "mule-module:analyze");
+    result.assertErrorFreeLog();
+    assertThat(result.getLog(), hasItem("[INFO] No module API problems found"));
+
+    final long nonMuleModuleProjects = result.getLog()
+        .stream()
+        .filter(log -> log.equals("[INFO] " + PROJECT_IS_NOT_A_MULE_MODULE))
+        .count();
+    assertThat(nonMuleModuleProjects, is(0L));
+
+    final Module muleModule =
+        loadMuleModuleProperties("mule-module-with-mule-scope-test", result);
+
+    assertThat(muleModule.getName(), is("org.bar.simple.wrapper"));
+    assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.bar"));
+    assertThat(muleModule.getExportedPrivilegedPackages(), empty());
+    assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
+    assertThat(muleModule.getModuleServiceDefinitions(), empty());
+    assertThat(muleModule.getOptionalExportedPackages(), empty());
+  }
+
   @Test
   public void requiresTransitiveOnJavaxModule() throws Exception {
     MavenExecutionResult result = doRunMaven("requiresTransitiveOnJavaxModule");
@@ -194,6 +218,20 @@ public class GenerateTestCase extends AbstractExportTestCase {
 
     assertThat(muleModule.getName(), is("org.foo.simple"));
     assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.foo", "javax.inject"));
+    assertThat(muleModule.getExportedPrivilegedPackages(), empty());
+    assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
+    assertThat(muleModule.getModuleServiceDefinitions(), empty());
+    assertThat(muleModule.getOptionalExportedPackages(), empty());
+  }
+
+  // W-14610685
+  @Test
+  public void dependsOnXmlApis() throws Exception {
+    MavenExecutionResult result = doRunMaven("dependsOnXmlApis");
+    final Module muleModule = loadMuleModuleProperties(".", result);
+
+    assertThat(muleModule.getName(), is("org.foo.simple"));
+    assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.foo"));
     assertThat(muleModule.getExportedPrivilegedPackages(), empty());
     assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
     assertThat(muleModule.getModuleServiceDefinitions(), empty());
@@ -208,6 +246,34 @@ public class GenerateTestCase extends AbstractExportTestCase {
 
     assertThat(muleModule.getName(), is("org.bar.service"));
     assertThat(muleModule.getExportedPackages(), empty());
+    assertThat(muleModule.getExportedPrivilegedPackages(), empty());
+    assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
+    assertThat(muleModule.getOptionalExportedPackages(), empty());
+
+    final ServiceDefinition expectedServiceDefinition = new ServiceDefinition();
+    expectedServiceDefinition.setServiceInterface("org.foo.A");
+    expectedServiceDefinition.setServiceImplementations(asList("org.bar.B"));
+    assertThat(muleModule.getModuleServiceDefinitions(), not(containsInAnyOrder(expectedServiceDefinition)));
+
+    try (final FileInputStream inStream =
+        new FileInputStream(new File(result.getBasedir(), "module-with-provides/target/classes/META-INF/services/org.foo.A"))) {
+      assertThat(readLines(inStream, UTF_8)
+          .stream()
+          .filter(line -> !line.startsWith("#"))
+          .collect(toList()),
+                 containsInAnyOrder("org.bar.B"));
+    }
+  }
+
+  // W-14610698
+  @Test
+  public void servicesExportedImpl() throws Exception {
+    MavenExecutionResult result = doRunMaven("servicesExportedImpl");
+    final Module muleModule =
+        loadMuleModuleProperties("module-with-provides", result);
+
+    assertThat(muleModule.getName(), is("org.bar.service"));
+    assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.bar"));
     assertThat(muleModule.getExportedPrivilegedPackages(), empty());
     assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
     assertThat(muleModule.getOptionalExportedPackages(), empty());
