@@ -233,7 +233,7 @@ public class GenerateMojo extends AbstractMojo {
 
       return finder.findAll()
           .stream()
-          .filter(modRef -> modRef.location().map(loc -> !loc.toString().endsWith(".jar")).orElse(false))
+          .filter(modRef -> roots.contains(modRef.descriptor().name()))
           .map(modRef -> modRef.descriptor().name())
           .findFirst()
           .flatMap(controller.layer()::findModule);
