@@ -58,6 +58,12 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
       return new ProjectAnalysisResult(null, null);
     }
 
+    return analyze(project, module, analyzerLogger, log);
+  }
+
+  @Override
+  public ProjectAnalysisResult analyze(MavenProject project, Module module, ModuleLogger analyzerLogger, Log log)
+      throws ModuleApiAnalyzerException {
     try {
       List<Module> modules = moduleDiscoverer.discoverExternalModules(project, analyzerLogger, module.getName());
 

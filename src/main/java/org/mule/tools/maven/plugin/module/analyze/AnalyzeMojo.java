@@ -11,28 +11,22 @@ import static java.lang.System.lineSeparator;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VALIDATE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
+import org.mule.tools.maven.plugin.module.common.AbstractModuleMojo;
 import org.mule.tools.maven.plugin.module.common.ModuleLogger;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * Analyzes the exported API in a mule module and checks that there are no missing exported packages.
  */
 @Mojo(name = "analyze", requiresDependencyResolution = TEST, threadSafe = true, defaultPhase = VALIDATE)
-public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
+public class AnalyzeMojo extends AbstractModuleMojo {
 
   public static final String NO_MODULE_API_PROBLEMS_FOUND = "No module API problems found";
   public static final String MODULE_API_PROBLEMS_FOUND = "Module API problems found";
@@ -43,17 +37,6 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
   public static final String DUPLICATED_EXPORTED_PACKAGES = "Following packages are already exported by a module dependency:";
   public static final String DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES =
       "Following privileged packages are already exported by a module dependency:";
-
-  /**
-   * The plexus context to look-up the right {@link ModuleApiAnalyzer} implementation depending on the mojo configuration.
-   */
-  private Context context;
-
-  /**
-   * The Maven project to analyze.
-   */
-  @Parameter(defaultValue = "${project}", readonly = true, required = true)
-  private MavenProject project;
 
   /**
    * Logs extra information about analysis process
@@ -92,27 +75,6 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     }
   }
 
-  protected ModuleApiAnalyzer createProjectDependencyAnalyzer() throws MojoExecutionException {
-    final String role = ModuleApiAnalyzer.ROLE;
-    final String roleHint = "default";
-
-    try {
-      final PlexusContainer container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
-
-      return (ModuleApiAnalyzer) container.lookup(role, roleHint);
-    } catch (Exception exception) {
-      throw new MojoExecutionException(
-                                       "Failed to instantiate ModuleApiAnalyzer with role " + role + " / role-hint " + roleHint,
-                                       exception);
-    }
-  }
-
-  @Override
-  public void contextualize(Context context)
-      throws ContextException {
-    this.context = context;
-  }
-
   public boolean isSkip() {
     return skip;
   }
@@ -125,7 +87,7 @@ public class AnalyzeMojo extends AbstractMojo implements Contextualizable {
     ProjectAnalysisResult analysis;
     try {
       final ModuleLogger analyzerLogger = verbose ? new VerboseAnalyzerLogger(getLog()) : new SilentAnalyzerLogger();
-      analysis = createProjectDependencyAnalyzer().analyze(project, analyzerLogger, getLog());
+      analysis = analyzer.analyze(project, analyzerLogger, getLog());
     } catch (ModuleApiAnalyzerException exception) {
       throw new MojoExecutionException("Cannot analyze module API", exception);
     }
