@@ -35,12 +35,14 @@ import java.util.stream.Collectors;
 import io.takari.maven.testing.TestResources;
 import io.takari.maven.testing.executor.MavenExecutionResult;
 import io.takari.maven.testing.executor.MavenRuntime;
+import io.takari.maven.testing.executor.MavenVersions;
 import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
 
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 @RunWith(MavenJUnitTestRunner.class)
+@MavenVersions({"3.8.8", "3.9.3"})
 public abstract class AbstractExportTestCase {
 
   protected static final String PATH_CLASS_A = "org/foo/A";
