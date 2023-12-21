@@ -293,4 +293,21 @@ public class GenerateTestCase extends AbstractExportTestCase {
     }
   }
 
+  // W-14658807
+  @Test
+  public void fillOptionalPackages() throws Exception {
+    MavenExecutionResult result = runMaven("fillOptionalPackages", "package", "mule-module:analyze");
+    result.assertErrorFreeLog();
+    assertThat(result.getLog(), hasItem("[INFO] No module API problems found"));
+
+    final Module muleModule =
+        loadMuleModuleProperties("mule-module-with-non-mule-transitive", result);
+
+    assertThat(muleModule.getName(), is("org.bar.simple.wrapper"));
+    assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.bar", "org.foo"));
+    assertThat(muleModule.getExportedPrivilegedPackages(), empty());
+    assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
+    assertThat(muleModule.getOptionalExportedPackages(), containsInAnyOrder("org.sub"));
+  }
+
 }

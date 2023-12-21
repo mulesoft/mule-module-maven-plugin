@@ -33,7 +33,11 @@ import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_CLASSES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
+import org.mule.tools.maven.plugin.module.analyze.ModuleApiAnalyzerException;
+import org.mule.tools.maven.plugin.module.analyze.ProjectAnalysisResult;
+import org.mule.tools.maven.plugin.module.analyze.SilentAnalyzerLogger;
 import org.mule.tools.maven.plugin.module.bean.ServiceDefinition;
+import org.mule.tools.maven.plugin.module.common.AbstractModuleMojo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,12 +59,10 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Generates mule-module.properties file form module-info.java if present.
@@ -70,19 +72,16 @@ import org.apache.maven.project.MavenProject;
     requiresDependencyCollection = TEST,
     threadSafe = true,
     defaultPhase = PROCESS_CLASSES)
-public class GenerateMojo extends AbstractMojo {
-
-  /**
-   * The Maven project to analyze.
-   */
-  @Parameter(defaultValue = "${project}", readonly = true, required = true)
-  private MavenProject project;
+public class GenerateMojo extends AbstractModuleMojo {
 
   /**
    * Skip plugin execution completely.
    */
   @Parameter(property = "muleModule.generate.skip", defaultValue = "false")
   private boolean skip;
+
+  @Parameter(defaultValue = "false")
+  private boolean fillOptionalPackages;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
@@ -125,7 +124,7 @@ public class GenerateMojo extends AbstractMojo {
   }
 
   private org.mule.tools.maven.plugin.module.bean.Module toMuleModule(final java.lang.Module currentModule)
-      throws ClassNotFoundException {
+      throws ClassNotFoundException, ModuleApiAnalyzerException, MojoExecutionException {
     final PrivilegedApiReflectiveWrapper privilegedApiReflectiveWrapper = new PrivilegedApiReflectiveWrapper(currentModule);
 
     final Set<String> optionalPackages = Stream.of(privilegedApiReflectiveWrapper.getOptionalPackages())
@@ -151,12 +150,30 @@ public class GenerateMojo extends AbstractMojo {
         })
         .collect(toCollection(TreeSet::new));
 
-    return new org.mule.tools.maven.plugin.module.bean.Module(currentModule.getName(),
-                                                              exportedPackages,
-                                                              exportedPrivilegedPackages,
-                                                              optionalPackages,
-                                                              modulePrivilegedArtifactIds,
-                                                              moduleServiceDefinitions);
+    org.mule.tools.maven.plugin.module.bean.Module generatedModule =
+        new org.mule.tools.maven.plugin.module.bean.Module(currentModule.getName(),
+                                                           exportedPackages,
+                                                           exportedPrivilegedPackages,
+                                                           optionalPackages,
+                                                           modulePrivilegedArtifactIds,
+                                                           moduleServiceDefinitions);
+
+    if (fillOptionalPackages) {
+      final ProjectAnalysisResult analysis = analyzer
+          .analyze(project, generatedModule, new SilentAnalyzerLogger(), getLog());
+      final Set<String> additionalOptionalPackages = analysis.getStandardApi().getPackagesToExport();
+      if (!additionalOptionalPackages.isEmpty()) {
+        optionalPackages.addAll(additionalOptionalPackages);
+        generatedModule = new org.mule.tools.maven.plugin.module.bean.Module(currentModule.getName(),
+                                                                             exportedPackages,
+                                                                             exportedPrivilegedPackages,
+                                                                             optionalPackages,
+                                                                             modulePrivilegedArtifactIds,
+                                                                             moduleServiceDefinitions);
+      }
+    }
+
+    return generatedModule;
   }
 
   private boolean isProvidedServiceExported(final Set<String> exportedPrivilegedPackages, final Set<String> exportedPackages,
