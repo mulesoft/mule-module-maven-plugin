@@ -302,7 +302,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(result.getLog(), hasItem("[INFO] No module API problems found"));
 
     final Module muleModule =
-      loadMuleModuleProperties("mule-module-with-non-mule-transitive", result);
+        loadMuleModuleProperties("mule-module-with-non-mule-transitive", result);
 
     assertThat(muleModule.getName(), is("org.bar.simple.wrapper"));
     assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.bar", "org.foo"));
