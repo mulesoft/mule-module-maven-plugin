@@ -10,6 +10,7 @@ import static org.mule.tools.maven.plugin.module.analyze.DefaultModuleApiAnalyze
 import static org.mule.tools.maven.plugin.module.bean.Module.MODULE_NAME;
 import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES_LOCATION;
 
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -301,13 +302,25 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(result.getLog(), hasItem("[INFO] No module API problems found"));
 
     final Module muleModule =
-        loadMuleModuleProperties("mule-module-with-non-mule-transitive", result);
+      loadMuleModuleProperties("mule-module-with-non-mule-transitive", result);
 
     assertThat(muleModule.getName(), is("org.bar.simple.wrapper"));
     assertThat(muleModule.getExportedPackages(), containsInAnyOrder("org.bar", "org.foo"));
     assertThat(muleModule.getExportedPrivilegedPackages(), empty());
     assertThat(muleModule.getModulePrivilegedArtifactIds(), empty());
     assertThat(muleModule.getOptionalExportedPackages(), containsInAnyOrder("org.sub"));
+  }
+
+  @Test
+  public void skipsWritingPropertiesFileIfEqual() throws Exception {
+    MavenExecutionResult result = doRunMaven("simpleModule");
+
+    // Re-runs in the same directory
+    File baseDir = result.getBasedir();
+    result = mavenRuntime.forProject(baseDir).execute("package", "mule-module:analyze");
+
+    String propertiesLocation = new File(result.getBasedir(), "target/classes/" + MULE_MODULE_PROPERTIES_LOCATION).toString();
+    assertThat(result.getLog(), hasItem(format("[INFO] No changes detected for '%s' skipping.", propertiesLocation)));
   }
 
 }
