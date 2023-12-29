@@ -73,7 +73,7 @@
         <apiAnnotationsVersion>1.6.0-SNAPSHOT</apiAnnotationsVersion>
 
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-        <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
+        <maven-plugin-annotations.version>3.6.2</maven-plugin-annotations.version>
         <maven-core.version>3.6.3</maven-core.version>
         <asm.version>9.1</asm.version>
         <takari.test.version>3.0.0</takari.test.version>
