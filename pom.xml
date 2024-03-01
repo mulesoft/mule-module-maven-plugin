@@ -71,10 +71,11 @@
 
     <properties>
         <apiAnnotationsVersion>1.6.0-SNAPSHOT</apiAnnotationsVersion>
+        <muleBomVersion>4.7.0-SNAPSHOT</muleBomVersion>
 
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
-        <maven-core.version>3.6.3</maven-core.version>
+        <maven-core.version>3.9.6</maven-core.version>
         <asm.version>9.1</asm.version>
         <takari.test.version>3.0.0</takari.test.version>
         <junit.version>4.13.2</junit.version>
@@ -115,6 +116,34 @@
         <url>https://github.com/mulesoft/mule-module-maven-plugin</url>
     </scm>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.mule</groupId>
+                <artifactId>mule-runtime-bom</artifactId>
+                <version>${muleBomVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${maven-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${maven-plugin-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.mule.runtime</groupId>
@@ -124,17 +153,18 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>${maven-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>${maven-plugin-annotations.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
 
         <!-- test -->
