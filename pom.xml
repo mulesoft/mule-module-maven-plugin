@@ -70,7 +70,7 @@
     </developers>
 
     <properties>
-        <apiAnnotationsVersion>1.6.0-SNAPSHOT</apiAnnotationsVersion>
+        <apiAnnotationsVersion>1.6.0-20240227</apiAnnotationsVersion>
 
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
