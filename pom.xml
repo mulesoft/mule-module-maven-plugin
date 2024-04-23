@@ -74,7 +74,7 @@
         <muleBomVersion>4.7.0-SNAPSHOT</muleBomVersion>
 
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-        <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
+        <maven-plugin-annotations.version>3.12.0</maven-plugin-annotations.version>
         <maven-core.version>3.9.6</maven-core.version>
         <asm.version>9.1</asm.version>
         <takari.test.version>3.0.2</takari.test.version>
