@@ -4,6 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.mule</groupId>
+        <artifactId>mule-plugin-mgmt-parent-pom</artifactId>
+        <version>4.8.0-SNAPSHOT</version>
+    </parent>
+
     <groupId>org.mule.tools.maven</groupId>
     <artifactId>mule-module-maven-plugin</artifactId>
     <version>1.8.0-SNAPSHOT</version>
@@ -73,7 +79,6 @@
         <apiAnnotationsVersion>1.7.0-SNAPSHOT</apiAnnotationsVersion>
         <muleBomVersion>4.7.0-SNAPSHOT</muleBomVersion>
 
-        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven-plugin-annotations.version>3.12.0</maven-plugin-annotations.version>
         <maven-core.version>3.9.6</maven-core.version>
         <asm.version>9.1</asm.version>
@@ -81,30 +86,17 @@
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jdk.version>11</jdk.version>
-        <javaFormatter.plugin.version>2.14.0</javaFormatter.plugin.version>
         <formatterGoal>validate</formatterGoal>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <plexus.component.metadata.version>2.2.0</plexus.component.metadata.version>
         <takari.lifecycle.plugin.version>1.13.10</takari.lifecycle.plugin.version>
-        <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
 
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
-
-        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-        <maven.plugin.plugin.version>3.12.0</maven.plugin.plugin.version>
-        <maven.clean.plugin.version>3.3.2</maven.clean.plugin.version>
-        <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
-        <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
-        <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
-        <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
-        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
-        <maven.site.plugin.version>3.9.1</maven.site.plugin.version>
-        <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
     </properties>
 
     <scm>
@@ -197,47 +189,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven.compiler.plugin.version}</version>
                     <configuration>
                         <source>${jdk.version}</source>
                         <target>${jdk.version}</target>
                         <encoding>ISO-8859-1</encoding>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>${maven.clean.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven.install.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven.source.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>${maven.resources.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${maven.jar.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven.javadoc.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-plugin-plugin</artifactId>
-                    <version>${maven.plugin.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -245,12 +201,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>${maven.site.plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>${maven.enforcer.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>enforce-maven-version</id>
@@ -273,7 +227,6 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>${license.maven.plugin.version}</version>
                 <configuration>
                     <header>com/mycila/maven/plugin/license/templates/CPAL.txt</header>
                     <properties>
@@ -331,7 +284,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                     <systemPropertyVariables>
@@ -355,7 +307,6 @@
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
-                <version>${javaFormatter.plugin.version}</version>
                 <configuration>
                     <compilerCompliance>${jdk.version}</compilerCompliance>
                     <compilerSource>${jdk.version}</compilerSource>
