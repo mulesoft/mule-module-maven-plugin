@@ -88,7 +88,7 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <plexus.component.metadata.version>2.2.0</plexus.component.metadata.version>
         <takari.lifecycle.plugin.version>1.13.10</takari.lifecycle.plugin.version>
-        <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
+        <maven.enforcer.plugin.version>1.4.2.jenkins-1</maven.enforcer.plugin.version>
 
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
