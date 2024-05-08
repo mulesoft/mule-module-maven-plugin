@@ -86,15 +86,11 @@
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jdk.version>11</jdk.version>
-        <formatterGoal>validate</formatterGoal>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <skipVerifications>false</skipVerifications>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <plexus.component.metadata.version>2.2.0</plexus.component.metadata.version>
         <takari.lifecycle.plugin.version>1.13.10</takari.lifecycle.plugin.version>
 
-        <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
-        <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
     </properties>
@@ -192,7 +188,6 @@
                     <configuration>
                         <source>${jdk.version}</source>
                         <target>${jdk.version}</target>
-                        <encoding>ISO-8859-1</encoding>
                     </configuration>
                 </plugin>
             </plugins>
@@ -254,14 +249,6 @@
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>io.takari.maven.plugins</groupId>
@@ -285,7 +272,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
                     <systemPropertyVariables>
                         <maven.repo.local>${maven.repo.local}</maven.repo.local>
                         <surefire.project.version>${project.version}</surefire.project.version>
@@ -316,18 +302,6 @@
                     <aggregator>false</aggregator>
                     <executionRoot>true</executionRoot>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>apply-format</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>${formatterGoal}</goal>
-                        </goals>
-                        <configuration>
-                            <skipFormatting>${skipVerifications}</skipFormatting>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -384,7 +358,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven.gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -401,7 +374,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>${maven.enforcer.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>enforce-no-snapshots-in-deps</id>
