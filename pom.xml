@@ -228,26 +228,6 @@
                         <owner>MuleSoft, Inc</owner>
                         <project.url>http://www.mulesoft.com</project.url>
                     </properties>
-                    <excludes>
-                        <exclude>target/**</exclude>
-                        <exclude>.gitignore</exclude>
-                        <exclude>**/*.txt</exclude>
-                        <exclude>**/*.ftl</exclude>
-                        <exclude>**/build-number.txt</exclude>
-                        <exclude>**/*.ftl</exclude>
-                        <exclude>**/assets/**</exclude>
-                        <exclude>**/*.xsd</exclude>
-                        <exclude>**/*.properties</exclude>
-                        <exclude>**/*.xml</exclude>
-                        <exclude>**/archetype-resources/**</exclude>
-                        <exclude>**/src/main/java/package.html</exclude>
-                    </excludes>
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                    </mapping>
                 </configuration>
             </plugin>
             <plugin>
@@ -358,53 +338,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <skip>${skipGpg}</skip>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>enforce-no-snapshots-in-deps</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireReleaseDeps>
-                                            <message>No Snapshots Allowed in Deps!</message>
-                                        </requireReleaseDeps>
-                                        <requireReleaseVersion>
-                                            <message>No Snapshots Allowed in Project Version!</message>
-                                        </requireReleaseVersion>
-                                        <requirePluginVersions>
-                                            <message>Best Practice is to always define plugin versions!</message>
-                                            <unCheckedPluginList>
-                                                org.apache.maven.plugins:maven-plugin-plugin,
-                                                org.apache.maven.plugins:maven-site-plugin,
-                                                org.apache.maven.plugins:maven-resources-plugin,
-                                                org.apache.maven.plugins:maven-jar-plugin,
-                                                org.apache.maven.plugins:maven-clean-plugin,
-                                                org.apache.maven.plugins:maven-install-plugin,
-                                                org.apache.maven.plugins:maven-deploy-plugin
-                                            </unCheckedPluginList>
-                                        </requirePluginVersions>
-                                    </rules>
-                                    <skip>${skipNoSnapshotsEnforcerPluginRule}</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
