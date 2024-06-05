@@ -89,7 +89,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <plexus.component.metadata.version>2.2.0</plexus.component.metadata.version>
-        <takari.lifecycle.plugin.version>1.13.10</takari.lifecycle.plugin.version>
+        <takari.lifecycle.plugin.version>2.1.5</takari.lifecycle.plugin.version>
 
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
