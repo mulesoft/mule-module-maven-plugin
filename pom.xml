@@ -70,7 +70,7 @@
     </developers>
 
     <properties>
-        <apiAnnotationsVersion>1.6.1-rc3</apiAnnotationsVersion>
+        <apiAnnotationsVersion>1.6.1</apiAnnotationsVersion>
         <muleBomVersion>4.7.1-rc3</muleBomVersion>
 
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
