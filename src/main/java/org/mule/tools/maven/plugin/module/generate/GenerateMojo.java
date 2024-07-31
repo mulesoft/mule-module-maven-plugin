@@ -232,6 +232,7 @@ public class GenerateMojo extends AbstractModuleMojo {
       Collection<String> directTestDependencies = project.getDependencies()
           .stream()
           .filter(dependency -> SCOPE_TEST.equals(dependency.getScope()))
+          .filter(dependency -> "jar".equals(dependency.getType()))
           .map(dependency -> project.getArtifactMap().get(dependency.getGroupId() + ":" + dependency.getArtifactId()))
           .map(artifact -> artifact.getFile().getAbsolutePath())
           .collect(toSet());
