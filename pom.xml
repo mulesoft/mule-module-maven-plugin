@@ -79,7 +79,7 @@
         <apiAnnotationsVersion>1.7.0-SNAPSHOT</apiAnnotationsVersion>
         <muleBomVersion>4.8.0-SNAPSHOT</muleBomVersion>
 
-        <maven-plugin-annotations.version>3.12.0</maven-plugin-annotations.version>
+        <maven-plugin-annotations.version>3.13.1</maven-plugin-annotations.version>
         <maven-core.version>3.9.7</maven-core.version>
         <asm.version>9.7</asm.version>
         <takari.test.version>3.0.2</takari.test.version>
