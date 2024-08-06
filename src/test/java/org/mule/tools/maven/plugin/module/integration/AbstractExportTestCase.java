@@ -42,7 +42,7 @@ import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 @RunWith(MavenJUnitTestRunner.class)
-@MavenVersions({"3.8.8", "3.9.5"})
+@MavenVersions({"3.8.8", "3.9.8"})
 public abstract class AbstractExportTestCase {
 
   protected static final String PATH_CLASS_A = "org/foo/A";
