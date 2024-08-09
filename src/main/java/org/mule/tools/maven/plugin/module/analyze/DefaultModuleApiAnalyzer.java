@@ -292,6 +292,10 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
         analyzerLogger.log("Skipping test artifact: " + artifact.getFile().toString());
         continue;
       }
+      if ("pom".equals(artifact.getType())) {
+        analyzerLogger.log("Skipping POM artifact: " + artifact.getFile().toString());
+        continue;
+      }
       final Map<String, Set<String>> artifactExternalPackageDeps =
           findPackageDependencies(artifact.getFile().toString(), analyzerLogger);
 
