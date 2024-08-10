@@ -47,7 +47,7 @@ public class DefaultClassVisitor extends ClassVisitor {
   public DefaultClassVisitor(String packageName, SignatureVisitor signatureVisitor, AnnotationVisitor annotationVisitor,
                              FieldVisitor fieldVisitor, MethodVisitor methodVisitor,
                              ResultCollector resultCollector, ModuleLogger analyzerLogger) {
-    super(Opcodes.ASM5);
+    super(Opcodes.ASM9);
     this.packageName = packageName;
     this.signatureVisitor = signatureVisitor;
     this.annotationVisitor = annotationVisitor;
@@ -57,6 +57,7 @@ public class DefaultClassVisitor extends ClassVisitor {
     this.analyzerLogger = analyzerLogger;
   }
 
+  @Override
   public void visit(final int version, final int access, final String name, final String signature,
                     final String superName, final String[] interfaces) {
     analyzerLogger.log("Analyzing class: " + name + (signature != null ? signature : ""));
@@ -78,6 +79,7 @@ public class DefaultClassVisitor extends ClassVisitor {
     }
   }
 
+  @Override
   public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
     if (skipClass) {
       return null;
@@ -92,6 +94,7 @@ public class DefaultClassVisitor extends ClassVisitor {
     }
   }
 
+  @Override
   public FieldVisitor visitField(final int access, final String name, final String desc, final String signature,
                                  final Object value) {
     if (skipClass) {
@@ -119,6 +122,7 @@ public class DefaultClassVisitor extends ClassVisitor {
     }
   }
 
+  @Override
   public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
                                    final String[] exceptions) {
     if (skipClass) {
