@@ -71,7 +71,7 @@
 
     <properties>
         <apiAnnotationsVersion>1.6.4-SNAPSHOT</apiAnnotationsVersion>
-        <muleBomVersion>4.7.3-SNAPSHOT</muleBomVersion>
+        <muleBomVersion>4.7.4-SNAPSHOT</muleBomVersion>
 
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
