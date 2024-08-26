@@ -229,10 +229,12 @@ public class GenerateMojo extends AbstractModuleMojo {
       final Optional<Path> xmlApisPath = Optional.ofNullable(project.getArtifactMap().get("xml-apis:xml-apis"))
           .map(xmlApisArtifact -> xmlApisArtifact.getFile().toPath());
 
+      // Include test dependencies overriding a transitive compile dependency
       Collection<String> directTestDependencies = project.getDependencies()
           .stream()
           .filter(dependency -> SCOPE_TEST.equals(dependency.getScope()))
           .filter(dependency -> "jar".equals(dependency.getType()))
+          .filter(dependency -> !"tests".equals(dependency.getClassifier()))
           .map(dependency -> project.getArtifactMap().get(dependency.getGroupId() + ":" + dependency.getArtifactId()))
           .map(artifact -> artifact.getFile().getAbsolutePath())
           .collect(toSet());
