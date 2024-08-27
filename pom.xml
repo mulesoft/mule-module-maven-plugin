@@ -81,7 +81,7 @@
 
         <takari.test.version>3.0.2</takari.test.version>
         <junit.version>4.13.2</junit.version>
-        <hamcrest.version>2.2</hamcrest.version>
+        <hamcrest.version>3.0</hamcrest.version>
         <jdk.version>17</jdk.version>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
