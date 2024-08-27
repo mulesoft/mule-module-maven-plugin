@@ -79,7 +79,7 @@
         <apiAnnotationsVersion>1.8.0-SNAPSHOT</apiAnnotationsVersion>
         <muleBomVersion>4.9.0-SNAPSHOT</muleBomVersion>
 
-        <takari.test.version>3.0.2</takari.test.version>
+        <takari.test.version>3.0.4</takari.test.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jdk.version>17</jdk.version>
