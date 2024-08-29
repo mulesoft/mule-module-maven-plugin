@@ -79,13 +79,9 @@
         <apiAnnotationsVersion>1.8.0-SNAPSHOT</apiAnnotationsVersion>
         <muleBomVersion>4.9.0-SNAPSHOT</muleBomVersion>
 
-        <takari.test.version>3.0.2</takari.test.version>
-        <junit.version>4.13.2</junit.version>
-        <hamcrest.version>2.2</hamcrest.version>
         <jdk.version>17</jdk.version>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-        <takari.lifecycle.plugin.version>1.13.10</takari.lifecycle.plugin.version>
 
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
@@ -107,6 +103,13 @@
             <dependency>
                 <groupId>org.mule</groupId>
                 <artifactId>mule-runtime-bom</artifactId>
+                <version>${muleBomVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mule</groupId>
+                <artifactId>mule-tests-bom</artifactId>
                 <version>${muleBomVersion}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -146,19 +149,16 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.takari.maven.plugins</groupId>
             <artifactId>takari-plugin-integration-testing</artifactId>
-            <version>${takari.test.version}</version>
             <type>pom</type>
             <scope>test</scope>
         </dependency>
