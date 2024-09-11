@@ -8,21 +8,12 @@ package org.mule.tools.maven.plugin.module.common;
 
 import org.mule.tools.maven.plugin.module.analyze.ModuleApiAnalyzer;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
-public abstract class AbstractModuleMojo extends org.apache.maven.plugin.AbstractMojo implements Contextualizable {
-
-  /**
-   * The plexus context to look-up the right {@link ModuleApiAnalyzer} implementation depending on the mojo configuration.
-   */
-  private Context context;
+public abstract class AbstractModuleMojo extends org.apache.maven.plugin.AbstractMojo {
 
   /**
    * The Maven project to analyze.
@@ -30,28 +21,7 @@ public abstract class AbstractModuleMojo extends org.apache.maven.plugin.Abstrac
   @Parameter(defaultValue = "${project}", readonly = true, required = true)
   protected MavenProject project;
 
+  @Inject
   protected ModuleApiAnalyzer analyzer;
-
-  @Override
-  public void contextualize(Context context)
-      throws ContextException {
-    this.context = context;
-    this.analyzer = createProjectDependencyAnalyzer();
-  }
-
-  protected ModuleApiAnalyzer createProjectDependencyAnalyzer() throws ContextException {
-    final String role = ModuleApiAnalyzer.ROLE;
-    final String roleHint = "default";
-
-    try {
-      final PlexusContainer container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
-
-      return (ModuleApiAnalyzer) container.lookup(role, roleHint);
-    } catch (ContextException | ComponentLookupException exception) {
-      throw new ContextException("Failed to instantiate ModuleApiAnalyzer with role " + role + " / role-hint " + roleHint,
-                                 exception);
-    }
-  }
-
 
 }

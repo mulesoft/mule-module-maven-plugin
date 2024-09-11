@@ -15,15 +15,21 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.plexus.component.annotations.Component;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-@Component(role = DependencyAnalyzer.class)
+import org.eclipse.sisu.Typed;
+
+@Named
+@Singleton
+@Typed(DependencyAnalyzer.class)
 public class ASMDependencyAnalyzer
     implements DependencyAnalyzer {
 
   /*
    * @see org.mule.tools.maven.plugin.module.analyze.DependencyAnalyzer#analyze(java.net.URL)
    */
+  @Override
   public Map<String, Set<String>> analyze(URL url, ModuleLogger analyzerLogger)
       throws IOException {
     DependencyClassFileVisitor visitor = new DependencyClassFileVisitor(analyzerLogger);
