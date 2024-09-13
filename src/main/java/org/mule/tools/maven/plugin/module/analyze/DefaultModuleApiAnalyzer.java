@@ -21,13 +21,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
+import org.eclipse.sisu.Typed;
 
-@Component(role = ModuleApiAnalyzer.class)
+@Named
+@Singleton
+@Typed(ModuleApiAnalyzer.class)
 public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
 
   public static final String PROJECT_IS_NOT_A_MULE_MODULE = "Project is not a mule module";
@@ -39,7 +44,7 @@ public class DefaultModuleApiAnalyzer implements ModuleApiAnalyzer {
   /**
    * DependencyAnalyzer
    */
-  @Requirement
+  @Inject
   private DependencyAnalyzer dependencyAnalyzer;
   private final ModuleDiscoverer moduleDiscoverer = new ModuleDiscoverer();
 
