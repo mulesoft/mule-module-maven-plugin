@@ -8,6 +8,7 @@
         <groupId>org.mule</groupId>
         <artifactId>mule-plugin-mgmt-parent-pom</artifactId>
         <version>4.9.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <groupId>org.mule.tools.maven</groupId>
@@ -213,13 +214,6 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <configuration>
-                    <header>com/mycila/maven/plugin/license/templates/CPAL.txt</header>
-                    <properties>
-                        <owner>MuleSoft, Inc</owner>
-                        <project.url>http://www.mulesoft.com</project.url>
-                    </properties>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>io.takari.maven.plugins</groupId>
