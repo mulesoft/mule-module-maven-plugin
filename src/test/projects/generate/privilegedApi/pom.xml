@@ -10,7 +10,7 @@
     <name>Empty Project</name>
     
     <properties>
-        <apiAnnotationsVersion>1.7.0-SNAPSHOT</apiAnnotationsVersion>
+        <apiAnnotationsVersion>1.7.0</apiAnnotationsVersion>
     </properties>
 
     <dependencies>
