@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.mule</groupId>
         <artifactId>mule-plugin-mgmt-parent-pom</artifactId>
-        <version>4.8.2-SNAPSHOT</version>
+        <version>4.8.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.mule.tools.maven</groupId>
     <artifactId>mule-module-maven-plugin</artifactId>
-    <version>1.8.2-SNAPSHOT</version>
+    <version>1.8.3-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Mule Module Analyzer Plugin</name>
@@ -76,8 +76,8 @@
     </developers>
 
     <properties>
-        <apiAnnotationsVersion>1.7.2-SNAPSHOT</apiAnnotationsVersion>
-        <muleBomVersion>4.8.2-SNAPSHOT</muleBomVersion>
+        <apiAnnotationsVersion>1.7.3-SNAPSHOT</apiAnnotationsVersion>
+        <muleBomVersion>4.8.3-SNAPSHOT</muleBomVersion>
 
         <takari.test.version>3.0.2</takari.test.version>
         <junit.version>4.13.2</junit.version>
