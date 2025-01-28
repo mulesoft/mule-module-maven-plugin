@@ -78,7 +78,7 @@
 
     <properties>
         <apiAnnotationsVersion>1.8.0-rc4</apiAnnotationsVersion>
-        <muleBomVersion>4.9.0-rc3</muleBomVersion>
+        <muleBomVersion>4.9.0-rc4</muleBomVersion>
 
         <jdk.version>17</jdk.version>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
