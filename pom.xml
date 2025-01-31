@@ -76,7 +76,7 @@
     </developers>
 
     <properties>
-        <apiAnnotationsVersion>1.7.4-rc1</apiAnnotationsVersion>
+        <apiAnnotationsVersion>1.7.4</apiAnnotationsVersion>
         <muleBomVersion>4.8.4-rc1</muleBomVersion>
 
         <takari.test.version>3.0.2</takari.test.version>
