@@ -40,7 +40,7 @@ import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
 import org.mule.tools.maven.plugin.module.analyze.impl.logging.SilentAnalyzerLogger;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.ServiceDefinition;
-import org.mule.tools.maven.plugin.module.generate.mms.PrivilegedApiReflectiveWrapper;
+import org.mule.tools.maven.plugin.module.util.PrivilegedApiReflectiveWrapper;
 
 import java.io.File;
 import java.io.FileInputStream;

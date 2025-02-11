@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.generate.mms;
+package org.mule.tools.maven.plugin.module.util;
 
 import org.mule.api.annotation.jpms.OptionalPackages;
 import org.mule.api.annotation.jpms.PrivilegedApi;

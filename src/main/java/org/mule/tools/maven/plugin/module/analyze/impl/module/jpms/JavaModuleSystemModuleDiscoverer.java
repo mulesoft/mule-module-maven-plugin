@@ -26,7 +26,7 @@ import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.ServiceDefinition;
-import org.mule.tools.maven.plugin.module.generate.mms.PrivilegedApiReflectiveWrapper;
+import org.mule.tools.maven.plugin.module.util.PrivilegedApiReflectiveWrapper;
 
 import java.io.IOException;
 import java.io.InputStream;
