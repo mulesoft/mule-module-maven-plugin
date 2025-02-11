@@ -4,13 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.mms;
+package org.mule.tools.maven.plugin.module.analyze.impl.module.mms;
 
 import static java.util.stream.Collectors.toCollection;
 
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.DefaultModule;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.ServiceDefinition;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.ServiceDefinition;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -4,36 +4,44 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm;
+package org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm;
 
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
 
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * Computes the set of classes referenced by visited code. Inspired by <code>org.objectweb.asm.depend.DependencyVisitor</code> in
  * the ASM dependencies example.
  */
-public class DefaultSignatureVisitor
-    extends SignatureVisitor {
+public class DefaultFieldVisitor
+    extends FieldVisitor {
 
   private final String packageName;
+  private final AnnotationVisitor annotationVisitor;
+
   private final ResultCollector resultCollector;
   private final ModuleLogger analyzerLogger;
 
-  public DefaultSignatureVisitor(String packageName, ResultCollector resultCollector, ModuleLogger analyzerLogger) {
+  public DefaultFieldVisitor(String packageName, AnnotationVisitor annotationVisitor, ResultCollector resultCollector,
+                             ModuleLogger analyzerLogger) {
     super(Opcodes.ASM5);
     this.packageName = packageName;
+    this.annotationVisitor = annotationVisitor;
     this.resultCollector = resultCollector;
     this.analyzerLogger = analyzerLogger;
   }
 
-  public void visitClassType(final String name) {
-    resultCollector.addName(packageName, name);
+  public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+    if (visible) {
+      resultCollector.addDesc(packageName, desc);
+
+      return annotationVisitor;
+    } else {
+      return null;
+    }
   }
 
-  public void visitInnerClassType(final String name) {
-    resultCollector.addName(packageName, name);
-  }
 }

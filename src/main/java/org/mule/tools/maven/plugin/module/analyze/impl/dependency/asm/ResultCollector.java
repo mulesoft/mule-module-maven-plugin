@@ -4,9 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm;
+package org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm;
 
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.DefaultMuleModuleSystemApiAnalyzer.getPackageName;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.DefaultMuleModuleSystemApiAnalyzer.getPackageName;
 
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
 

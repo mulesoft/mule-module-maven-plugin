@@ -4,13 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm;
+package org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm;
 
-import static org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm.AccessUtils.isFinal;
-import static org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm.AccessUtils.isPackage;
-import static org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm.AccessUtils.isPrivate;
-import static org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm.AccessUtils.isProtected;
-import static org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm.AccessUtils.isPublic;
+import static org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm.AccessUtils.isFinal;
+import static org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm.AccessUtils.isPackage;
+import static org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm.AccessUtils.isPrivate;
+import static org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm.AccessUtils.isProtected;
+import static org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm.AccessUtils.isPublic;
 
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
 

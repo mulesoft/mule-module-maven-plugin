@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.common.dependency;
+package org.mule.tools.maven.plugin.module.analyze.impl.dependency;
 
 import java.io.InputStream;
 import java.util.HashSet;

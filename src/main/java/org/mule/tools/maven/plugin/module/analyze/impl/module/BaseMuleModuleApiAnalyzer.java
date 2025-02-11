@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.common;
+package org.mule.tools.maven.plugin.module.analyze.impl.module;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
@@ -13,9 +13,9 @@ import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
 import org.mule.tools.maven.plugin.module.analyze.api.ApiAnalysisResult;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.DependencyAnalyzer;
+import org.mule.tools.maven.plugin.module.analyze.impl.dependency.DependencyAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
-import org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleDiscoverer;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleDiscoverer;
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
 
 import javax.inject.Inject;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.mule.tools.maven.plugin.module.analyze.impl.common.JrePackageFinder.find;
+import static org.mule.tools.maven.plugin.module.analyze.impl.util.JrePackageFinder.find;
 
 public abstract class BaseMuleModuleApiAnalyzer implements ModuleApiAnalyzer {
 

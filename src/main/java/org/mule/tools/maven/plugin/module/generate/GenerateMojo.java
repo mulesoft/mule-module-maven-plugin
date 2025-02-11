@@ -6,13 +6,13 @@
  */
 package org.mule.tools.maven.plugin.module.generate;
 
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.EXPORT_CLASS_PACKAGES;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.EXPORT_OPTIONAL_PACKAGES;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.EXPORT_SERVICES;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.MODULE_NAME;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.MULE_MODULE_PROPERTIES_LOCATION;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.PRIVILEGED_ARTIFACT_IDS;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.PRIVILEGED_CLASS_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.EXPORT_CLASS_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.EXPORT_OPTIONAL_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.EXPORT_SERVICES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.MODULE_NAME;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.MULE_MODULE_PROPERTIES_LOCATION;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.PRIVILEGED_ARTIFACT_IDS;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.PRIVILEGED_CLASS_PACKAGES;
 
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.ModuleLayer.boot;
@@ -35,11 +35,11 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.maven.AbstractModuleMojo;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.DefaultModule;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.logging.SilentAnalyzerLogger;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.ServiceDefinition;
+import org.mule.tools.maven.plugin.module.analyze.impl.logging.SilentAnalyzerLogger;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.ServiceDefinition;
 import org.mule.tools.maven.plugin.module.generate.mms.PrivilegedApiReflectiveWrapper;
 
 import java.io.File;

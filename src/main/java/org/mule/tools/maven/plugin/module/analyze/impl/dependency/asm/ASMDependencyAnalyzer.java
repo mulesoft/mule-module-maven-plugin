@@ -4,10 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.asm;
+package org.mule.tools.maven.plugin.module.analyze.impl.dependency.asm;
 
-import org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.ClassFileVisitorUtils;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.dependency.DependencyAnalyzer;
+import org.mule.tools.maven.plugin.module.analyze.impl.dependency.ClassFileVisitorUtils;
+import org.mule.tools.maven.plugin.module.analyze.impl.dependency.DependencyAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
 
 import java.io.IOException;

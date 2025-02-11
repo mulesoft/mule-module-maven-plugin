@@ -11,8 +11,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.PACKAGES_TO_EXPORT_ERROR;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.DefaultMuleModuleSystemApiAnalyzer.PROJECT_IS_NOT_A_MULE_MODULE;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.DefaultMuleModuleSystemApiAnalyzer.buildOptionalPackageExportedMessage;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.DefaultMuleModuleSystemApiAnalyzer.PROJECT_IS_NOT_A_MULE_MODULE;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.DefaultMuleModuleSystemApiAnalyzer.buildOptionalPackageExportedMessage;
 
 import java.util.List;
 import java.util.Map;

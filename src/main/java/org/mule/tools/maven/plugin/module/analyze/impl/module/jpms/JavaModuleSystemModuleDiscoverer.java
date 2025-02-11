@@ -4,9 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.jpms;
+package org.mule.tools.maven.plugin.module.analyze.impl.module.jpms;
 
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.MULE_MODULE_PROPERTIES_LOCATION;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.MULE_MODULE_PROPERTIES_LOCATION;
 
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.ModuleLayer.boot;
@@ -23,9 +23,9 @@ import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.DefaultModule;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.ServiceDefinition;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.ServiceDefinition;
 import org.mule.tools.maven.plugin.module.generate.mms.PrivilegedApiReflectiveWrapper;
 
 import java.io.IOException;

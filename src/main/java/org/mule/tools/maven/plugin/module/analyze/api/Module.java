@@ -6,7 +6,7 @@
  */
 package org.mule.tools.maven.plugin.module.analyze.api;
 
-import org.mule.tools.maven.plugin.module.analyze.impl.common.ServiceDefinition;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.ServiceDefinition;
 
 import java.util.Set;
 

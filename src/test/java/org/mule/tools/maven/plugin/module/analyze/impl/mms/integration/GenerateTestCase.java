@@ -6,9 +6,9 @@
  */
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.DefaultMuleModuleSystemApiAnalyzer.PROJECT_IS_NOT_A_MULE_MODULE;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.MODULE_NAME;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.MULE_MODULE_PROPERTIES_LOCATION;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.DefaultMuleModuleSystemApiAnalyzer.PROJECT_IS_NOT_A_MULE_MODULE;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.MODULE_NAME;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory.MULE_MODULE_PROPERTIES_LOCATION;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -26,10 +26,10 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assume.assumeTrue;
 
-import org.mule.tools.maven.plugin.module.analyze.impl.common.logging.SilentAnalyzerLogger;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.DefaultModule;
-import org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.ServiceDefinition;
+import org.mule.tools.maven.plugin.module.analyze.impl.logging.SilentAnalyzerLogger;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.ServiceDefinition;
 
 import java.io.File;
 import java.io.FileInputStream;

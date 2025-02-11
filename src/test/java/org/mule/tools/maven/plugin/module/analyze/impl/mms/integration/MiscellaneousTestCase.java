@@ -6,8 +6,8 @@
  */
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.DefaultMuleModuleSystemApiAnalyzer.buildRemovedJrePackageMessage;
-import static org.mule.tools.maven.plugin.module.analyze.impl.mms.DefaultMuleModuleSystemApiAnalyzer.buildRemovedSunPackageMessage;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.DefaultMuleModuleSystemApiAnalyzer.buildRemovedJrePackageMessage;
+import static org.mule.tools.maven.plugin.module.analyze.impl.module.mms.DefaultMuleModuleSystemApiAnalyzer.buildRemovedSunPackageMessage;
 
 import static org.apache.commons.lang3.JavaVersion.JAVA_11;
 import static org.apache.commons.lang3.SystemUtils.isJavaVersionAtLeast;

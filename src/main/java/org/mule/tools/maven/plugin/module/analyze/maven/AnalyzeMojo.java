@@ -11,7 +11,7 @@ import static java.lang.System.lineSeparator;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VALIDATE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
-import org.mule.tools.maven.plugin.module.analyze.impl.jpms.JavaModuleSystemApiAnalyzer;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.jpms.JavaModuleSystemApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
 
@@ -24,8 +24,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.logging.SilentAnalyzerLogger;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.logging.VerboseAnalyzerLogger;
+import org.mule.tools.maven.plugin.module.analyze.impl.logging.SilentAnalyzerLogger;
+import org.mule.tools.maven.plugin.module.analyze.impl.logging.VerboseAnalyzerLogger;
 
 /**
  * Analyzes the exported API in a mule module and checks that there are no missing exported packages.
@@ -44,13 +44,15 @@ public class AnalyzeMojo extends AbstractModuleMojo {
       "Following privileged packages are already exported by a module dependency:";
 
   /**
-   * Logs extra information about analysis process
+   * Logs extra information about analysis process.
+   * Defaults to false.
    */
   @Parameter(property = "muleModule.analyze.verbose", defaultValue = "false")
   private boolean verbose;
 
   /**
    * Skip plugin execution completely.
+   * Defaults to false.
    */
   @Parameter(property = "muleModule.analyze.skip", defaultValue = "false")
   private boolean skip;
@@ -59,10 +61,17 @@ public class AnalyzeMojo extends AbstractModuleMojo {
    * Workaround for 3rd party modules that do not export packages that are indeed part of their API.<br>
    * When set to true, such un-exported packages will be added to the {@link Module#getOptionalExportedPackages()} as if they were
    * part of the API.
+   * Defaults to false.
    */
   @Parameter(defaultValue = "false")
   private boolean fillOptionalPackages;
 
+  /**
+   * The module system to use. Possible values:<br>
+   * 'mms': Use the Mule module system (based on mule-module.properties descriptors).<br>
+   * 'jpms': Use the Java module system (based on module-info.java descriptors).<br>
+   * Defaults to 'mms'.
+   */
   @Parameter(property = "muleModule.analyze.moduleSystem", defaultValue = "mms")
   private String moduleSystem;
 

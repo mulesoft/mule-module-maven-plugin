@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.jpms;
+package org.mule.tools.maven.plugin.module.analyze.impl.module.jpms;
 
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzer;
 

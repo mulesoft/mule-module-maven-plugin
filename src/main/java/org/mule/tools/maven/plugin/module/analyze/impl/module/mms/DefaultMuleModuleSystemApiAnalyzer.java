@@ -4,11 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.mms;
+package org.mule.tools.maven.plugin.module.analyze.impl.module.mms;
 
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
-import org.mule.tools.maven.plugin.module.analyze.impl.common.BaseMuleModuleApiAnalyzer;
+import org.mule.tools.maven.plugin.module.analyze.impl.module.BaseMuleModuleApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
