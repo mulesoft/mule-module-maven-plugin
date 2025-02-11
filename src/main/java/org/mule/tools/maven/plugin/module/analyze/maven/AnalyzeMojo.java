@@ -44,15 +44,13 @@ public class AnalyzeMojo extends AbstractModuleMojo {
       "Following privileged packages are already exported by a module dependency:";
 
   /**
-   * Logs extra information about analysis process.
-   * Defaults to false.
+   * Logs extra information about analysis process. Defaults to false.
    */
   @Parameter(property = "muleModule.analyze.verbose", defaultValue = "false")
   private boolean verbose;
 
   /**
-   * Skip plugin execution completely.
-   * Defaults to false.
+   * Skip plugin execution completely. Defaults to false.
    */
   @Parameter(property = "muleModule.analyze.skip", defaultValue = "false")
   private boolean skip;
@@ -60,8 +58,7 @@ public class AnalyzeMojo extends AbstractModuleMojo {
   /**
    * Workaround for 3rd party modules that do not export packages that are indeed part of their API.<br>
    * When set to true, such un-exported packages will be added to the {@link Module#getOptionalExportedPackages()} as if they were
-   * part of the API.
-   * Defaults to false.
+   * part of the API. Defaults to false.
    */
   @Parameter(defaultValue = "false")
   private boolean fillOptionalPackages;

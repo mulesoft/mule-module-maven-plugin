@@ -67,22 +67,6 @@ public class JavaModuleSystemModuleDiscoverer {
     return resolveCurrentModule(project, analyzerLogger);
   }
 
-  /**
-   * Discovers all the Mule modules used as dependencies on the Maven project under analysis
-   *
-   * @param project           project being analyzed.
-   * @param analyzerLogger    collects all the logging information generated during the project analysis
-   * @param projectModuleName name of the module that corresponds to the project being analyzed
-   * @return a list containing all the Mule modules that are dependencies of the analyzed project.
-   * @throws ModuleApiAnalyzerException
-   */
-  public List<DefaultModule> discoverExternalModules(MavenProject project, ModuleLogger analyzerLogger,
-                                                     String projectModuleName)
-      throws ModuleApiAnalyzerException {
-    // TODO: Implement (probably not needed).
-    return null;
-  }
-
   private Optional<Module> resolveCurrentModule(MavenProject project, ModuleLogger analyzerLogger) throws Exception {
     try {
       final ModuleFinder currentModuleFinder = ModuleFinder.of(Path.of(project.getBuild().getOutputDirectory()));

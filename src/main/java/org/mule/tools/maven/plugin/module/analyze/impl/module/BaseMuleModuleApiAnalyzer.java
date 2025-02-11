@@ -76,12 +76,12 @@ public abstract class BaseMuleModuleApiAnalyzer implements ModuleApiAnalyzer {
   public ProjectAnalysisResult analyze(MavenProject project, Module module, ModuleLogger analyzerLogger, Log log)
       throws ModuleApiAnalyzerException {
     try {
-      List<Module> modules =
+      List<Module> muleModuleSystemExternalModules =
           new MuleModuleSystemModuleDiscoverer().discoverExternalModules(project, analyzerLogger, module.getName());
 
       checkExportedOptionalPackage(analyzerLogger, module.getExportedPackages(), module.getOptionalExportedPackages());
 
-      Set<String> externalExportedPackages = getExternalExportedPackages(modules);
+      Set<String> externalExportedPackages = getExternalExportedPackages(muleModuleSystemExternalModules);
 
       final Map<String, Set<String>> projectPackageDependencies = findPackageDependencies(project, analyzerLogger);
       final Map<String, Set<String>> externalPackageDeps = calculateExternalDeps(project, analyzerLogger);
@@ -96,7 +96,7 @@ public abstract class BaseMuleModuleApiAnalyzer implements ModuleApiAnalyzer {
       ApiAnalysisResult privilegedApiAnalysisResult = null;
 
       if (!module.getExportedPrivilegedPackages().isEmpty()) {
-        Set<String> externalPrivilegedExportedPackages = getExternalExportedPrivilegedPackages(modules);
+        Set<String> externalPrivilegedExportedPackages = getExternalExportedPrivilegedPackages(muleModuleSystemExternalModules);
         Set<String> exportedPackages = new HashSet<>(module.getExportedPackages());
         exportedPackages.addAll(externalExportedPackages);
         exportedPackages.addAll(externalPrivilegedExportedPackages);
