@@ -6,13 +6,13 @@
  */
 package org.mule.tools.maven.plugin.module.generate;
 
-import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_CLASS_PACKAGES;
-import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_OPTIONAL_PACKAGES;
-import static org.mule.tools.maven.plugin.module.bean.Module.EXPORT_SERVICES;
-import static org.mule.tools.maven.plugin.module.bean.Module.MODULE_NAME;
-import static org.mule.tools.maven.plugin.module.bean.Module.MULE_MODULE_PROPERTIES_LOCATION;
-import static org.mule.tools.maven.plugin.module.bean.Module.PRIVILEGED_ARTIFACT_IDS;
-import static org.mule.tools.maven.plugin.module.bean.Module.PRIVILEGED_CLASS_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.EXPORT_CLASS_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.EXPORT_OPTIONAL_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.EXPORT_SERVICES;
+import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.MODULE_NAME;
+import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.MULE_MODULE_PROPERTIES_LOCATION;
+import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.PRIVILEGED_ARTIFACT_IDS;
+import static org.mule.tools.maven.plugin.module.analyze.impl.mms.MuleModuleSystemModuleFactory.PRIVILEGED_CLASS_PACKAGES;
 
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.ModuleLayer.boot;
@@ -33,11 +33,14 @@ import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_CLASSES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
-import org.mule.tools.maven.plugin.module.analyze.ModuleApiAnalyzerException;
-import org.mule.tools.maven.plugin.module.analyze.ProjectAnalysisResult;
-import org.mule.tools.maven.plugin.module.analyze.SilentAnalyzerLogger;
-import org.mule.tools.maven.plugin.module.bean.ServiceDefinition;
-import org.mule.tools.maven.plugin.module.common.AbstractModuleMojo;
+import org.mule.tools.maven.plugin.module.analyze.api.Module;
+import org.mule.tools.maven.plugin.module.analyze.maven.AbstractModuleMojo;
+import org.mule.tools.maven.plugin.module.analyze.impl.common.DefaultModule;
+import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
+import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
+import org.mule.tools.maven.plugin.module.analyze.impl.common.logging.SilentAnalyzerLogger;
+import org.mule.tools.maven.plugin.module.analyze.impl.common.ServiceDefinition;
+import org.mule.tools.maven.plugin.module.generate.mms.PrivilegedApiReflectiveWrapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -115,7 +118,7 @@ public class GenerateMojo extends AbstractModuleMojo {
     java.lang.Module currentModule = currentModuleOpt.get();
 
     getLog().info("Loading module information for '" + currentModule.getName() + "'...");
-    final org.mule.tools.maven.plugin.module.bean.Module muleModule = toMuleModule(currentModule);
+    final Module muleModule = toMuleModule(currentModule);
 
     getLog().info("Setting properties for mule module '" + currentModule.getName() + "'...");
     final Properties properties = toMuleModuleProperties(muleModule);
@@ -124,7 +127,7 @@ public class GenerateMojo extends AbstractModuleMojo {
     writeFiles(muleModule, properties);
   }
 
-  private org.mule.tools.maven.plugin.module.bean.Module toMuleModule(final java.lang.Module currentModule)
+  private Module toMuleModule(final java.lang.Module currentModule)
       throws ClassNotFoundException, ModuleApiAnalyzerException, MojoExecutionException {
     final PrivilegedApiReflectiveWrapper privilegedApiReflectiveWrapper = new PrivilegedApiReflectiveWrapper(currentModule);
 
@@ -151,26 +154,26 @@ public class GenerateMojo extends AbstractModuleMojo {
         })
         .collect(toCollection(TreeSet::new));
 
-    org.mule.tools.maven.plugin.module.bean.Module generatedModule =
-        new org.mule.tools.maven.plugin.module.bean.Module(currentModule.getName(),
-                                                           exportedPackages,
-                                                           exportedPrivilegedPackages,
-                                                           optionalPackages,
-                                                           modulePrivilegedArtifactIds,
-                                                           moduleServiceDefinitions);
+    Module generatedModule =
+        new DefaultModule(currentModule.getName(),
+                          exportedPackages,
+                          exportedPrivilegedPackages,
+                          optionalPackages,
+                          modulePrivilegedArtifactIds,
+                          moduleServiceDefinitions);
 
     if (fillOptionalPackages) {
-      final ProjectAnalysisResult analysis = analyzer
+      final ProjectAnalysisResult analysis = analyzer.get("mms")
           .analyze(project, generatedModule, new SilentAnalyzerLogger(), getLog());
       final Set<String> additionalOptionalPackages = analysis.getStandardApi().getPackagesToExport();
       if (!additionalOptionalPackages.isEmpty()) {
         optionalPackages.addAll(additionalOptionalPackages);
-        generatedModule = new org.mule.tools.maven.plugin.module.bean.Module(currentModule.getName(),
-                                                                             exportedPackages,
-                                                                             exportedPrivilegedPackages,
-                                                                             optionalPackages,
-                                                                             modulePrivilegedArtifactIds,
-                                                                             moduleServiceDefinitions);
+        generatedModule = new DefaultModule(currentModule.getName(),
+                                            exportedPackages,
+                                            exportedPrivilegedPackages,
+                                            optionalPackages,
+                                            modulePrivilegedArtifactIds,
+                                            moduleServiceDefinitions);
       }
     }
 
@@ -263,7 +266,7 @@ public class GenerateMojo extends AbstractModuleMojo {
     }
   }
 
-  private Properties toMuleModuleProperties(final org.mule.tools.maven.plugin.module.bean.Module muleModule) {
+  private Properties toMuleModuleProperties(final Module muleModule) {
     final Properties properties = new Properties();
 
     properties.put(MODULE_NAME, muleModule.getName());
@@ -311,7 +314,7 @@ public class GenerateMojo extends AbstractModuleMojo {
     return properties;
   }
 
-  private void writeFiles(final org.mule.tools.maven.plugin.module.bean.Module muleModule, final Properties properties)
+  private void writeFiles(final Module muleModule, final Properties properties)
       throws MojoFailureException, IOException, FileNotFoundException {
     if (!muleModule.getModuleServiceDefinitions().isEmpty()) {
       for (ServiceDefinition serviceDefinition : muleModule.getModuleServiceDefinitions()) {
