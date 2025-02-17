@@ -4,13 +4,14 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.maven;
+package org.mule.tools.maven.plugin.module.analyze;
 
 import static java.lang.System.lineSeparator;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VALIDATE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
+import org.mule.tools.maven.plugin.module.AbstractModuleMojo;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.jpms.JavaModuleSystemApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;

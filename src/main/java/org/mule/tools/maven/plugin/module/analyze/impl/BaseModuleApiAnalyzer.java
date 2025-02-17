@@ -65,7 +65,7 @@ public abstract class BaseModuleApiAnalyzer implements ModuleApiAnalyzer {
   }
 
   /**
-   * @param packageName a package providede by the JRE
+   * @param packageName a package provided by the JRE
    * @return a message indicating that the package was removed from the package closure
    */
   public static String buildRemovedJrePackageMessage(String packageName) {

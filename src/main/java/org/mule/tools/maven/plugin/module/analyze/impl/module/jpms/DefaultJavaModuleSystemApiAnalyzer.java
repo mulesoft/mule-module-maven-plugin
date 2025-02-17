@@ -33,7 +33,6 @@ public class DefaultJavaModuleSystemApiAnalyzer extends BaseModuleApiAnalyzer im
   public static final String PROJECT_IS_NOT_A_JPMS_MODULE = "Project is not a jpms module";
   private boolean isFillOptionalPackages = false;
 
-  // TODO: Evaluate creating an API interface for this.
   private final JavaModuleSystemModuleDiscoverer javaModuleSystemModuleDiscoverer = new JavaModuleSystemModuleDiscoverer();
 
   @Override

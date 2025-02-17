@@ -34,7 +34,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_CLASSE
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
-import org.mule.tools.maven.plugin.module.analyze.maven.AbstractModuleMojo;
+import org.mule.tools.maven.plugin.module.AbstractModuleMojo;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;

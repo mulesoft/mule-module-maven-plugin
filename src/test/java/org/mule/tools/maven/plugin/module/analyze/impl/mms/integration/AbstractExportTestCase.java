@@ -6,13 +6,13 @@
  */
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
-import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.DUPLICATED_EXPORTED_PACKAGES;
-import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES;
-import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.MODULE_API_PROBLEMS_FOUND;
-import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.NOT_ANALYZED_PACKAGES_ERROR;
-import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.NO_MODULE_API_PROBLEMS_FOUND;
-import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.PACKAGES_TO_EXPORT_ERROR;
-import static org.mule.tools.maven.plugin.module.analyze.maven.AnalyzeMojo.PRIVILEGED_PACKAGES_TO_EXPORT_ERROR;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_EXPORTED_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.DUPLICATED_PRIVILEGED_EXPORTED_PACKAGES;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.MODULE_API_PROBLEMS_FOUND;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NOT_ANALYZED_PACKAGES_ERROR;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.NO_MODULE_API_PROBLEMS_FOUND;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PACKAGES_TO_EXPORT_ERROR;
+import static org.mule.tools.maven.plugin.module.analyze.AnalyzeMojo.PRIVILEGED_PACKAGES_TO_EXPORT_ERROR;
 
 import static java.io.File.separator;
 import static java.lang.System.arraycopy;

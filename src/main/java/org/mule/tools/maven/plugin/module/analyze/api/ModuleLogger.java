@@ -6,6 +6,7 @@
  */
 package org.mule.tools.maven.plugin.module.analyze.api;
 
+// TODO: Move up (outside the analyze plugin).
 public interface ModuleLogger {
 
   void log(String message);
