@@ -7,7 +7,7 @@
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class CodeReferenceExportTestCase extends AbstractExportTestCase {
 
@@ -15,12 +15,12 @@ public class CodeReferenceExportTestCase extends AbstractExportTestCase {
     super(builder, "code");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresTypeReferenceInMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresTypeReferenceInMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresTypeReferenceInStaticInitializer() throws Exception {
     doSuccessfulStandardValidationTest("ignoresTypeReferenceInStaticInitializer");
   }

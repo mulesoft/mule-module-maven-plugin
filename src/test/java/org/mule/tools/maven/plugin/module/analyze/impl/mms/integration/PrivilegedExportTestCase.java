@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class PrivilegedExportTestCase extends AbstractExportTestCase {
 
@@ -18,22 +18,22 @@ public class PrivilegedExportTestCase extends AbstractExportTestCase {
     super(builder, "privileged");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportInPrivilegedApi() throws Exception {
     doSuccessfulPrivilegedValidationTest("exportInPrivilegedApi", ANALYZED_CLASSES_A_B);
   }
 
-  @Test
+  @MavenPluginTest
   public void missingExportInPrivilegedApi() throws Exception {
     doMissingPrivilegedExportTest("missingExportInPrivilegedApi", ANALYZED_CLASSES_A_B);
   }
 
-  @Test
+  @MavenPluginTest
   public void duplicatedExportInPrivilegedApi() throws Exception {
     doDuplicatedPrivilegedExportTest("duplicatedExportInPrivilegedApi", "org.foo");
   }
 
-  @Test
+  @MavenPluginTest
   public void noPrivilegedExportPackageFromModule() throws Exception {
     Map<String, List<String>> logs = buildMultiModule("noPrivilegedExportPackageFromModule");
 
@@ -46,7 +46,7 @@ public class PrivilegedExportTestCase extends AbstractExportTestCase {
     assertValidModuleApi(fooLog);
   }
 
-  @Test
+  @MavenPluginTest
   public void redundantPrivilegedExportPackageFromModule() throws Exception {
     doDuplicatedPrivilegedExportTest("redundantPrivilegedExportPackageFromModule", BAR_PACKAGE);
   }

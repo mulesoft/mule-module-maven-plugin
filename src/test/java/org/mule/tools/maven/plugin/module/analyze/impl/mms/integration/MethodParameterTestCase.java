@@ -7,7 +7,7 @@
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class MethodParameterTestCase extends AbstractExportTestCase {
 
@@ -15,37 +15,37 @@ public class MethodParameterTestCase extends AbstractExportTestCase {
     super(builder, "parameter");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedParameterInPublicMethod() throws Exception {
     doSuccessfulStandardValidationTest("exportedParameterInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedParameterInProtectedMethod() throws Exception {
     doSuccessfulStandardValidationTest("exportedParameterInProtectedMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingExportedParameterInPublicMethod() throws Exception {
     doMissingStandardExportTest("missingParameterInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingExportedParameterInProtectedMethod() throws Exception {
     doMissingStandardExportTest("missingParameterInProtectedMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresParameterInPrivateMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresParameterInPrivateMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresParameterInPackageMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresParameterInPackageMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresParamInProtectedMethodFromFinalClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresParameterInProtectedMethodFromFinalClass");
   }

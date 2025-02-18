@@ -41,7 +41,7 @@ import io.takari.maven.testing.executor.MavenExecutionResult;
 import io.takari.maven.testing.executor.MavenRuntime;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class GenerateTestCase extends AbstractExportTestCase {
 
@@ -74,7 +74,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
                                                       properties);
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedPackages() throws Exception {
     MavenExecutionResult result = doRunMaven("simpleModule");
     final DefaultModule muleModule = loadMuleModuleProperties(".", result);
@@ -87,7 +87,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void requiresTransitiveOnJvmModule() throws Exception {
     MavenExecutionResult result = doRunMaven("requiresTransitiveOnJvmModule");
     final DefaultModule muleModule = loadMuleModuleProperties(".", result);
@@ -101,7 +101,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void somethingOnMetaInf() throws Exception {
     MavenExecutionResult result = doRunMaven("somethingOnMetaInf");
     final DefaultModule muleModule = loadMuleModuleProperties(".", result);
@@ -114,7 +114,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void privilegedPackages() throws Exception {
     MavenExecutionResult result = doRunMaven("privilegedApi");
     final DefaultModule muleModule = loadMuleModuleProperties(".", result);
@@ -127,7 +127,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void requiresTransitiveMuleModule() throws Exception {
     MavenExecutionResult result = doRunMaven("requiresTransitiveMuleModule");
     final DefaultModule muleModule =
@@ -141,7 +141,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void requiresTransitiveNonMuleModule() throws Exception {
     MavenExecutionResult result = runMaven("requiresTransitiveNonMuleModule", "package", "mule-module:analyze");
     result.assertErrorFreeLog();
@@ -165,7 +165,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void requiresTransitiveNonMuleModuleIndirectly() throws Exception {
     MavenExecutionResult result = runMaven("requiresTransitiveNonMuleModuleIndirectly", "package", "mule-module:analyze");
     result.assertErrorFreeLog();
@@ -190,7 +190,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
   }
 
   // W-14610690
-  @Test
+  @MavenPluginTest
   public void transitiveMuleModuleAsTestDependency() throws Exception {
     MavenExecutionResult result = runMaven("transitiveMuleModuleAsTestDependency", "package", "mule-module:analyze");
     result.assertErrorFreeLog();
@@ -213,7 +213,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void requiresTransitiveOnJavaxModule() throws Exception {
     MavenExecutionResult result = doRunMaven("requiresTransitiveOnJavaxModule");
     final DefaultModule muleModule = loadMuleModuleProperties(".", result);
@@ -227,7 +227,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
   }
 
   // W-14610685
-  @Test
+  @MavenPluginTest
   public void dependsOnXmlApis() throws Exception {
     MavenExecutionResult result = doRunMaven("dependsOnXmlApis");
     final DefaultModule muleModule = loadMuleModuleProperties(".", result);
@@ -240,7 +240,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), empty());
   }
 
-  @Test
+  @MavenPluginTest
   public void services() throws Exception {
     MavenExecutionResult result = doRunMaven("services");
     final DefaultModule muleModule =
@@ -268,7 +268,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
   }
 
   // W-14610698
-  @Test
+  @MavenPluginTest
   public void servicesExportedImpl() throws Exception {
     MavenExecutionResult result = doRunMaven("servicesExportedImpl");
     final DefaultModule muleModule =
@@ -296,7 +296,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
   }
 
   // W-14658807
-  @Test
+  @MavenPluginTest
   public void fillOptionalPackages() throws Exception {
     MavenExecutionResult result = runMaven("fillOptionalPackages", "package", "mule-module:analyze");
     result.assertErrorFreeLog();
@@ -312,7 +312,7 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assertThat(muleModule.getOptionalExportedPackages(), containsInAnyOrder("org.sub"));
   }
 
-  @Test
+  @MavenPluginTest
   public void skipsWritingPropertiesFileIfEqual() throws Exception {
     MavenExecutionResult result = doRunMaven("simpleModule");
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 import io.takari.maven.testing.executor.MavenRuntime;
 
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class MiscellaneousTestCase extends AbstractExportTestCase {
 
@@ -28,12 +28,12 @@ public class MiscellaneousTestCase extends AbstractExportTestCase {
     super(builder, "miscellaneous");
   }
 
-  @Test
+  @MavenPluginTest
   public void redundantExportedPackage() throws Exception {
     doMissingAnalyzedPackageTest("redundantExportedPackage");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresJreExportedPackage() throws Exception {
     assumeFalse(isJavaVersionAtLeast(JAVA_11));
 
@@ -45,14 +45,14 @@ public class MiscellaneousTestCase extends AbstractExportTestCase {
     assertThat(log, hasItem(containsString(buildRemovedSunPackageMessage("sun.misc"))));
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedServices() throws Exception {
     List<String> log = buildSingleModule("services");
 
     assertValidModuleApi(log);
   }
 
-  @Test
+  @MavenPluginTest
   public void invalidExportedServices() throws Exception {
     List<String> log = buildSingleModule("servicesInvalid");
 
@@ -60,7 +60,7 @@ public class MiscellaneousTestCase extends AbstractExportTestCase {
         + "Invalid service definition 'notAServiceDefinition'. Must be of format '<interface fqcn>:<implementation fqcn>")));
   }
 
-  @Test
+  @MavenPluginTest
   public void emptyExportedServices() throws Exception {
     List<String> log = buildSingleModule("servicesEmpty");
 

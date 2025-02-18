@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class DefaultModuleTestCase extends AbstractExportTestCase {
 
@@ -29,7 +29,7 @@ public class DefaultModuleTestCase extends AbstractExportTestCase {
     super(builder, "module");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportsPackageFromLibrary() throws Exception {
     Map<String, List<String>> logs = buildMultiModule("exportsPackageFromLibrary");
 
@@ -41,7 +41,7 @@ public class DefaultModuleTestCase extends AbstractExportTestCase {
     assertValidModuleApi(fooLog);
   }
 
-  @Test
+  @MavenPluginTest
   public void missingExportsPackageFromLibrary() throws Exception {
     Map<String, List<String>> logs = buildMultiModule("missingExportsPackageFromLibrary");
 
@@ -53,7 +53,7 @@ public class DefaultModuleTestCase extends AbstractExportTestCase {
     assertMissingExportedPackages(fooLog, PACKAGES_TO_EXPORT_ERROR, BAR_PACKAGE);
   }
 
-  @Test
+  @MavenPluginTest
   public void noExportsPackageFromModule() throws Exception {
     Map<String, List<String>> logs = buildMultiModule("noExportsPackageFromModule");
 
@@ -66,12 +66,12 @@ public class DefaultModuleTestCase extends AbstractExportTestCase {
     assertValidModuleApi(fooLog);
   }
 
-  @Test
+  @MavenPluginTest
   public void redundantExportPackageFromModule() throws Exception {
     doDuplicatedExportTest("redundantExportPackageFromModule", BAR_PACKAGE);
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresOptionalPackageFromLibrary() throws Exception {
     Map<String, List<String>> logs = buildMultiModule("ignoresOptionalPackageFromLibrary");
 
@@ -83,7 +83,7 @@ public class DefaultModuleTestCase extends AbstractExportTestCase {
     assertValidModuleApi(fooLog);
   }
 
-  @Test
+  @MavenPluginTest
   public void detectsExportedOptionalPackageFromLibrary() throws Exception {
     Map<String, List<String>> logs = buildMultiModule("detectsExportedOptionalPackageFromLibrary");
 

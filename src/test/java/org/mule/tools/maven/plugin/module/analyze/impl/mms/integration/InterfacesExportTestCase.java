@@ -7,7 +7,7 @@
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class InterfacesExportTestCase extends AbstractExportTestCase {
 
@@ -15,62 +15,62 @@ public class InterfacesExportTestCase extends AbstractExportTestCase {
     super(builder, "interface");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedSuperInterfaceInPublicInterface() throws Exception {
     doSuccessfulStandardValidationTest("exportedSuperInterfaceInPublicInterface");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingSuperInterfaceInPublicInterface() throws Exception {
     doMissingStandardExportTest("missingSuperInterfaceInPublicInterface");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedSuperInterfaceInProtectedInnerInterface() throws Exception {
     doSuccessfulStandardValidationTest("exportedSuperInterfaceInProtectedInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void missingSuperInterfaceInProtectedInnerInterface() throws Exception {
     doMissingStandardExportTest("missingSuperInterfaceInProtectedInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSuperInterfaceInPackageInterface() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSuperInterfaceInPackageInterface");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSuperInterfaceInPrivateInnerInterface() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSuperInterfaceInPrivateInnerInterface", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedInterfaceInPublicClass() throws Exception {
     doSuccessfulStandardValidationTest("exportedInterfaceInPublicClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresInterfaceInPrivateInnerClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresInterfaceInPrivateInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void missingInterfaceInPublicClass() throws Exception {
     doMissingStandardExportTest("missingInterfaceInPublicClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedInterfaceInProtectedInnerClass() throws Exception {
     doSuccessfulStandardValidationTest("exportedInterfaceInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void missingInterfaceInProtectedInnerClass() throws Exception {
     doMissingStandardExportTest("missingInterfaceInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresInterfaceInPackageClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresInterfaceInPackageClass");
   }

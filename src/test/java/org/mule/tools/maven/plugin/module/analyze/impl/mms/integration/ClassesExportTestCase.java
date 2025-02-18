@@ -7,7 +7,7 @@
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class ClassesExportTestCase extends AbstractExportTestCase {
 
@@ -15,32 +15,32 @@ public class ClassesExportTestCase extends AbstractExportTestCase {
     super(builder, "class");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedSuperClassInPublicClass() throws Exception {
     doSuccessfulStandardValidationTest("exportedSuperClassInPublicClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingSuperClassInPublicClass() throws Exception {
     doMissingStandardExportTest("missingSuperClassInPublicClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedSuperClassInProtectedInnerClass() throws Exception {
     doSuccessfulStandardValidationTest("exportedSuperClassInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void missingSuperClassInProtectedInnerClass() throws Exception {
     doMissingStandardExportTest("missingSuperClassInProtectedInnerClass", ANALYZED_CLASSES_A_B_C);
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSuperClassInPackageClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSuperClassInPackageClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSuperClassInPrivateInnerClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSuperClassInPrivateInnerClass", ANALYZED_CLASSES_A_B_C);
   }

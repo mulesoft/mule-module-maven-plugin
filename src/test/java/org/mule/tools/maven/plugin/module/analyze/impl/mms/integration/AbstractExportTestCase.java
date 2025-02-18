@@ -32,16 +32,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import io.takari.maven.testing.TestResources;
+import io.takari.maven.testing.TestResources5;
 import io.takari.maven.testing.executor.MavenExecutionResult;
 import io.takari.maven.testing.executor.MavenRuntime;
 import io.takari.maven.testing.executor.MavenVersions;
-import io.takari.maven.testing.executor.junit.MavenJUnitTestRunner;
 
-import org.junit.Rule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@RunWith(MavenJUnitTestRunner.class)
 @MavenVersions({"3.9.8"})
 public abstract class AbstractExportTestCase {
 
@@ -59,8 +56,10 @@ public abstract class AbstractExportTestCase {
   private static final String ANALYZING_CLASS_PREFIX = INFO_LOG_PREFIX + "Analyzing class: ";
   private static final String MAVEN_BUILD_PREFIX = "[INFO] Building ";
 
-  @Rule
-  public final TestResources resources = new TestResources();
+
+  @RegisterExtension
+  final TestResources5 resources = new TestResources5();
+
   public final MavenRuntime mavenRuntime;
   private final String folder;
 

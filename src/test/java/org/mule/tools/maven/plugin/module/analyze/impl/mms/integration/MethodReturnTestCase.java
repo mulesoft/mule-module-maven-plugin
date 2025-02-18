@@ -7,7 +7,7 @@
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class MethodReturnTestCase extends AbstractExportTestCase {
 
@@ -15,37 +15,37 @@ public class MethodReturnTestCase extends AbstractExportTestCase {
     super(builder, "return");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedReturnPackageInPublicMethod() throws Exception {
     doSuccessfulStandardValidationTest("exportedReturnInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedReturnPackageInProtectedMethod() throws Exception {
     doSuccessfulStandardValidationTest("exportedReturnInProtectedMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingExportedReturnPackageInPublicMethod() throws Exception {
     doMissingStandardExportTest("missingReturnInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingExportedReturnPackageInProtectedMethod() throws Exception {
     doMissingStandardExportTest("missingReturnInProtectedMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresReturnPackageInPrivateMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresReturnInPrivateMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresReturnPackageInPackageMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresReturnInPackageMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresReturnPackageInProtectedMethodFromFinalClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresReturnInProtectedMethodFromFinalClass");
   }

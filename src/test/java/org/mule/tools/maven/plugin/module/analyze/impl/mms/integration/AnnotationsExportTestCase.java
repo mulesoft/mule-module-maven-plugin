@@ -7,7 +7,7 @@
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class AnnotationsExportTestCase extends AbstractExportTestCase {
 
@@ -15,104 +15,104 @@ public class AnnotationsExportTestCase extends AbstractExportTestCase {
     super(builder, "annotation");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedRuntimeAnnotationInPublicClass() throws Exception {
     doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingRuntimeAnnotationInPublicClass() throws Exception {
     final String missingRuntimeAnnotationInPublicClass = "missingRuntimeAnnotationInPublicClass";
     doMissingStandardExportTest(missingRuntimeAnnotationInPublicClass);
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresCompileAnnotationInPublicClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSourceAnnotationInPublicClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresRuntimeAnnotationInPackageClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageClass");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedRuntimeAnnotationInPublicMethod() throws Exception {
     // TODO(pablo.kraan): what about private/protected/package methods?
     doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingRuntimeAnnotationInPublicMethod() throws Exception {
     doMissingStandardExportTest("missingRuntimeAnnotationInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresCompileAnnotationInPublicMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSourceAnnotationInPublicMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresRuntimeAnnotationInPackageMethod() throws Exception {
     doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedRuntimeAnnotationInPublicField() throws Exception {
     doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicField");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingRuntimeAnnotationInPublicField() throws Exception {
     doMissingStandardExportTest("missingRuntimeAnnotationInPublicField");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresCompileAnnotationInPublicField() throws Exception {
     doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicField");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSourceAnnotationInPublicField() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicField");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresRuntimeAnnotationInPackageField() throws Exception {
     doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageMethod");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedRuntimeAnnotationInPublicMethodParam() throws Exception {
     doSuccessfulStandardValidationTest("exportedRuntimeAnnotationInPublicMethodParam");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingRuntimeAnnotationInPublicMethodParam() throws Exception {
     doMissingStandardExportTest("missingRuntimeAnnotationInPublicMethodParam");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresCompileAnnotationInPublicMethodParam() throws Exception {
     doSuccessfulStandardValidationTest("ignoresCompileAnnotationInPublicMethodParam");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresSourceAnnotationInPublicMethodParam() throws Exception {
     doSuccessfulStandardValidationTest("ignoresSourceAnnotationInPublicMethodParam");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresRuntimeAnnotationInPackageMethodParam() throws Exception {
     doSuccessfulStandardValidationTest("ignoresRuntimeAnnotationInPackageMethodParam");
   }

@@ -7,7 +7,7 @@
 package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-import org.junit.Test;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
 public class ClassFieldExportTestCase extends AbstractExportTestCase {
 
@@ -15,37 +15,37 @@ public class ClassFieldExportTestCase extends AbstractExportTestCase {
     super(builder, "field");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedPublicInstanceField() throws Exception {
     doSuccessfulStandardValidationTest("exportedPublicInstanceField");
   }
 
-  @Test
+  @MavenPluginTest
   public void exportedProtectedInstanceField() throws Exception {
     doSuccessfulStandardValidationTest("exportedProtectedInstanceField");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingProtectedInstanceField() throws Exception {
     doMissingStandardExportTest("missingProtectedInstanceField");
   }
 
-  @Test
+  @MavenPluginTest
   public void missingPublicInstanceField() throws Exception {
     doMissingStandardExportTest("missingPublicInstanceField");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresPrivateInstanceField() throws Exception {
     doSuccessfulStandardValidationTest("ignoresPrivateInstanceField");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresPackageInstanceField() throws Exception {
     doSuccessfulStandardValidationTest("ignoresPackageInstanceField");
   }
 
-  @Test
+  @MavenPluginTest
   public void ignoresProtectedInstanceFieldInFinalClass() throws Exception {
     doSuccessfulStandardValidationTest("ignoresProtectedInstanceFieldInFinalClass");
   }
