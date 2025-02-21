@@ -26,18 +26,26 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import io.takari.maven.testing.TestResources5;
 import io.takari.maven.testing.executor.MavenExecutionResult;
 import io.takari.maven.testing.executor.MavenRuntime;
-import io.takari.maven.testing.executor.MavenVersions;
 
+import io.takari.maven.testing.executor.MavenVersions;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 
 @MavenVersions({"3.9.8"})
 public abstract class AbstractExportTestCase {
@@ -56,18 +64,18 @@ public abstract class AbstractExportTestCase {
   private static final String ANALYZING_CLASS_PREFIX = INFO_LOG_PREFIX + "Analyzing class: ";
   private static final String MAVEN_BUILD_PREFIX = "[INFO] Building ";
 
-
   @RegisterExtension
   final TestResources5 resources = new TestResources5();
 
   public final MavenRuntime mavenRuntime;
   private final String folder;
 
-  public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder) throws Exception {
-    this(builder, folder, "1.8");
+  public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem, String folder) throws Exception {
+    this(builder, moduleSystem, folder, "1.8");
   }
 
-  public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String folder, String sourceLevel) throws Exception {
+  public AbstractExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem, String folder, String sourceLevel)
+      throws Exception {
     this.mavenRuntime = builder.withCliOptions("-DmuleModule.analyze.verbose",
                                                "--batch-mode",
                                                "-Dmaven.repo.local=" + getProperty("maven.repo.local", ""),
@@ -75,7 +83,7 @@ public abstract class AbstractExportTestCase {
                                                "-Dmaven.compiler.target=" + sourceLevel,
                                                "-e")
         .build();
-    this.folder = folder;
+    this.folder = moduleSystem + separator + folder;
   }
 
   /**
@@ -356,5 +364,49 @@ public abstract class AbstractExportTestCase {
       throw new IllegalStateException(e);
     }
     return log;
+  }
+
+  public static class ExportTestCaseContextProvider
+      implements TestTemplateInvocationContextProvider {
+
+    @Override
+    public boolean supportsTestTemplate(ExtensionContext context) {
+      return true;
+    }
+
+    @Override
+    public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
+                                                                                       ExtensionContext context) {
+
+      return Stream.of(invocationContext("mms"), invocationContext("jpms"));
+    }
+
+    private TestTemplateInvocationContext invocationContext(String parameter) {
+      return new TestTemplateInvocationContext() {
+
+        @Override
+        public String getDisplayName(int invocationIndex) {
+          return "Module System: " + parameter;
+        }
+
+        @Override
+        public List<Extension> getAdditionalExtensions() {
+          return Collections.singletonList(new ParameterResolver() {
+
+            @Override
+            public boolean supportsParameter(ParameterContext parameterContext,
+                                             ExtensionContext extensionContext) {
+              return parameterContext.getParameter().getType().equals(String.class);
+            }
+
+            @Override
+            public Object resolveParameter(ParameterContext parameterContext,
+                                           ExtensionContext extensionContext) {
+              return parameter;
+            }
+          });
+        }
+      };
+    }
   }
 }

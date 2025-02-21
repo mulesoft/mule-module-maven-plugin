@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assume.assumeTrue;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mule.tools.maven.plugin.module.analyze.impl.logging.SilentAnalyzerLogger;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.mms.MuleModuleSystemModuleFactory;
@@ -43,6 +44,7 @@ import io.takari.maven.testing.executor.MavenRuntime;
 import org.junit.BeforeClass;
 import io.takari.maven.testing.executor.junit.MavenPluginTest;
 
+@ExtendWith(AbstractExportTestCase.ExportTestCaseContextProvider.class)
 public class GenerateTestCase extends AbstractExportTestCase {
 
   @BeforeClass
@@ -50,8 +52,8 @@ public class GenerateTestCase extends AbstractExportTestCase {
     assumeTrue(isJavaVersionAtLeast(JAVA_11));
   }
 
-  public GenerateTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
-    super(builder, "generate", "11");
+  public GenerateTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem) throws Exception {
+    super(builder, moduleSystem, "generate", "11");
   }
 
   private MavenExecutionResult doRunMaven(final String string) throws Exception {

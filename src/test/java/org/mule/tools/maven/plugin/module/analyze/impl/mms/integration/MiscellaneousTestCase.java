@@ -19,17 +19,18 @@ import static org.junit.Assume.assumeFalse;
 import java.util.List;
 
 import io.takari.maven.testing.executor.MavenRuntime;
-
 import io.takari.maven.testing.executor.junit.MavenPluginTest;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(AbstractExportTestCase.ExportTestCaseContextProvider.class)
 public class MiscellaneousTestCase extends AbstractExportTestCase {
 
-  public MiscellaneousTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
-    super(builder, "miscellaneous");
+  public MiscellaneousTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem) throws Exception {
+    super(builder, moduleSystem, "miscellaneous");
   }
 
   @MavenPluginTest
-  public void redundantExportedPackage() throws Exception {
+  void redundantExportedPackage(String moduleSystem) throws Exception {
     doMissingAnalyzedPackageTest("redundantExportedPackage");
   }
 

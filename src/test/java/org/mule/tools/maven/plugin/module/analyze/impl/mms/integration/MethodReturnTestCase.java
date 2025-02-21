@@ -8,11 +8,13 @@ package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
 
 import io.takari.maven.testing.executor.MavenRuntime;
 import io.takari.maven.testing.executor.junit.MavenPluginTest;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(AbstractExportTestCase.ExportTestCaseContextProvider.class)
 public class MethodReturnTestCase extends AbstractExportTestCase {
 
-  public MethodReturnTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
-    super(builder, "return");
+  public MethodReturnTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem) throws Exception {
+    super(builder, moduleSystem, "return");
   }
 
   @MavenPluginTest

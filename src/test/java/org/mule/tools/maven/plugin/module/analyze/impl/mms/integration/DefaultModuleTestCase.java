@@ -19,14 +19,16 @@ import java.util.Map;
 
 import io.takari.maven.testing.executor.MavenRuntime;
 import io.takari.maven.testing.executor.junit.MavenPluginTest;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(AbstractExportTestCase.ExportTestCaseContextProvider.class)
 public class DefaultModuleTestCase extends AbstractExportTestCase {
 
 
   private static final String BAR_LIBRARY_ID = "Bar Library ";
 
-  public DefaultModuleTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
-    super(builder, "module");
+  public DefaultModuleTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem) throws Exception {
+    super(builder, moduleSystem, "module");
   }
 
   @MavenPluginTest

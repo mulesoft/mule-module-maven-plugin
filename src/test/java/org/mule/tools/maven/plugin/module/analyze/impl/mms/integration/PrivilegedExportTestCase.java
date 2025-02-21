@@ -11,11 +11,13 @@ import java.util.Map;
 
 import io.takari.maven.testing.executor.MavenRuntime;
 import io.takari.maven.testing.executor.junit.MavenPluginTest;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(AbstractExportTestCase.ExportTestCaseContextProvider.class)
 public class PrivilegedExportTestCase extends AbstractExportTestCase {
 
-  public PrivilegedExportTestCase(MavenRuntime.MavenRuntimeBuilder builder) throws Exception {
-    super(builder, "privileged");
+  public PrivilegedExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem) throws Exception {
+    super(builder, moduleSystem, "privileged");
   }
 
   @MavenPluginTest
