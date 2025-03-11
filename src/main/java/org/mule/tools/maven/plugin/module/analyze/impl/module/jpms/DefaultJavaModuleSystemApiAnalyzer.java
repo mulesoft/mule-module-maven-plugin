@@ -9,7 +9,7 @@ package org.mule.tools.maven.plugin.module.analyze.impl.module.jpms;
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
-import org.mule.tools.maven.plugin.module.analyze.impl.module.BaseMuleModuleApiAnalyzer;
+import org.mule.tools.maven.plugin.module.analyze.impl.BaseModuleApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.impl.module.DefaultModule;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
@@ -28,7 +28,7 @@ import java.util.Set;
 @Named("jpms")
 @Singleton
 @Typed(ModuleApiAnalyzer.class)
-public class DefaultJavaModuleSystemApiAnalyzer extends BaseMuleModuleApiAnalyzer implements JavaModuleSystemApiAnalyzer {
+public class DefaultJavaModuleSystemApiAnalyzer extends BaseModuleApiAnalyzer implements JavaModuleSystemApiAnalyzer {
 
   public static final String PROJECT_IS_NOT_A_JPMS_MODULE = "Project is not a jpms module";
   private boolean isFillOptionalPackages = false;

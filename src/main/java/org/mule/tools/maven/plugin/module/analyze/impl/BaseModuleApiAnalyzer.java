@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.maven.plugin.module.analyze.impl.module;
+package org.mule.tools.maven.plugin.module.analyze.impl;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 import static org.mule.tools.maven.plugin.module.analyze.impl.util.JrePackageFinder.find;
 
-public abstract class BaseMuleModuleApiAnalyzer implements ModuleApiAnalyzer {
+public abstract class BaseModuleApiAnalyzer implements ModuleApiAnalyzer {
 
 
   /**
@@ -139,7 +139,7 @@ public abstract class BaseMuleModuleApiAnalyzer implements ModuleApiAnalyzer {
     }
 
     if (!packages.isEmpty()) {
-      String message = BaseMuleModuleApiAnalyzer.buildOptionalPackageExportedMessage(packages);
+      String message = BaseModuleApiAnalyzer.buildOptionalPackageExportedMessage(packages);
       analyzerLogger.log(message);
       throw new ModuleApiAnalyzerException(message);
     }
@@ -163,14 +163,14 @@ public abstract class BaseMuleModuleApiAnalyzer implements ModuleApiAnalyzer {
 
     if (otherModuleExportedPackages.contains(packageName)) {
       analyzerLogger
-          .log(BaseMuleModuleApiAnalyzer.buildRemovedProvidedPackageMessage(packageName));
+          .log(BaseModuleApiAnalyzer.buildRemovedProvidedPackageMessage(packageName));
       result = true;
     } else if (jrePackages.contains(packageName)) {
       analyzerLogger.log(
-                         BaseMuleModuleApiAnalyzer.buildRemovedJrePackageMessage(packageName));
+                         BaseModuleApiAnalyzer.buildRemovedJrePackageMessage(packageName));
       result = true;
     } else if (packageName.startsWith("sun.") || packageName.startsWith("com.sun.")) {
-      analyzerLogger.log(BaseMuleModuleApiAnalyzer.buildRemovedSunPackageMessage(packageName));
+      analyzerLogger.log(BaseModuleApiAnalyzer.buildRemovedSunPackageMessage(packageName));
       result = true;
     }
 

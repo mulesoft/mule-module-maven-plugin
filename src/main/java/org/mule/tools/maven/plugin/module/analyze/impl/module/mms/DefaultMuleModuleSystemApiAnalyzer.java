@@ -8,7 +8,7 @@ package org.mule.tools.maven.plugin.module.analyze.impl.module.mms;
 
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzerException;
 import org.mule.tools.maven.plugin.module.analyze.api.ProjectAnalysisResult;
-import org.mule.tools.maven.plugin.module.analyze.impl.module.BaseMuleModuleApiAnalyzer;
+import org.mule.tools.maven.plugin.module.analyze.impl.BaseModuleApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.Module;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleApiAnalyzer;
 import org.mule.tools.maven.plugin.module.analyze.api.ModuleLogger;
@@ -23,7 +23,7 @@ import org.eclipse.sisu.Typed;
 @Named("mms")
 @Singleton
 @Typed(ModuleApiAnalyzer.class)
-public class DefaultMuleModuleSystemApiAnalyzer extends BaseMuleModuleApiAnalyzer {
+public class DefaultMuleModuleSystemApiAnalyzer extends BaseModuleApiAnalyzer {
 
   public static final String PROJECT_IS_NOT_A_MULE_MODULE = "Project is not a mule module";
 
