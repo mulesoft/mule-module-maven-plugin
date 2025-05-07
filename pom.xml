@@ -81,7 +81,6 @@
         <muleBomVersion>4.10.0-SNAPSHOT</muleBomVersion>
 
         <jdk.version>17</jdk.version>
-        <formatterConfigPath>formatter.xml</formatterConfigPath>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
@@ -260,10 +259,6 @@
                     <compilerCompliance>${jdk.version}</compilerCompliance>
                     <compilerSource>${jdk.version}</compilerSource>
                     <compilerTargetPlatform>${jdk.version}</compilerTargetPlatform>
-                    <configFile>${basedir}/${formatterConfigPath}</configFile>
-                    <configJsFile>${basedir}/${formatterConfigPath}</configJsFile>
-                    <aggregator>false</aggregator>
-                    <executionRoot>true</executionRoot>
                 </configuration>
             </plugin>
         </plugins>
