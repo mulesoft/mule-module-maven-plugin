@@ -1,0 +1,55 @@
+/*
+ * Copyright 2023 Salesforce, Inc. All rights reserved.
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
+package org.mule.tools.maven.plugin.module.analyze.impl.mms.integration;
+
+import java.util.List;
+import java.util.Map;
+
+import io.takari.maven.testing.executor.MavenRuntime;
+import io.takari.maven.testing.executor.junit.MavenPluginTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+@ExtendWith(AbstractExportTestCase.ExportTestCaseContextProvider.class)
+public class PrivilegedExportTestCase extends AbstractExportTestCase {
+
+  public PrivilegedExportTestCase(MavenRuntime.MavenRuntimeBuilder builder, String moduleSystem) throws Exception {
+    super(builder, moduleSystem, "privileged");
+  }
+
+  @MavenPluginTest
+  public void exportInPrivilegedApi() throws Exception {
+    doSuccessfulPrivilegedValidationTest("exportInPrivilegedApi", ANALYZED_CLASSES_A_B);
+  }
+
+  @MavenPluginTest
+  public void missingExportInPrivilegedApi() throws Exception {
+    doMissingPrivilegedExportTest("missingExportInPrivilegedApi", ANALYZED_CLASSES_A_B);
+  }
+
+  @MavenPluginTest
+  public void duplicatedExportInPrivilegedApi() throws Exception {
+    doDuplicatedPrivilegedExportTest("duplicatedExportInPrivilegedApi", "org.foo");
+  }
+
+  @MavenPluginTest
+  public void noPrivilegedExportPackageFromModule() throws Exception {
+    Map<String, List<String>> logs = buildMultiModule("noPrivilegedExportPackageFromModule");
+
+    List<String> barLog = logs.get(BAR_MODULE_ID);
+    assertAnalyzedClasses(barLog, PATH_CLASS_B);
+    assertValidModuleApi(barLog);
+
+    List<String> fooLog = logs.get(FOO_MODULE_ID);
+    assertAnalyzedClasses(fooLog, ANALYZED_CLASSES_A_B);
+    assertValidModuleApi(fooLog);
+  }
+
+  @MavenPluginTest
+  public void redundantPrivilegedExportPackageFromModule() throws Exception {
+    doDuplicatedPrivilegedExportTest("redundantPrivilegedExportPackageFromModule", BAR_PACKAGE);
+  }
+}
